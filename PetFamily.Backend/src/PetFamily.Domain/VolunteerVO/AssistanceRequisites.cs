@@ -16,16 +16,6 @@ public record AssistanceRequisites
     
     public static Result<AssistanceRequisites> Create(Title title, Description description)
     {
-        if (title is null)
-        {
-            return Result.Failure<AssistanceRequisites>("Title is required.");
-        }
-
-        if (description is null)
-        {
-            return Result.Failure<AssistanceRequisites>("Descriptione is required.");
-        }
-        
         var requisitesForHelp = new AssistanceRequisites(title, description);
         
         return Result.Success(requisitesForHelp);

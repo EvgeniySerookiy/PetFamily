@@ -17,10 +17,6 @@ public class Breed : Entity
     public static Result<Breed> Create(Guid id, Name name)
     {
         var createName = Name.Create(name.Value);
-        if (createName.IsFailure)
-        {
-            return Result.Failure<Breed>(createName.Error);
-        }
 
         var breed = new Breed(id, createName.Value);
         

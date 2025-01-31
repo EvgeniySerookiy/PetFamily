@@ -6,6 +6,8 @@ namespace PetFamily.Domain.PetContext;
 
 public class Volunteer : Entity
 {
+    private readonly List<SocialNetwork> _socialNetworks = new();
+    private readonly List<Pet> _pets = new();
     public Guid Id { get; private set; }
     public FullName FullName { get; private set; }
     public Email Email { get; private set; }
@@ -15,9 +17,9 @@ public class Volunteer : Entity
     public int PetsSeekingHome { get; private set; }
     public int PetsUnderTreatment { get; private set; }
     public PhoneNumber PhoneNumber { get; private set; }
-    public List<SocialNetwork> SocialNetworks { get; private set; }
+    public IReadOnlyList<SocialNetwork> SocialNetworks => _socialNetworks;
     public AssistanceRequisites AssistanceRequisites { get; private set; }
-    public List<Pet> Pets { get; private set; }
+    public IReadOnlyList<Pet> Pets => _pets;
 
     private Volunteer(
         Guid id, 
@@ -26,9 +28,7 @@ public class Volunteer : Entity
         Description description,
         YearsOfExperience yearsOfExperience,
         PhoneNumber phoneNumber,
-        List<SocialNetwork> socialNetworks,
-        AssistanceRequisites assistanceRequisites,
-        List<Pet> pets)
+        AssistanceRequisites assistanceRequisites)
     {
         Id = id;
         FullName = fullName;
@@ -39,9 +39,17 @@ public class Volunteer : Entity
         PetsSeekingHome = CountPetsSeekingHome();
         PetsUnderTreatment = CountPetsUnderTreatment();
         PhoneNumber = phoneNumber;
-        SocialNetworks = socialNetworks;
         AssistanceRequisites = assistanceRequisites;
-        Pets = pets;
+    }
+
+    public void AddSocialNetwork(SocialNetwork socialNetwork)
+    {
+        _socialNetworks.Add(socialNetwork);
+    }
+
+    public void AddPet(Pet pet)
+    {
+        _pets.Add(pet);
     }
 
     public static Result<Volunteer> Create(
@@ -51,56 +59,16 @@ public class Volunteer : Entity
         Description description,
         YearsOfExperience yearsOfExperience,
         PhoneNumber phoneNumber,
-        List<SocialNetwork> socialNetworks,
-        AssistanceRequisites assistanceRequisites,
-        List<Pet> pets)
+        AssistanceRequisites assistanceRequisites)
     {
-        var createFullName = FullName.Create(fullName.FirstName, fullName.LastName, fullName.MiddleName);
-        if (createFullName.IsFailure)
-        {
-            return Result.Failure<Volunteer>(createFullName.Error);
-        }
-        
-        var createEmail = Email.Create(email.Value);
-        if (createEmail.IsFailure)
-        {
-            return Result.Failure<Volunteer>(createEmail.Error);
-        }
-        
-        var createDescription = Description.Create(description.Value);
-        if (createDescription.IsFailure)
-        {
-            return Result.Failure<Volunteer>(createDescription.Error);
-        }
-        
-        var createYearsOfExperience = YearsOfExperience.Create(yearsOfExperience.Value);
-        if (createYearsOfExperience.IsFailure)
-        {
-            return Result.Failure<Volunteer>(createYearsOfExperience.Error);
-        }
-        
-        var createPhoneNumber = PhoneNumber.Create(phoneNumber.Value);
-        if (createPhoneNumber.IsFailure)
-        {
-            return Result.Failure<Volunteer>(createPhoneNumber.Error);
-        }
-        
-        var createAssistanceRequisites = AssistanceRequisites.Create(assistanceRequisites.Title, assistanceRequisites.Description);
-        if (createAssistanceRequisites.IsFailure)
-        {
-            return Result.Failure<Volunteer>(createAssistanceRequisites.Error);
-        }
-        
         var volunteer = new Volunteer(
             id,
-            createFullName.Value,
-            createEmail.Value,
-            createDescription.Value,
-            createYearsOfExperience.Value,
-            createPhoneNumber.Value,
-            socialNetworks,
-            assistanceRequisites,
-            pets);
+            fullName,
+            email,
+            description,
+            yearsOfExperience,
+            phoneNumber,
+            assistanceRequisites);
         
         return Result.Success(volunteer);
     }
