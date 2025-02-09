@@ -1,6 +1,6 @@
-using CSharpFunctionalExtensions;
+using PetFamily.Domain.Shared;
 
-namespace PetFamily.Domain.PetVO;
+namespace PetFamily.Domain.PetContext.PetVO;
 
 public record Size
 {
@@ -16,13 +16,13 @@ public record Size
     public static Result<Size> Create(int weight, int height)
     {
         if (weight <= 0) 
-            return Result.Failure<Size>("Weight must be greater than zero.");
+            return "Weight must be greater than zero.";
         
         if (height <= 0) 
-            return Result.Failure<Size>("Height must be greater than zero.");
+            return "Height must be greater than zero.";
         
         var petSize = new Size(weight, height);
         
-        return Result.Success(petSize);
+        return petSize;
     }
 }

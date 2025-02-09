@@ -1,6 +1,6 @@
-using CSharpFunctionalExtensions;
+using PetFamily.Domain.Shared;
 
-namespace PetFamily.Domain.PetVO;
+namespace PetFamily.Domain.PetContext.PetVO;
 
 public record NeuteredStatus
 {
@@ -15,6 +15,6 @@ public record NeuteredStatus
     {
         var neuteredStatus = new NeuteredStatus(value);
         
-        return Result.Success(neuteredStatus);
+        return neuteredStatus;
     }
 }

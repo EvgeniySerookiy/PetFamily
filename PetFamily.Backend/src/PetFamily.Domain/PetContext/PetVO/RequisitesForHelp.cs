@@ -1,12 +1,14 @@
-using CSharpFunctionalExtensions;
+using PetFamily.Domain.Shared;
 using PetFamily.Domain.SharedVO;
 
-namespace PetFamily.Domain.PetVO;
+namespace PetFamily.Domain.PetContext.PetVO;
 
 public record RequisitesForHelp
 {
     public Title Title { get; }
     public Description Description { get; }
+    
+    private RequisitesForHelp() { }
 
     private RequisitesForHelp(Title title, Description description)
     {
@@ -18,6 +20,6 @@ public record RequisitesForHelp
     {
         var requisitesForHelp = new RequisitesForHelp(title, description);
         
-        return Result.Success(requisitesForHelp);
+        return requisitesForHelp;
     }
 }

@@ -1,6 +1,6 @@
-using CSharpFunctionalExtensions;
+using PetFamily.Domain.Shared;
 
-namespace PetFamily.Domain.VolunteerVO;
+namespace PetFamily.Domain.VolunteerContext.VolunteerVO;
 
 public record YearsOfExperience
 {
@@ -15,11 +15,11 @@ public record YearsOfExperience
     {
         if (value < 0)
         {
-            return Result.Failure<YearsOfExperience>("Years of experience cannot be negative.");
+            return "Years of experience cannot be negative.";
         }
 
         var yearsOfExperience = new YearsOfExperience(value);
         
-        return Result.Success(yearsOfExperience);
+        return yearsOfExperience;
     }
 }

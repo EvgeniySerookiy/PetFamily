@@ -1,9 +1,10 @@
-using CSharpFunctionalExtensions;
+using PetFamily.Domain.Shared;
 
 namespace PetFamily.Domain.SharedVO;
 
 public record Title
 {
+    public const int MAX_TITLE_TEXT_LENGTH = 70;
     public string Value { get; }
 
     private Title(string value)
@@ -15,11 +16,14 @@ public record Title
     {
         if (string.IsNullOrWhiteSpace(value))
         {
-            return Result.Failure<Title>("Title is required.");
+            return "Title cannot be empty.";
         }
 
-        var title = new Title(value);
+        if (value.Length > MAX_TITLE_TEXT_LENGTH)
+        {
+            return $"Title cannot be longer than {MAX_TITLE_TEXT_LENGTH} characters.";
+        }
         
-        return Result.Success(title);
+        return new Title(value);
     }
 }

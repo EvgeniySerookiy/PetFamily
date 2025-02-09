@@ -1,9 +1,10 @@
-using CSharpFunctionalExtensions;
+using PetFamily.Domain.Shared;
 
 namespace PetFamily.Domain.SharedVO;
 
 public record PhoneNumber
 {
+    public const int MAX_PHONE_NUMBER_TEXT_LENGTH = 20;
     public string Value { get; }
 
     private PhoneNumber(string value)
@@ -15,11 +16,14 @@ public record PhoneNumber
     {
         if (string.IsNullOrWhiteSpace(value))
         {
-            return Result.Failure<PhoneNumber>("Phone number cannot be empty.");
+            return "Phone number cannot be empty.";
         }
 
-        var phoneNumber = new PhoneNumber(value);
+        if (value.Length > MAX_PHONE_NUMBER_TEXT_LENGTH)
+        {
+            return $"Phone number cannot be longer than {MAX_PHONE_NUMBER_TEXT_LENGTH} characters.";
+        }
         
-        return Result.Success(phoneNumber);
+        return new PhoneNumber(value);
     }
 }

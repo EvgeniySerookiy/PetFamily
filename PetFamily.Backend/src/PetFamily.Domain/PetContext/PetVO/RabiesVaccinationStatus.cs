@@ -1,6 +1,6 @@
-using CSharpFunctionalExtensions;
+using PetFamily.Domain.Shared;
 
-namespace PetFamily.Domain.PetVO;
+namespace PetFamily.Domain.PetContext.PetVO;
 
 public record RabiesVaccinationStatus
 {
@@ -15,6 +15,6 @@ public record RabiesVaccinationStatus
     {
         var rabiesVaccinationStatus = new RabiesVaccinationStatus(value);
         
-        return Result.Success(rabiesVaccinationStatus);
+        return rabiesVaccinationStatus;
     }
 }
