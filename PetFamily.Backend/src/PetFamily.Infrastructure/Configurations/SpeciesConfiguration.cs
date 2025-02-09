@@ -19,13 +19,13 @@ public class SpeciesConfiguration : IEntityTypeConfiguration<Species>
                 id => id.Value,
                 value => SpeciesId.Create(value));
 
-        //builder.ComplexProperty(s => s.Name, nb =>
-        //{
-        //    nb.Property(n => n.Value)
-        //        .IsRequired()
-        //        .HasMaxLength(NotEmptyString.MAX_NOT_EMPTY_STRING_TEXT_LENGTH)
-        //        .HasColumnName("name");
-        //});
+        builder.ComplexProperty(s => s.Name, nb =>
+        {
+            nb.Property(n => n.Value)
+                .IsRequired()
+                .HasMaxLength(NotEmptyString.MAX_NOT_EMPTY_STRING_TEXT_LENGTH)
+                .HasColumnName("name");
+        });
 
         builder.HasMany(s => s.Breeds)
             .WithOne()

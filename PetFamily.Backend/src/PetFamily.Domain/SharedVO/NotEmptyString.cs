@@ -7,7 +7,6 @@ public record NotEmptyString
     public const int MAX_NOT_EMPTY_STRING_TEXT_LENGTH = 30;
     public string Value { get; }
     
-    private NotEmptyString() {}
     private NotEmptyString(string value)
     {
         Value = value;

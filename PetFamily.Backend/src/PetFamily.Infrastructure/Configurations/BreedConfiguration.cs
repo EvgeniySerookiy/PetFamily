@@ -19,12 +19,12 @@ public class BreedConfiguration : IEntityTypeConfiguration<Breed>
                 id => id.Value,
                 value => BreedId.Create(value));
 
-        //builder.ComplexProperty(b => b.Name, nb =>
-        //{
-        //    nb.Property(n => n.Value)
-        //        .IsRequired()
-        //        .HasMaxLength(NotEmptyString.MAX_NOT_EMPTY_STRING_TEXT_LENGTH)
-        //        .HasColumnName("name");
-        //});
+        builder.ComplexProperty(b => b.Name, nb =>
+        {
+            nb.Property(n => n.Value)
+                .IsRequired()
+                .HasMaxLength(NotEmptyString.MAX_NOT_EMPTY_STRING_TEXT_LENGTH)
+                .HasColumnName("name");
+        });
     }
 }

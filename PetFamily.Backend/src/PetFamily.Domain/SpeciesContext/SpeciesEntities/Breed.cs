@@ -6,7 +6,7 @@ namespace PetFamily.Domain.SpeciesContext.SpeciesEntities;
 
 public class Breed : Entity<BreedId>
 {
-    //public NotEmptyString Name { get; private set; }
+    public NotEmptyString Name { get; private set; }
     
     private Breed(BreedId id) : base(id)
     {
@@ -14,7 +14,7 @@ public class Breed : Entity<BreedId>
 
     private Breed(BreedId id, NotEmptyString name) : base(id)
     {
-        //Name = name;
+        Name = name;
     }
 
     public static Result<Breed> Create(BreedId id, NotEmptyString name)

@@ -11,7 +11,7 @@ public record Address
     public NotEmptyString Building { get; }
     public string? Apartment { get; }
     
-    //private Address() {}
+    private Address() { }
 
     private Address(
         NotEmptyString region, 
