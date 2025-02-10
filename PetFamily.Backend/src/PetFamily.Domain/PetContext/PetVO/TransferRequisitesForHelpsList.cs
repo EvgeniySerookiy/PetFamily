@@ -7,10 +7,10 @@ public record TransferRequisitesForHelpsList
     private readonly List<RequisitesForHelp> _requisitesForHelps = new();
     public IReadOnlyList<RequisitesForHelp> RequisitesForHelps => _requisitesForHelps;
     
-    private TransferRequisitesForHelpsList() { }
+    private TransferRequisitesForHelpsList() {}
     private TransferRequisitesForHelpsList(IEnumerable<RequisitesForHelp> requisitesForHelps)
     {
-        requisitesForHelps = requisitesForHelps.ToList();
+        _requisitesForHelps = requisitesForHelps.ToList();
     }
     
     public void AddRequisitesForHelp(RequisitesForHelp requisitesForHelp)
@@ -18,8 +18,8 @@ public record TransferRequisitesForHelpsList
         _requisitesForHelps.Add(requisitesForHelp);
     }
 
-    public static Result<TransferRequisitesForHelpsList> Create(IEnumerable<RequisitesForHelp> requisitesForHelp)
+    public static Result<TransferRequisitesForHelpsList> Create(IEnumerable<RequisitesForHelp> requisitesForHelps)
     {
-        return new TransferRequisitesForHelpsList(requisitesForHelp);
+        return new TransferRequisitesForHelpsList(requisitesForHelps);
     }
 }

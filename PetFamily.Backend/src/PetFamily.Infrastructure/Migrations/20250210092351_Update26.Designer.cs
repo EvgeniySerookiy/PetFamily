@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PetFamily.Infrastructure;
@@ -12,9 +13,11 @@ using PetFamily.Infrastructure;
 namespace PetFamily.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContex))]
-    partial class ApplicationDbContexModelSnapshot : ModelSnapshot
+    [Migration("20250210092351_Update26")]
+    partial class Update26
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -518,104 +521,6 @@ namespace PetFamily.Infrastructure.Migrations
                         .WithMany("Breeds")
                         .HasForeignKey("species_id")
                         .HasConstraintName("fk_breeds_species_species_id");
-                });
-
-            modelBuilder.Entity("PetFamily.Domain.VolunteerContext.Volunteer", b =>
-                {
-                    b.OwnsOne("PetFamily.Domain.VolunteerContext.VolunteerVO.TransferSocialNetworkList", "TransferSocialNetworkList", b1 =>
-                        {
-                            b1.Property<Guid>("VolunteerId")
-                                .HasColumnType("uuid")
-                                .HasColumnName("id");
-
-                            b1.HasKey("VolunteerId");
-
-                            b1.ToTable("Volunteers");
-
-                            b1.ToJson("TransferSocialNetworkList");
-
-                            b1.WithOwner()
-                                .HasForeignKey("VolunteerId")
-                                .HasConstraintName("fk_volunteers_volunteers_id");
-
-                            b1.OwnsMany("PetFamily.Domain.VolunteerContext.VolunteerVO.SocialNetwork", "SocialNetworks", b2 =>
-                                {
-                                    b2.Property<Guid>("TransferSocialNetworkListVolunteerId")
-                                        .HasColumnType("uuid");
-
-                                    b2.Property<int>("__synthesizedOrdinal")
-                                        .ValueGeneratedOnAdd()
-                                        .HasColumnType("integer");
-
-                                    b2.HasKey("TransferSocialNetworkListVolunteerId", "__synthesizedOrdinal")
-                                        .HasName("pk_volunteers");
-
-                                    b2.ToTable("Volunteers");
-
-                                    b2.WithOwner()
-                                        .HasForeignKey("TransferSocialNetworkListVolunteerId")
-                                        .HasConstraintName("fk_volunteers_volunteers_transfer_social_network_list_volunteer_id");
-
-                                    b2.OwnsOne("PetFamily.Domain.SharedVO.NotEmptyString", "NetworkName", b3 =>
-                                        {
-                                            b3.Property<Guid>("SocialNetworkTransferSocialNetworkListVolunteerId")
-                                                .HasColumnType("uuid");
-
-                                            b3.Property<int>("SocialNetwork__synthesizedOrdinal")
-                                                .HasColumnType("integer");
-
-                                            b3.Property<string>("Value")
-                                                .IsRequired()
-                                                .HasMaxLength(30)
-                                                .HasColumnType("character varying(30)")
-                                                .HasColumnName("network_name");
-
-                                            b3.HasKey("SocialNetworkTransferSocialNetworkListVolunteerId", "SocialNetwork__synthesizedOrdinal")
-                                                .HasName("pk_volunteers");
-
-                                            b3.ToTable("Volunteers");
-
-                                            b3.WithOwner()
-                                                .HasForeignKey("SocialNetworkTransferSocialNetworkListVolunteerId", "SocialNetwork__synthesizedOrdinal")
-                                                .HasConstraintName("fk_volunteers_volunteers_social_network_transfer_social_network_lis");
-                                        });
-
-                                    b2.OwnsOne("PetFamily.Domain.SharedVO.Description", "NetworkAddress", b3 =>
-                                        {
-                                            b3.Property<Guid>("SocialNetworkTransferSocialNetworkListVolunteerId")
-                                                .HasColumnType("uuid");
-
-                                            b3.Property<int>("SocialNetwork__synthesizedOrdinal")
-                                                .HasColumnType("integer");
-
-                                            b3.Property<string>("Value")
-                                                .IsRequired()
-                                                .HasMaxLength(500)
-                                                .HasColumnType("character varying(500)")
-                                                .HasColumnName("network_address");
-
-                                            b3.HasKey("SocialNetworkTransferSocialNetworkListVolunteerId", "SocialNetwork__synthesizedOrdinal")
-                                                .HasName("pk_volunteers");
-
-                                            b3.ToTable("Volunteers");
-
-                                            b3.WithOwner()
-                                                .HasForeignKey("SocialNetworkTransferSocialNetworkListVolunteerId", "SocialNetwork__synthesizedOrdinal")
-                                                .HasConstraintName("fk_volunteers_volunteers_social_network_transfer_social_network_lis");
-                                        });
-
-                                    b2.Navigation("NetworkAddress")
-                                        .IsRequired();
-
-                                    b2.Navigation("NetworkName")
-                                        .IsRequired();
-                                });
-
-                            b1.Navigation("SocialNetworks");
-                        });
-
-                    b.Navigation("TransferSocialNetworkList")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("PetFamily.Domain.SpeciesContext.SpeciesEntities.Species", b =>

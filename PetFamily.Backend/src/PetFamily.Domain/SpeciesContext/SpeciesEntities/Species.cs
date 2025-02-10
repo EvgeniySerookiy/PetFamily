@@ -27,6 +27,7 @@ public class Species : Entity<SpeciesId>
     public static Result<Species> Create(SpeciesId id, NotEmptyString name, List<Breed> breeds)
     {
         var createName = NotEmptyString.Create(name.Value);
+        
         var species = new Species(id, createName.Value, breeds);
         
         return species;

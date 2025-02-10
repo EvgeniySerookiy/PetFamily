@@ -160,7 +160,7 @@ public class PetConfiguration : IEntityTypeConfiguration<Pet>
             builder.OwnsOne(p => p.TransferRequisitesForHelpsList, tb =>
             {
                 tb.ToJson();
-//
+
                 tb.OwnsMany(t => t.RequisitesForHelps, rb =>
                 {
                     rb.OwnsOne(r => r.Title, tb =>
