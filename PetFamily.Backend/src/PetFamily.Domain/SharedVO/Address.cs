@@ -1,16 +1,24 @@
-using CSharpFunctionalExtensions;
+using PetFamily.Domain.Shared;
 
 namespace PetFamily.Domain.SharedVO;
 
 public record Address
 {
-    public string Region { get; }
-    public string City { get; }
-    public string Street { get; }
-    public string Building { get; }
-    public string Apartment { get; }
+    public const int MAX_APARTMENT_TEXT_LENGTH = 30;
+    public NotEmptyString Region { get; }
+    public NotEmptyString City { get; }
+    public NotEmptyString Street { get; }
+    public NotEmptyString Building { get; }
+    public string? Apartment { get; }
+    
+    private Address() { }
 
-    private Address(string region, string city, string street, string building, string apartment)
+    private Address(
+        NotEmptyString region, 
+        NotEmptyString city, 
+        NotEmptyString street, 
+        NotEmptyString building, 
+        string apartment)
     {
         Region = region;
         City = city;
@@ -19,36 +27,18 @@ public record Address
         Apartment = apartment;
     }
 
-    public static Result<Address> Create(string region, string city, string street, string building, string apartment)
+    public static Result<Address> Create(
+        NotEmptyString region, 
+        NotEmptyString city, 
+        NotEmptyString street,
+        NotEmptyString building, 
+        string apartment)
     {
-        if (string.IsNullOrWhiteSpace(region))
+        if (apartment.Length > MAX_APARTMENT_TEXT_LENGTH)
         {
-            return Result.Failure<Address>("Region cannot be empty.");
+            return $"Apartment cannot be longer than {MAX_APARTMENT_TEXT_LENGTH} characters.";
         }
         
-        if (string.IsNullOrWhiteSpace(city))
-        {
-            return Result.Failure<Address>("City cannot be empty.");
-        }
-        
-        if (string.IsNullOrWhiteSpace(street))
-        {
-            return Result.Failure<Address>("Street cannot be empty.");
-        }
-        
-        if (string.IsNullOrWhiteSpace(building))
-        {
-            return Result.Failure<Address>("Building cannot be empty.");
-        }
-        
-        if (string.IsNullOrWhiteSpace(apartment))
-        {
-            return Result.Failure<Address>("Apartment cannot be empty.");
-        }
-
-        var address = new Address(region, city, street, building, apartment);
-        
-        return Result.Success(address);
+        return new Address(region, city, street, building, apartment);
     }
-    
 }
