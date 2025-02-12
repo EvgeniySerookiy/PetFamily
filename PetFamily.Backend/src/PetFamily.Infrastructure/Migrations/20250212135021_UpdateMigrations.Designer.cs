@@ -13,8 +13,8 @@ using PetFamily.Infrastructure;
 namespace PetFamily.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContex))]
-    [Migration("20250210191406_UpdateTables")]
-    partial class UpdateTables
+    [Migration("20250212135021_UpdateMigrations")]
+    partial class UpdateMigrations
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
