@@ -46,7 +46,7 @@ public class Result<TValue> : Result
      {
           get
           {
-               if (!IsSuccess)
+               if (IsSuccess)
                {
                     return _value;
                }

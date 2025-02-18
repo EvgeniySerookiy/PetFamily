@@ -14,18 +14,18 @@ public class VolunteersRepository
         _applicationDbContex = applicationDbContex;
     }
 
-    public async Task<Guid> Add(Volunteer volunteer, CancellationToken cancellationToken)
+    public async Task<Guid> Add(Volunteer volunteer, CancellationToken cancellationToken = default)
     {
         await _applicationDbContex.Volunteers.AddAsync(volunteer, cancellationToken);
         await _applicationDbContex.SaveChangesAsync(cancellationToken);
         
-        return volunteer.Id.Value;
+        return volunteer.Id;
     }
 
     public async Task<Result<Volunteer>> GetById(VolunteerId volunteerId)
     {
         var volunteer = await _applicationDbContex.Volunteers
-            .Include(m => m.Pets)
+            .Include(v => v.Pets)
             .FirstOrDefaultAsync(v => v.Id == volunteerId);
 
         if (volunteer is null)

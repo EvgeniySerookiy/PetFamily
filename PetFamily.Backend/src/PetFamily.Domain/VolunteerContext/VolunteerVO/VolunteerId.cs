@@ -23,4 +23,14 @@ public record VolunteerId
     {
         return new (Guid.Empty);
     }
+
+    public static implicit operator Guid(VolunteerId volunteerId)
+    {
+        if (volunteerId is null)
+        {
+            throw new ArgumentNullException();
+        }
+        
+        return volunteerId.Value;
+    }
 }
