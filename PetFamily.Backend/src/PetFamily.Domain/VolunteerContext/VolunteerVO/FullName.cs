@@ -1,33 +1,42 @@
-using PetFamily.Domain.Shared;
-using PetFamily.Domain.SharedVO;
+using CSharpFunctionalExtensions;
+using PetFamily.Domain.Shared.ErrorContext;
 
 namespace PetFamily.Domain.VolunteerContext.VolunteerVO;
 
 public record FullName
 {
-    public const int MAX_MIDDLE_NAME_TEXT_LENGTH = 30;
-    public NotEmptyString FirstName { get; }
-    public NotEmptyString LastName { get; }
+    public const int MAX_ALL_NAME_TEXT_LENGTH = 50;
+    public string FirstName { get; }
+    public string LastName { get; }
     public string? MiddleName { get; }
-    
-    private FullName() { }
 
-    private FullName(NotEmptyString firstName, NotEmptyString lastName, string middleName)
+    private FullName(string firstName, string lastName, string middleName)
     {
         FirstName = firstName;
         LastName = lastName;
         MiddleName = middleName;
     }
 
-    public static Result<FullName> Create(NotEmptyString firstName, NotEmptyString lastName, string middleName)
+    public static Result<FullName, Error> Create(
+        string firstName, 
+        string lastName, 
+        string middleName)
     {
-        if (middleName.Length > MAX_MIDDLE_NAME_TEXT_LENGTH)
-        {
-            return $"Middle name cannot be longer than {MAX_MIDDLE_NAME_TEXT_LENGTH} characters.";
-        }
+        if (string.IsNullOrWhiteSpace(firstName))
+            return Errors.General.ValueIsRequired("First name");
         
-        var fullName = new FullName(firstName, lastName, middleName);
+        if (string.IsNullOrWhiteSpace(lastName))
+            return Errors.General.ValueIsRequired("Last name");
         
-        return fullName;
+        if (firstName.Length > MAX_ALL_NAME_TEXT_LENGTH)
+            return Errors.General.ValueIsTooLong("First name", MAX_ALL_NAME_TEXT_LENGTH);
+        
+        if (lastName.Length > MAX_ALL_NAME_TEXT_LENGTH)
+            return Errors.General.ValueIsTooLong("Last name", MAX_ALL_NAME_TEXT_LENGTH);
+        
+        if (middleName.Length > MAX_ALL_NAME_TEXT_LENGTH)
+            return Errors.General.ValueIsTooLong("Middle name", MAX_ALL_NAME_TEXT_LENGTH);
+        
+        return new FullName(firstName, lastName, middleName);
     }
 }

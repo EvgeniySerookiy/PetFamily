@@ -1,5 +1,4 @@
-using PetFamily.Domain.PetContext.PetVO;
-using PetFamily.Domain.Shared;
+using CSharpFunctionalExtensions;
 
 namespace PetFamily.Domain.VolunteerContext.VolunteerVO;
 
@@ -20,8 +19,6 @@ public record TransferSocialNetworkList
         _socialNetworks.Add(socialNetwork);
     }
 
-    public static Result<TransferSocialNetworkList> Create(IEnumerable<SocialNetwork> socialNetworks)
-    {
-        return new TransferSocialNetworkList(socialNetworks);
-    }
+    public static Result<TransferSocialNetworkList> Create(IEnumerable<SocialNetwork> socialNetworks) =>
+        new TransferSocialNetworkList(socialNetworks);
 }

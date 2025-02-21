@@ -1,4 +1,5 @@
-using PetFamily.Domain.Shared;
+using CSharpFunctionalExtensions;
+using PetFamily.Domain.Shared.ErrorContext;
 
 namespace PetFamily.Domain.PetContext.PetVO;
 
@@ -13,16 +14,14 @@ public record Size
         Height = height;
     }
 
-    public static Result<Size> Create(int weight, int height)
+    public static Result<Size, Error> Create(int weight, int height)
     {
         if (weight <= 0) 
-            return "Weight must be greater than zero.";
+            return Errors.General.ValueCannotBeNegative("Weight", weight);
         
         if (height <= 0) 
-            return "Height must be greater than zero.";
+            return Errors.General.ValueCannotBeNegative("Height", height);
         
-        var petSize = new Size(weight, height);
-        
-        return petSize;
+        return new Size(weight, height);
     }
 }

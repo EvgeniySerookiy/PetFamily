@@ -1,4 +1,5 @@
-using PetFamily.Domain.Shared;
+using CSharpFunctionalExtensions;
+using PetFamily.Domain.Shared.ErrorContext;
 
 namespace PetFamily.Domain.SharedVO;
 
@@ -12,17 +13,13 @@ public record PhoneNumber
         Value = value;
     }
 
-    public static Result<PhoneNumber> Create(string value)
+    public static Result<PhoneNumber, Error> Create(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
-        {
-            return "Phone number cannot be empty.";
-        }
+            return Errors.General.ValueIsRequired("Phone number");
 
         if (value.Length > MAX_PHONE_NUMBER_TEXT_LENGTH)
-        {
-            return $"Phone number cannot be longer than {MAX_PHONE_NUMBER_TEXT_LENGTH} characters.";
-        }
+            return Errors.General.ValueIsTooLong("Phone number", MAX_PHONE_NUMBER_TEXT_LENGTH);
         
         return new PhoneNumber(value);
     }

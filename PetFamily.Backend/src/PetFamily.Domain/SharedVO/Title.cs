@@ -1,4 +1,5 @@
-using PetFamily.Domain.Shared;
+using CSharpFunctionalExtensions;
+using PetFamily.Domain.Shared.ErrorContext;
 
 namespace PetFamily.Domain.SharedVO;
 
@@ -12,17 +13,13 @@ public record Title
         Value = value;
     }
 
-    public static Result<Title> Create(string value)
+    public static Result<Title, Error> Create(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
-        {
-            return "Title cannot be empty.";
-        }
-
+            return Errors.General.ValueIsRequired("Title");
+        
         if (value.Length > MAX_TITLE_TEXT_LENGTH)
-        {
-            return $"Title cannot be longer than {MAX_TITLE_TEXT_LENGTH} characters.";
-        }
+            return Errors.General.ValueIsTooLong("Title", MAX_TITLE_TEXT_LENGTH);
         
         return new Title(value);
     }

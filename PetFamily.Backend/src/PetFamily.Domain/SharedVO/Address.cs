@@ -1,23 +1,22 @@
-using PetFamily.Domain.Shared;
+using CSharpFunctionalExtensions;
+using PetFamily.Domain.Shared.ErrorContext;
 
 namespace PetFamily.Domain.SharedVO;
 
 public record Address
 {
-    public const int MAX_APARTMENT_TEXT_LENGTH = 30;
-    public NotEmptyString Region { get; }
-    public NotEmptyString City { get; }
-    public NotEmptyString Street { get; }
-    public NotEmptyString Building { get; }
+    public const int MAX_ALL_FIELDS_ADDRESS_TEXT_LENGTH = 30;
+    public string Region { get; }
+    public string City { get; }
+    public string Street { get; }
+    public string Building { get; }
     public string? Apartment { get; }
-    
-    private Address() { }
 
     private Address(
-        NotEmptyString region, 
-        NotEmptyString city, 
-        NotEmptyString street, 
-        NotEmptyString building, 
+        string region, 
+        string city, 
+        string street, 
+        string building, 
         string apartment)
     {
         Region = region;
@@ -27,17 +26,39 @@ public record Address
         Apartment = apartment;
     }
 
-    public static Result<Address> Create(
-        NotEmptyString region, 
-        NotEmptyString city, 
-        NotEmptyString street,
-        NotEmptyString building, 
+    public static Result<Address, Error> Create(
+        string region, 
+        string city, 
+        string street,
+        string building, 
         string apartment)
     {
-        if (apartment.Length > MAX_APARTMENT_TEXT_LENGTH)
-        {
-            return $"Apartment cannot be longer than {MAX_APARTMENT_TEXT_LENGTH} characters.";
-        }
+        if (string.IsNullOrWhiteSpace(region))
+            return Errors.General.ValueIsRequired("Region");
+        
+        if (string.IsNullOrWhiteSpace(city))
+            return Errors.General.ValueIsRequired("City");
+        
+        if (string.IsNullOrWhiteSpace(street))
+            return Errors.General.ValueIsRequired("Street");
+        
+        if (string.IsNullOrWhiteSpace(building))
+            return Errors.General.ValueIsRequired("Building");
+        
+        if (region.Length > MAX_ALL_FIELDS_ADDRESS_TEXT_LENGTH)
+            return Errors.General.ValueIsTooLong("Region", MAX_ALL_FIELDS_ADDRESS_TEXT_LENGTH);
+        
+        if (city.Length > MAX_ALL_FIELDS_ADDRESS_TEXT_LENGTH)
+            return Errors.General.ValueIsTooLong("City", MAX_ALL_FIELDS_ADDRESS_TEXT_LENGTH);
+        
+        if (street.Length > MAX_ALL_FIELDS_ADDRESS_TEXT_LENGTH)
+            return Errors.General.ValueIsTooLong("Street", MAX_ALL_FIELDS_ADDRESS_TEXT_LENGTH);
+            
+        if (building.Length > MAX_ALL_FIELDS_ADDRESS_TEXT_LENGTH)
+            return Errors.General.ValueIsTooLong("Building", MAX_ALL_FIELDS_ADDRESS_TEXT_LENGTH);
+        
+        if (apartment.Length > MAX_ALL_FIELDS_ADDRESS_TEXT_LENGTH)
+            return Errors.General.ValueIsTooLong("Apartment", MAX_ALL_FIELDS_ADDRESS_TEXT_LENGTH);
         
         return new Address(region, city, street, building, apartment);
     }

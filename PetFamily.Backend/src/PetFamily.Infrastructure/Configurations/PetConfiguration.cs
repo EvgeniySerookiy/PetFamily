@@ -21,12 +21,12 @@ public class PetConfiguration : IEntityTypeConfiguration<Pet>
                 id => id.Value,
                 value => PetId.Create(value));
         
-        builder.ComplexProperty(p => p.Name, nb =>
+        builder.ComplexProperty(p => p.PetName, nb =>
         {
-            nb.Property(n => n.Value)
+            nb.Property(p => p.Value)
                 .IsRequired()
-                .HasMaxLength(NotEmptyString.MAX_NOT_EMPTY_STRING_TEXT_LENGTH)
-                .HasColumnName("name");
+                .HasMaxLength(PetName.MAX_PET_NAME_TEXT_LENGTH)
+                .HasColumnName("pet_name");
         });
         
         builder.ComplexProperty(p => p.SpeciesId, sb =>
@@ -63,7 +63,7 @@ public class PetConfiguration : IEntityTypeConfiguration<Pet>
         {
             cb.Property(c => c.Value)
                 .IsRequired()
-                .HasMaxLength(NotEmptyString.MAX_NOT_EMPTY_STRING_TEXT_LENGTH)
+                .HasMaxLength(Color.MAX_COLOR_TEXT_LENGTH)
                 .HasColumnName("color");
         });
         
@@ -74,117 +74,80 @@ public class PetConfiguration : IEntityTypeConfiguration<Pet>
                 .HasMaxLength(PetHealthInformation.MAX_HEALTH_INFORMATION_TEXT_LENGTH)
                 .HasColumnName("pet_health_information");
         });
-        
+
         builder.ComplexProperty(p => p.PetAddress, pb =>
         {
-            pb.ComplexProperty(p => p.Region, rb =>
-            {
-                rb.Property(r => r.Value)
-                    .IsRequired()
-                    .HasMaxLength(NotEmptyString.MAX_NOT_EMPTY_STRING_TEXT_LENGTH)
-                    .HasColumnName("region");
-            });
+            pb.Property(p => p.Region)
+                .IsRequired()
+                .HasMaxLength(Address.MAX_ALL_FIELDS_ADDRESS_TEXT_LENGTH)
+                .HasColumnName("region");
             
-            pb.ComplexProperty(p => p.City, cb =>
-            {
-                cb.Property(c => c.Value)
-                    .IsRequired()
-                    .HasMaxLength(NotEmptyString.MAX_NOT_EMPTY_STRING_TEXT_LENGTH)
-                    .HasColumnName("city");
-            });
+            pb.Property(p => p.City)
+                .IsRequired()
+                .HasMaxLength(Address.MAX_ALL_FIELDS_ADDRESS_TEXT_LENGTH)
+                .HasColumnName("city");
             
-            pb.ComplexProperty(p => p.Street, sb =>
-            {
-                sb.Property(s => s.Value)
-                    .IsRequired()
-                    .HasMaxLength(NotEmptyString.MAX_NOT_EMPTY_STRING_TEXT_LENGTH)
-                    .HasColumnName("street");
-            });
+            pb.Property(p => p.Street)
+                .IsRequired()
+                .HasMaxLength(Address.MAX_ALL_FIELDS_ADDRESS_TEXT_LENGTH)
+                .HasColumnName("street");
             
-            pb.ComplexProperty(p => p.Building, bb =>
-            {
-                bb.Property(b => b.Value)
-                    .IsRequired()
-                    .HasMaxLength(NotEmptyString.MAX_NOT_EMPTY_STRING_TEXT_LENGTH)
-                    .HasColumnName("building");
-            });
-                
+            pb.Property(p => p.Building)
+                .IsRequired()
+                .HasMaxLength(Address.MAX_ALL_FIELDS_ADDRESS_TEXT_LENGTH)
+                .HasColumnName("building");
+            
             pb.Property(p => p.Apartment)
-                .HasMaxLength(Address.MAX_APARTMENT_TEXT_LENGTH)
+                .HasMaxLength(Address.MAX_ALL_FIELDS_ADDRESS_TEXT_LENGTH)
                 .HasColumnName("apartment");
-            
-            builder.ComplexProperty(p => p.OwnerPhoneNumber, ob =>
-            {
-                ob.Property(o => o.Value)
-                    .IsRequired()
-                    .HasMaxLength(PhoneNumber.MAX_PHONE_NUMBER_TEXT_LENGTH)
-                    .HasColumnName("owner_phone_number");
-            });
-            
-            builder.ComplexProperty(p => p.Size, sb =>
-            {
-                sb.Property(s => s.Weight)
-                    .IsRequired()
-                    .HasColumnName("weight");
-                
-                sb.Property(s => s.Height)
-                    .IsRequired()
-                    .HasColumnName("height");
-            });
-
-            builder.ComplexProperty(p => p.IsNeutered, ib =>
-            {
-                ib.Property(i => i.Value)
-                    .IsRequired()
-                    .HasColumnName("is_neutered");
-            });
-            
-            builder.ComplexProperty(p => p.IsVaccinated, ib =>
-            {
-                ib.Property(i => i.Value)
-                    .IsRequired()
-                    .HasColumnName("is_vaccinated");
-            });
-            
-            builder.Property(p => p.DateOfBirth)
-                .HasColumnName("date_of_birth");
-            
-            builder.Property(p => p.Status)
-                .HasConversion(
-                    s => s.ToString(),
-                    s => (AssistanceStatus)Enum.Parse(typeof(AssistanceStatus), s))
-                .IsRequired()
-                .HasMaxLength(Constants.MAX_STATUS_TEXT_LENGTH)
-                .HasColumnName("status");
-            
-            builder.OwnsOne(p => p.TransferRequisitesForHelpsList, tb =>
-            {
-                tb.ToJson();
-
-                tb.OwnsMany(t => t.RequisitesForHelps, rb =>
-                {
-                    rb.OwnsOne(r => r.Title, tb =>
-                    {
-                        tb.Property(t => t.Value)
-                            .IsRequired()
-                            .HasMaxLength(Title.MAX_TITLE_TEXT_LENGTH)
-                            .HasColumnName("title");
-                    });
-                        
-                    rb.OwnsOne(r => r.Description, db =>
-                    {
-                        db.Property(t => t.Value)
-                            .IsRequired()
-                            .HasMaxLength(Description.MAX_DESCRIPTION_TEXT_LENGTH)
-                            .HasColumnName("description");
-                    });
-                });
-            });
-            
-            builder.Property(p => p.DateOfCreation)
-                .IsRequired()
-                .HasColumnName("date_of_creation");
         });
         
+        builder.ComplexProperty(p => p.OwnerPhoneNumber, ob =>
+        {
+            ob.Property(o => o.Value)
+                .IsRequired()
+                .HasMaxLength(PhoneNumber.MAX_PHONE_NUMBER_TEXT_LENGTH)
+                .HasColumnName("owner_phone_number");
+        });
+        
+        builder.ComplexProperty(p => p.Size, sb =>
+        {
+            sb.Property(s => s.Weight)
+                .IsRequired()
+                .HasColumnName("weight");
+    
+            sb.Property(s => s.Height)
+                .IsRequired()
+                .HasColumnName("height");
+        });
+        
+        builder.ComplexProperty(p => p.IsNeutered, ib =>
+        {
+            ib.Property(i => i.Value)
+                .IsRequired()
+                .HasColumnName("is_neutered");
+        });
+        
+        builder.ComplexProperty(p => p.IsVaccinated, ib =>
+        {
+            ib.Property(i => i.Value)
+                .IsRequired()
+                .HasColumnName("is_vaccinated");
+        });
+        
+        builder.Property(p => p.DateOfBirth)
+            .HasColumnName("date_of_birth");
+        
+        builder.Property(p => p.Status)
+            .HasConversion(
+                s => s.ToString(),
+                s => (AssistanceStatus)Enum.Parse(typeof(AssistanceStatus), s))
+            .IsRequired()
+            .HasMaxLength(Constants.MAX_STATUS_TEXT_LENGTH)
+            .HasColumnName("status");
+        
+        builder.Property(p => p.DateOfCreation)
+            .IsRequired()
+            .HasColumnName("date_of_creation");
     }
 }

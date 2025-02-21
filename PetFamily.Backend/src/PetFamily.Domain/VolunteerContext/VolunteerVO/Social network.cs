@@ -1,25 +1,35 @@
-using PetFamily.Domain.Shared;
-using PetFamily.Domain.SharedVO;
+using CSharpFunctionalExtensions;
+using PetFamily.Domain.Shared.ErrorContext;
 
 namespace PetFamily.Domain.VolunteerContext.VolunteerVO;
 
 public record SocialNetwork
 {
-    public NotEmptyString NetworkName { get; }
-    public Description NetworkAddress { get; }
-    
-    private SocialNetwork() {}
+    public const int MAX_NETWORK_NAME_TEXT_LENGTH = 100;
+    public const int MAX_NETWORK_ADDRESS_TEXT_LENGTH = 200;
+    public string NetworkName { get; }
+    public string NetworkAddress { get; }
 
-    private SocialNetwork(NotEmptyString networkName, Description networkAddress)
+    private SocialNetwork(string networkName, string networkAddress)
     {
         NetworkName = networkName;
         NetworkAddress = networkAddress;
     }
 
-    public static Result<SocialNetwork> Create(NotEmptyString networkName, Description networkAddress)
+    public static Result<SocialNetwork, Error> Create(string networkName, string networkAddress)
     {
-        var socialNetwork = new SocialNetwork(networkName, networkAddress);
+        if (string.IsNullOrWhiteSpace(networkName))
+            return Errors.General.ValueIsRequired("Network name");
         
-        return socialNetwork;
+        if (string.IsNullOrWhiteSpace(networkAddress))
+            return Errors.General.ValueIsRequired("Network address");
+        
+        if(networkName.Length > MAX_NETWORK_NAME_TEXT_LENGTH)
+            return Errors.General.ValueIsTooLong("Network name", MAX_NETWORK_NAME_TEXT_LENGTH);
+        
+        if(networkAddress.Length > MAX_NETWORK_ADDRESS_TEXT_LENGTH)
+            return Errors.General.ValueIsTooLong("Network address", MAX_NETWORK_ADDRESS_TEXT_LENGTH);
+        
+        return new SocialNetwork(networkName, networkAddress);
     }
 }

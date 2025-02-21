@@ -1,4 +1,4 @@
-using PetFamily.Domain.Shared;
+using CSharpFunctionalExtensions;
 
 namespace PetFamily.Domain.PetContext.PetVO;
 

@@ -1,22 +1,22 @@
-using PetFamily.Domain.Shared;
-using PetFamily.Domain.SharedVO;
+using CSharpFunctionalExtensions;
+using PetFamily.Domain.PetContext.PetVO;
 using PetFamily.Domain.SpeciesContext.SpeciesVO;
 
 namespace PetFamily.Domain.SpeciesContext.SpeciesEntities;
 
-public class Species : Entity<SpeciesId>
+public class Species : Shared.Entity<SpeciesId>
 {
     private readonly List<Breed> _breeds = new();
-    public NotEmptyString Name { get; private set; }
+    public PetName PetName { get; private set; }
     public IReadOnlyList<Breed> Breeds => _breeds;
     
     private Species(SpeciesId id) : base(id)
     {
     }
 
-    private Species(SpeciesId id, NotEmptyString name, List<Breed> breeds) : base(id)
+    private Species(SpeciesId id, PetName petName, List<Breed> breeds) : base(id)
     {
-        Name = name;
+        PetName = petName;
     }
     
     public void AddBreed(Breed breed)
@@ -24,9 +24,9 @@ public class Species : Entity<SpeciesId>
         _breeds.Add(breed);
     }
 
-    public static Result<Species> Create(SpeciesId id, NotEmptyString name, List<Breed> breeds)
+    public static Result<Species> Create(SpeciesId id, PetName petName, List<Breed> breeds)
     {
-        var createName = NotEmptyString.Create(name.Value);
+        var createName = PetName.Create(petName.Value);
         
         var species = new Species(id, createName.Value, breeds);
         
