@@ -27,7 +27,7 @@ public class Species : Shared.Entity<SpeciesId>
     public static Result<Species> Create(SpeciesId id, PetName petName, List<Breed> breeds)
     {
         var createName = PetName.Create(petName.Value);
-        
+         
         var species = new Species(id, createName.Value, breeds);
         
         return species;

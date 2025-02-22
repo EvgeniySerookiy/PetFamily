@@ -1,6 +1,6 @@
 namespace PetFamily.Domain.Shared.ErrorContext;
 
-public class Errors
+public static class Errors
 {
     public static class General
     {
