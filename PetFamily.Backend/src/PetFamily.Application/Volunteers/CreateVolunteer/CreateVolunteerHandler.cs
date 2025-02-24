@@ -21,7 +21,7 @@ public class CreateVolunteerHandler
     {
         var volunteerId = VolunteerId.NewVolunteerId();
         var fullNameResult = FullName.Create("Evgeniy", "Serookiy", "Sergeevich");
-        var emailResult = Email.Create("Evgeniy@gmail.com");
+        var emailResult = Email.Create("EvgeniySer@gmail.com");
         var descriptionResult = Description.Create(
             "The asymptote, without going into details, is negative. " +
             "The minimum, as follows from the above, is irrational. The " +
@@ -52,7 +52,12 @@ public class CreateVolunteerHandler
             socialNetworkTelegramResult.Value
         });
         
-        var volunteer = Volunteer.Create(
+        var existVolunteer = await _volunteersRepository.GetByEmail(emailResult.Value);
+
+        if (existVolunteer.IsSuccess)
+            return Errors.Volunteer.AlreadyExist();
+        
+        var volunteerToCreate = Volunteer.Create(
             volunteerId, 
             fullNameResult.Value,
             emailResult.Value,
@@ -62,7 +67,7 @@ public class CreateVolunteerHandler
             transferRequisitesForHelpsList.Value,
             transferSocialNetworkList.Value);
         
-        await _volunteersRepository.Add(volunteer.Value, cancellationToken);
+        await _volunteersRepository.Add(volunteerToCreate.Value, cancellationToken);
         
         return volunteerId.Value;
     }

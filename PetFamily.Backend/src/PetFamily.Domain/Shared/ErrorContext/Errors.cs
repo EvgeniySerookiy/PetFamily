@@ -30,4 +30,12 @@ public static class Errors
             return Error.NotFound("record.not.found", $"record not found {forId}");
         }
     }
+
+    public static class Volunteer
+    {
+        public static Error AlreadyExist()
+        {
+            return Error.Validation("record.already.exist", "Volunteer already exist");
+        }
+    }
 }

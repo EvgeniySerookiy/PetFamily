@@ -1,12 +1,13 @@
 using CSharpFunctionalExtensions;
 using Microsoft.EntityFrameworkCore;
 using PetFamily.Application.Volunteers;
+using PetFamily.Domain.Shared.ErrorContext;
 using PetFamily.Domain.VolunteerContext;
 using PetFamily.Domain.VolunteerContext.VolunteerVO;
 
+
 namespace PetFamily.Infrastructure.Repositories;
 
-// Этот слой работает с БД, он 
 public class VolunteersRepository : IVolunteersRepository
 {
     private readonly ApplicationDbContex _applicationDbContex;
@@ -24,14 +25,26 @@ public class VolunteersRepository : IVolunteersRepository
         return volunteer.Id.Value;
     }
 
-    public async Task<Result<Volunteer>> GetById(VolunteerId volunteerId)
+    public async Task<Result<Volunteer, Error>> GetById(VolunteerId volunteerId)
     {
         var volunteer = await _applicationDbContex.Volunteers
             .Include(v => v.Pets)
             .FirstOrDefaultAsync(v => v.Id == volunteerId);
 
         if (volunteer is null)
-            return Result.Failure<Volunteer> ("Volunteer not found");
+            return Errors.General.NotFound(volunteerId.Value);
+
+        return volunteer;
+    }
+    
+    public async Task<Result<Volunteer, Error>> GetByEmail(Email email)
+    {
+        var volunteer = await _applicationDbContex.Volunteers
+            .Include(v => v.Pets)
+            .FirstOrDefaultAsync(v => v.Email == email);
+
+        if (volunteer is null)
+            return Errors.General.NotFound();
 
         return volunteer;
     }

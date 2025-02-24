@@ -1,7 +1,4 @@
-using PetFamily.Application.Volunteers;
-using PetFamily.Application.Volunteers.CreateVolunteer;
 using PetFamily.Infrastructure;
-using PetFamily.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using PetFamily.API.Extensions;
+using PetFamily.API.Response;
 using PetFamily.Application.Volunteers.CreateVolunteer;
 
 namespace PetFamily.API.Controllers;
@@ -20,6 +21,6 @@ public class VolunteersController : ControllerBase
         if (result.IsFailure)
             return result.Error.ToResponse();
         
-        return Ok(result.Value);
+        return Ok(Envelope.Ok(result.Value));
     }
 }  
