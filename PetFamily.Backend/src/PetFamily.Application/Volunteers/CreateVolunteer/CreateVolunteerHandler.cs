@@ -1,8 +1,10 @@
 using CSharpFunctionalExtensions;
+using PetFamily.Application.Volunteers.Commands;
 using PetFamily.Domain.Shared.ErrorContext;
 using PetFamily.Domain.SharedVO;
-using PetFamily.Domain.VolunteerContext;
 using PetFamily.Domain.VolunteerContext.VolunteerVO;
+using RequisitesForHelp = PetFamily.Domain.VolunteerContext.VolunteerVO.RequisitesForHelp;
+using SocialNetwork = PetFamily.Domain.VolunteerContext.VolunteerVO.SocialNetwork;
 
 namespace PetFamily.Application.Volunteers.CreateVolunteer;
 
@@ -16,12 +18,16 @@ public class CreateVolunteerHandler
     }
     
     public async Task<Result<Guid, Error>> Handle(
-        CreateVolunteerRequest createVolunteerRequest, 
+        CreateVolunteerCommand command,
         CancellationToken cancellationToken = default)
     {
         var volunteerId = VolunteerId.NewVolunteerId();
-        var fullNameResult = FullName.Create("Evgeniy", "Serookiy", "Sergeevich");
-        var emailResult = Email.Create("EvgeniySer@gmail.com");
+        //var fullNameResult = FullName.Create("Evgeniy", "Serookiy", "Sergeevich");
+        var fullNameResult = FullName.Create(command.CreateVolunteerRequest.FirstName, 
+            command.CreateVolunteerRequest.LastName, 
+            command.CreateVolunteerRequest.MiddleName);
+
+        var emailResult = Email.Create("EvgeniySerк@gmail.com");
         var descriptionResult = Description.Create(
             "The asymptote, without going into details, is negative. " +
             "The minimum, as follows from the above, is irrational. The " +
@@ -57,7 +63,7 @@ public class CreateVolunteerHandler
         if (existVolunteer.IsSuccess)
             return Errors.Volunteer.AlreadyExist();
         
-        var volunteerToCreate = Volunteer.Create(
+        var volunteerToCreate = Domain.VolunteerContext.Volunteer.Create(
             volunteerId, 
             fullNameResult.Value,
             emailResult.Value,
