@@ -9,18 +9,9 @@ public record SpeciesId
         Value = value;
     }
     
-    public static SpeciesId Create(Guid id)
-    {
-        return new (id);
-    }
+    public static SpeciesId Create(Guid id) => new (id);
+
+    public static SpeciesId NewSpeciesId() => new (Guid.NewGuid());
     
-    public static SpeciesId NewSpeciesId()
-    {
-        return new (Guid.NewGuid());
-    }
-    
-    public static SpeciesId EmptySpeciesId()
-    {
-        return new (Guid.Empty);
-    }
+    public static SpeciesId EmptySpeciesId() => new (Guid.Empty);
 }

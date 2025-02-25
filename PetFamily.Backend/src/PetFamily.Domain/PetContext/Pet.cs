@@ -1,20 +1,20 @@
-﻿using System.Drawing;
+﻿using CSharpFunctionalExtensions;
 using PetFamily.Domain.PetContext.PetVO;
-using PetFamily.Domain.Shared;
 using PetFamily.Domain.SharedVO;
 using PetFamily.Domain.SpeciesContext.SpeciesVO;
+using PetFamily.Domain.VolunteerContext.VolunteerVO;
 using Size = PetFamily.Domain.PetContext.PetVO.Size;
 
 namespace PetFamily.Domain.PetContext;
 
-public class Pet : Entity<PetId>
+public class Pet : Shared.Entity<PetId>
 {
-    public NotEmptyString Name { get; private set; }
+    public PetName PetName { get; private set; }
     public SpeciesId SpeciesId { get; private set; }
     public BreedId BreedId { get; private set; }
     public Title Title { get; private set; }
     public Description Description { get; private set; }
-    public NotEmptyString Color { get; private set; }
+    public Color Color { get; private set; }
     public PetHealthInformation PetHealthInformation { get; private set; }
     public Address PetAddress { get; private set; }
     public PhoneNumber OwnerPhoneNumber { get; private set; }
@@ -23,19 +23,18 @@ public class Pet : Entity<PetId>
     public RabiesVaccinationStatus IsVaccinated { get; private set; }
     public DateTime? DateOfBirth { get; private set; }
     public AssistanceStatus Status { get; private set; }
-    public TransferRequisitesForHelpsList TransferRequisitesForHelpsList { get; private set; }
     public DateTime DateOfCreation { get; private set; }
 
     private Pet(PetId id) : base(id) { }
 
     private Pet(
         PetId id, 
-        NotEmptyString name,
+        PetName petName,
         SpeciesId speciesId,
         BreedId breedId,
         Title title,
         Description description,
-        NotEmptyString color,
+        Color color,
         PetHealthInformation petHealthInformation,
         Address petAddress,
         PhoneNumber ownerPhoneNumber,
@@ -44,10 +43,9 @@ public class Pet : Entity<PetId>
         RabiesVaccinationStatus isVaccinated,
         DateTime dateOfBirth,
         AssistanceStatus status,
-        TransferRequisitesForHelpsList transferRequisitesForHelpsList,
         DateTime dateOfCreation) : base(id)
     {
-        Name = name;
+        PetName = petName;
         SpeciesId = speciesId;
         BreedId = breedId;
         Title = title;
@@ -61,18 +59,17 @@ public class Pet : Entity<PetId>
         IsVaccinated = isVaccinated;
         DateOfBirth = dateOfBirth;
         Status = status;
-        TransferRequisitesForHelpsList = transferRequisitesForHelpsList;
         DateOfCreation = dateOfCreation;
     }
 
     public static Result<Pet> Create(
         PetId id,
-        NotEmptyString name,
+        PetName petName,
         SpeciesId speciesId,
         BreedId breedId,
         Title title,
         Description description,
-        NotEmptyString color,
+        Color color,
         PetHealthInformation petHealthInformation,
         Address petAddress,
         PhoneNumber ownerPhoneNumber,
@@ -86,7 +83,7 @@ public class Pet : Entity<PetId>
     {
         var pet = new Pet(
             id,
-            name,
+            petName,
             speciesId,
             breedId,
             title,
@@ -100,7 +97,6 @@ public class Pet : Entity<PetId>
             isVaccinated,
             dateOfBirth,
             status,
-            transferRequisitesForHelpsList,
             dateOfCreation); 
         
         return pet;

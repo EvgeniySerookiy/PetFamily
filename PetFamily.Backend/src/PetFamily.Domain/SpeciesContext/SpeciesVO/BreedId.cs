@@ -11,18 +11,9 @@ public record BreedId
         Value = value;
     }
     
-    public static BreedId Create(Guid id)
-    {
-        return new (id);
-    }
+    public static BreedId Create(Guid id) => new (id);
     
-    public static BreedId NewBreedId()
-    {
-        return new (Guid.NewGuid());
-    }
+    public static BreedId NewBreedId() => new (Guid.NewGuid());
     
-    public static BreedId EmptyBreedId()
-    {
-        return new (Guid.Empty);
-    }
+    public static BreedId EmptyBreedId() => new (Guid.Empty);
 }

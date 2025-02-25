@@ -1,4 +1,5 @@
-using PetFamily.Domain.Shared;
+using CSharpFunctionalExtensions;
+using PetFamily.Domain.Shared.ErrorContext;
 
 namespace PetFamily.Domain.VolunteerContext.VolunteerVO;
 
@@ -12,17 +13,13 @@ public record Email
         Value = value;
     }
 
-    public static Result<Email> Create(string value)
+    public static Result<Email, Error> Create(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
-        {
-            return "Email cannot be empty.";
-        }
+            return Errors.General.ValueIsRequired("Email");
 
         if (value.Length > MAX_EMAIL_TEXT_LENGTH)
-        {
-            return $"Email cannot be longer than {MAX_EMAIL_TEXT_LENGTH} characters.";
-        }
+            return Errors.General.ValueIsTooLong("Email", MAX_EMAIL_TEXT_LENGTH);
         
         return new Email(value);
     }

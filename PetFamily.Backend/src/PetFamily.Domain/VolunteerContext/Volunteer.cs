@@ -1,11 +1,11 @@
+using CSharpFunctionalExtensions;
 using PetFamily.Domain.PetContext;
-using PetFamily.Domain.Shared;
 using PetFamily.Domain.SharedVO;
 using PetFamily.Domain.VolunteerContext.VolunteerVO;
 
 namespace PetFamily.Domain.VolunteerContext;
 
-public sealed class Volunteer : Entity<VolunteerId>
+public sealed class Volunteer : Shared.Entity<VolunteerId>
 {
     private readonly List<Pet> _pets = new();
     public FullName FullName { get; private set; }
@@ -16,11 +16,12 @@ public sealed class Volunteer : Entity<VolunteerId>
     public int PetsSeekingHome { get; private set; }
     public int PetsUnderTreatment { get; private set; }
     public PhoneNumber PhoneNumber { get; private set; }
-    public AssistanceRequisites AssistanceRequisites { get; private set; }
     public TransferSocialNetworkList TransferSocialNetworkList { get; private set; }
+    public TransferRequisitesForHelpsList TransferRequisitesForHelpsList { get; private set; }
     public IReadOnlyList<Pet> Pets => _pets;
     
     private Volunteer(VolunteerId id) : base(id){}
+    
     private Volunteer(
         VolunteerId id, 
         FullName fullName,
@@ -28,7 +29,7 @@ public sealed class Volunteer : Entity<VolunteerId>
         Description description,
         YearsOfExperience yearsOfExperience,
         PhoneNumber phoneNumber,
-        AssistanceRequisites assistanceRequisites,
+        TransferRequisitesForHelpsList transferRequisitesForHelpsList,
         TransferSocialNetworkList transferSocialNetworkList) : base(id)
     {
         FullName = fullName;
@@ -36,7 +37,7 @@ public sealed class Volunteer : Entity<VolunteerId>
         Description = description;
         YearsOfExperience = yearsOfExperience;
         PhoneNumber = phoneNumber;
-        AssistanceRequisites = assistanceRequisites;
+        TransferRequisitesForHelpsList = transferRequisitesForHelpsList;
         TransferSocialNetworkList = transferSocialNetworkList;
     }
 
@@ -47,7 +48,7 @@ public sealed class Volunteer : Entity<VolunteerId>
         Description description,
         YearsOfExperience yearsOfExperience,
         PhoneNumber phoneNumber,
-        AssistanceRequisites assistanceRequisites,
+        TransferRequisitesForHelpsList transferRequisitesForHelpsList,
         TransferSocialNetworkList transferSocialNetworkList)
     {
         var volunteer = new Volunteer(
@@ -57,7 +58,7 @@ public sealed class Volunteer : Entity<VolunteerId>
             description,
             yearsOfExperience,
             phoneNumber,
-            assistanceRequisites,
+            transferRequisitesForHelpsList,
             transferSocialNetworkList);
         
         return volunteer;

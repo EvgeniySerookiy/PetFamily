@@ -1,4 +1,5 @@
-using PetFamily.Domain.Shared;
+using CSharpFunctionalExtensions;
+using PetFamily.Domain.Shared.ErrorContext;
 
 namespace PetFamily.Domain.PetContext.PetVO;
 
@@ -12,17 +13,13 @@ public record PetHealthInformation
         Value = value;
     }
 
-    public static Result<PetHealthInformation> Create(string value)
+    public static Result<PetHealthInformation, Error> Create(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
-        {
-            return "Pet health information cannot be null or empty.";
-        }
+            return Errors.General.ValueIsRequired("Pet health information");
         
         if (value.Length > MAX_HEALTH_INFORMATION_TEXT_LENGTH)
-        {
-            return $"Pet health information be longer than {MAX_HEALTH_INFORMATION_TEXT_LENGTH} characters.";
-        }
+            return Errors.General.ValueIsTooLong("Pet health information", MAX_HEALTH_INFORMATION_TEXT_LENGTH);
         
         return new PetHealthInformation(value);
     }

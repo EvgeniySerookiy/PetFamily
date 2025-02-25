@@ -1,4 +1,5 @@
-using PetFamily.Domain.Shared;
+using CSharpFunctionalExtensions;
+using PetFamily.Domain.Shared.ErrorContext;
 
 namespace PetFamily.Domain.SharedVO;
 
@@ -12,17 +13,13 @@ public record Description
         Value = value;
     }
 
-    public static Result<Description> Create(string value)
+    public static Result<Description, Error> Create(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
-        {
-            return "Description cannot be empty.";
-        }
+            return Errors.General.ValueIsRequired("Description");
         
         if (value.Length > MAX_DESCRIPTION_TEXT_LENGTH)
-        {
-            return $"Description cannot be longer than {MAX_DESCRIPTION_TEXT_LENGTH} characters.";
-        }
+            return Errors.General.ValueIsTooLong("Description", MAX_DESCRIPTION_TEXT_LENGTH);
         
         return new Description(value);
     }

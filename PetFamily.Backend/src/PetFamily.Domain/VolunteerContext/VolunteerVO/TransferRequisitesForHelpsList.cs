@@ -1,6 +1,6 @@
-using PetFamily.Domain.Shared;
+using CSharpFunctionalExtensions;
 
-namespace PetFamily.Domain.PetContext.PetVO;
+namespace PetFamily.Domain.VolunteerContext.VolunteerVO;
 
 public record TransferRequisitesForHelpsList
 {
@@ -8,6 +8,7 @@ public record TransferRequisitesForHelpsList
     public IReadOnlyList<RequisitesForHelp> RequisitesForHelps => _requisitesForHelps;
     
     private TransferRequisitesForHelpsList() {}
+    
     private TransferRequisitesForHelpsList(IEnumerable<RequisitesForHelp> requisitesForHelps)
     {
         _requisitesForHelps = requisitesForHelps.ToList();
