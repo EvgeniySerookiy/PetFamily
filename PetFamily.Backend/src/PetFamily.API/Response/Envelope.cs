@@ -2,24 +2,27 @@ using PetFamily.Domain.Shared.ErrorContext;
 
 namespace PetFamily.API.Response;
 
+public record ResponceError(
+    string? ErrorCode,
+    string? ErrorMessage,
+    string? InvalidField);
+
 public record Envelope
 {
     public object? Result { get; }
-    public string? ErrorCode { get; }
-    public string? ErrorMessage { get; }
+    List<ResponceError> Errors { get; } 
     public DateTime TimeGenarated { get; }
 
-    private Envelope(object? result, Error? error)
+    private Envelope(object? result, IEnumerable<ResponceError> errors)
     {
         Result = result;
-        ErrorCode = error?.Code;
-        ErrorMessage = error?.Message;
+        Errors = errors.ToList() ;
         TimeGenarated = DateTime.Now;
     }
     
     public static Envelope Ok(object? result) =>
-        new (result, null);
+        new (result, []);
     
-    public static Envelope Error(Error error) =>
-        new (null, error);
+    public static Envelope Error(IEnumerable<ResponceError> errors) =>
+        new (null, errors);
 }
