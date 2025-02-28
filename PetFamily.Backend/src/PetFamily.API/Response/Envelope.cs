@@ -1,8 +1,6 @@
-using PetFamily.Domain.Shared.ErrorContext;
+ namespace PetFamily.API.Response;
 
-namespace PetFamily.API.Response;
-
-public record ResponceError(
+public record ResponseError(
     string? ErrorCode,
     string? ErrorMessage,
     string? InvalidField);
@@ -10,19 +8,20 @@ public record ResponceError(
 public record Envelope
 {
     public object? Result { get; }
-    List<ResponceError> Errors { get; } 
-    public DateTime TimeGenarated { get; }
+    public List<ResponseError> Errors { get; } = [];
+    public DateTime TimeGenerated { get; }
 
-    private Envelope(object? result, IEnumerable<ResponceError> errors)
+    private Envelope(object? result, IEnumerable<ResponseError> errors)
     {
         Result = result;
         Errors = errors.ToList() ;
-        TimeGenarated = DateTime.Now;
+        TimeGenerated = DateTime.Now;
     }
     
-    public static Envelope Ok(object? result) =>
-        new (result, []);
+    public static Envelope Ok(object? result = null) =>
+        new (result, []); 
     
-    public static Envelope Error(IEnumerable<ResponceError> errors) =>
+    public static Envelope Error(IEnumerable<ResponseError> errors) =>
         new (null, errors);
 }
+

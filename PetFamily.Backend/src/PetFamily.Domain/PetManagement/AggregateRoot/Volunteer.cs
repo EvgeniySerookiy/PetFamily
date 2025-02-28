@@ -2,6 +2,7 @@ using CSharpFunctionalExtensions;
 using PetFamily.Domain.PetManagement.Entities;
 using PetFamily.Domain.PetManagement.SharedVO;
 using PetFamily.Domain.PetManagement.VolunteerVO;
+using PetFamily.Domain.Shared.ErrorContext;
 
 namespace PetFamily.Domain.PetManagement.AggregateRoot;
 
@@ -41,7 +42,7 @@ public sealed class Volunteer : Shared.Entity<VolunteerId>
         TransferSocialNetworkList = transferSocialNetworkList;
     }
 
-    public static Result<Volunteer> Create(
+    public static Result<Volunteer, Error> Create(
         VolunteerId id,
         FullName fullName,
         Email email,

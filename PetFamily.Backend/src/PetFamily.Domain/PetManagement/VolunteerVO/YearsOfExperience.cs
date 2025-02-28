@@ -14,7 +14,7 @@ public record YearsOfExperience
 
     public static Result<YearsOfExperience, Error> Create(int value)
     {
-        if (value < 0)
+        if (value <= 0)
             return Errors.General.ValueCannotBeNegative("Years of experience", value);
         
         return new YearsOfExperience(value);
