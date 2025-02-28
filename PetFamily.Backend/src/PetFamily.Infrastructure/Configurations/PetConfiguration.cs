@@ -1,10 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PetFamily.Domain;
-using PetFamily.Domain.PetContext;
-using PetFamily.Domain.PetContext.PetVO;
+using PetFamily.Domain.PetManagement.Entities;
+using PetFamily.Domain.PetManagement.PetVO;
+using PetFamily.Domain.PetManagement.SharedVO;
 using PetFamily.Domain.Shared;
-using PetFamily.Domain.SharedVO;
 
 namespace PetFamily.Infrastructure.Configurations;
 

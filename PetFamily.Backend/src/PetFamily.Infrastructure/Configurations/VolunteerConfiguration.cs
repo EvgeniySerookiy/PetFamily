@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using PetFamily.Domain.SharedVO;
-using PetFamily.Domain.VolunteerContext;
-using PetFamily.Domain.VolunteerContext.VolunteerVO;
+using PetFamily.Domain.PetManagement.AggregateRoot;
+using PetFamily.Domain.PetManagement.SharedVO;
+using PetFamily.Domain.PetManagement.VolunteerVO;
 
 namespace PetFamily.Infrastructure.Configurations;
 
@@ -82,7 +82,7 @@ public class VolunteerConfiguration : IEntityTypeConfiguration<Volunteer>
         
         builder.OwnsOne(p => p.TransferSocialNetworkList, tb =>
         {
-                tb.ToJson();
+                tb.ToJson("transfer_social_network_list");
                 
                 tb.OwnsMany(t => t.SocialNetworks, sb =>
                 {
@@ -100,7 +100,7 @@ public class VolunteerConfiguration : IEntityTypeConfiguration<Volunteer>
         
         builder.OwnsOne(p => p.TransferRequisitesForHelpsList, tb =>
         {
-                tb.ToJson();
+                tb.ToJson("transfer_requisites_for_help_list");
                 
                 tb.OwnsMany(t => t.RequisitesForHelps, rb =>
                 {

@@ -4,7 +4,7 @@ using PetFamily.Domain.Shared.ErrorContext;
 
 namespace PetFamily.API.Extensions;
 
-public static  class ResponseExtensions
+public static class ResponseExtensions
 {
     public static ActionResult ToResponse(this Error error)
     {
@@ -16,14 +16,13 @@ public static  class ResponseExtensions
             ErrorType.Failure => StatusCodes.Status500InternalServerError,
             _ => StatusCodes.Status500InternalServerError
         };
-        
-        var envelope = Envelope.Error(error);
-        
+        var responseError = new ResponseError(error.Code, error.Message, null);
+
+        var envelope = Envelope.Error([responseError]);
+
         return new ObjectResult(envelope)
         {
             StatusCode = statusCode
         };
-
-
     }
 }
