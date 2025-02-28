@@ -57,7 +57,10 @@ public class CreateVolunteerHandler
             requisitesForHelpList.Add(value);
         }
         
-        //var volunteer = await _volunteersRepository.GetByEmail(email);
+        var volunteer = await _volunteersRepository.GetByEmail(email);
+        
+        if (volunteer.IsSuccess)
+            return Errors.Volunteer.AlreadyExist();
         
         var volunteerToCreate = Volunteer.Create(
             volunteerId, 
