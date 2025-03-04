@@ -1,9 +1,9 @@
+using PetFamily.Domain.PetManagement.VolunteerVO;
+
 namespace PetFamily.Application.Volunteers.DTOs;
 
 public record CreateVolunteerDto(
-    string FirstName,
-    string LastName,
-    string MiddleName,
+    FullNameDto FullName,
     string Email,
     string Description,
     int YearsOfExperience,

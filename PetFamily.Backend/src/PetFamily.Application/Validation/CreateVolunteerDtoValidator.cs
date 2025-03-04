@@ -9,10 +9,10 @@ public class CreateVolunteerDtoValidator : AbstractValidator<CreateVolunteerDto>
 {
     public CreateVolunteerDtoValidator()
     {
-        RuleFor(c => new { c.FirstName, c.LastName, c.MiddleName })
+        RuleFor(c => c.FullName)
             .MustBeValueObject(x => FullName.Create(
                 x.FirstName, x.LastName, x.MiddleName));
-
+ 
         RuleFor(c => c.Email).MustBeValueObject(Email.Create);
         RuleFor(c => c.Description).MustBeValueObject(Description.Create);
         RuleFor(c => c.YearsOfExperience).MustBeValueObject(YearsOfExperience.Create);

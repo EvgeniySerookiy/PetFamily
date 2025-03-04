@@ -1,4 +1,4 @@
- namespace PetFamily.API.Response;
+namespace PetFamily.API.Response;
 
 public record ResponseError(
     string? ErrorCode,

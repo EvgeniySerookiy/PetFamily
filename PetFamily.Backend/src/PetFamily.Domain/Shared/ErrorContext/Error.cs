@@ -26,7 +26,8 @@ public record Error
     public static Error Conflict(string code, string message) =>
         new(code, message, ErrorType.Conflict);
 
-    public string Serialize() => string.Join(SEPARATOR, Code, Message, Type);
+    public string Serialize() => 
+        string.Join(SEPARATOR, Code, Message, Type);
 
     public static Error Deserialize(string serialize)
     {

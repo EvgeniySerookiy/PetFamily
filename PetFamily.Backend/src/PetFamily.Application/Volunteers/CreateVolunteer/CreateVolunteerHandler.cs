@@ -26,9 +26,9 @@ public class CreateVolunteerHandler
         var volunteerId = VolunteerId.NewVolunteerId();
 
         var fullName = FullName.Create(
-            request.FirstName,
-            request.LastName,
-            request.MiddleName).Value;
+            request.FullName.FirstName,
+            request.FullName.LastName,
+            request.FullName.MiddleName).Value;
         
         var email = Email.Create(request.Email).Value;
         var description = Description.Create(request.Description).Value;
