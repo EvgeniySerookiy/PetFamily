@@ -1,7 +1,7 @@
 using CSharpFunctionalExtensions;
+using PetFamily.Domain.PetManagement.AggregateRoot;
+using PetFamily.Domain.PetManagement.VolunteerVO;
 using PetFamily.Domain.Shared.ErrorContext;
-using PetFamily.Domain.VolunteerContext;
-using PetFamily.Domain.VolunteerContext.VolunteerVO;
 
 namespace PetFamily.Application.Volunteers;
 
