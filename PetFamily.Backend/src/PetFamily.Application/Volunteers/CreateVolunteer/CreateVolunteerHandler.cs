@@ -1,4 +1,5 @@
 using CSharpFunctionalExtensions;
+using Microsoft.Extensions.Logging;
 using PetFamily.Application.Volunteers.DTOs;
 using PetFamily.Domain.PetManagement.AggregateRoot;
 using PetFamily.Domain.PetManagement.SharedVO;
@@ -12,11 +13,14 @@ namespace PetFamily.Application.Volunteers.CreateVolunteer;
 public class CreateVolunteerHandler
 {
     private readonly IVolunteersRepository _volunteersRepository;
+    private readonly ILogger<CreateVolunteerHandler> _logger;
 
     public CreateVolunteerHandler(
-        IVolunteersRepository volunteersRepository)
+        IVolunteersRepository volunteersRepository,
+        ILogger<CreateVolunteerHandler> logger)
     {
         _volunteersRepository = volunteersRepository;
+        _logger = logger;
     }
 
     public async Task<Result<Guid, Error>> Handle(
@@ -73,6 +77,8 @@ public class CreateVolunteerHandler
             TransferSocialNetworkList.Create(socialNetworkList).Value);
         
         await _volunteersRepository.Add(volunteerToCreate.Value, cancellationToken);
+        
+        _logger.LogInformation("Created volunteer {volunteer} with id {volunteerId}", volunteer, volunteerId);
         
         return volunteerId.Value;
     }
