@@ -1,6 +1,6 @@
 using CSharpFunctionalExtensions;
 using Microsoft.Extensions.Logging;
-using PetFamily.Application.Volunteers.DTOs;
+using PetFamily.Application.Volunteers.Requests;
 using PetFamily.Domain.PetManagement.AggregateRoot;
 using PetFamily.Domain.PetManagement.SharedVO;
 using PetFamily.Domain.PetManagement.VolunteerVO;
@@ -8,7 +8,7 @@ using PetFamily.Domain.Shared.ErrorContext;
 using RequisitesForHelp = PetFamily.Domain.PetManagement.VolunteerVO.RequisitesForHelp;
 using SocialNetwork = PetFamily.Domain.PetManagement.VolunteerVO.SocialNetwork;
 
-namespace PetFamily.Application.Volunteers.CreateVolunteer;
+namespace PetFamily.Application.Volunteers.Create;
 
 public class CreateVolunteerHandler
 {
@@ -24,22 +24,22 @@ public class CreateVolunteerHandler
     }
 
     public async Task<Result<Guid, Error>> Handle(
-        CreateVolunteerDto request,
+        CreateVolunteerRequest request,
         CancellationToken cancellationToken = default)
     {
         var volunteerId = VolunteerId.NewVolunteerId();
 
         var fullName = FullName.Create(
-            request.FullName.FirstName,
-            request.FullName.LastName,
-            request.FullName.MiddleName).Value;
+            request.MainInfo.FullName.FirstName,
+            request.MainInfo.FullName.LastName,
+            request.MainInfo.FullName.MiddleName).Value;
         
-        var email = Email.Create(request.Email).Value;
-        var description = Description.Create(request.Description).Value;
-        var yearsOfExperience = YearsOfExperience.Create(request.YearsOfExperience).Value;
-        var phoneNumber = PhoneNumber.Create(request.PhoneNumber).Value;
+        var email = Email.Create(request.MainInfo.Email).Value;
+        var description = Description.Create(request.MainInfo.Description).Value;
+        var yearsOfExperience = YearsOfExperience.Create(request.MainInfo.YearsOfExperience).Value;
+        var phoneNumber = PhoneNumber.Create(request.MainInfo.PhoneNumber).Value;
         
-        var socialNetworks = request.SocialNetworks;
+        var socialNetworks = request.CollectionSocialNetwork.SocialNetworks;
         var socialNetworkList = new List<SocialNetwork>();
         foreach (var socialNetwork in socialNetworks)
         {
@@ -50,7 +50,7 @@ public class CreateVolunteerHandler
             socialNetworkList.Add(value);
         }
         
-        var requisitesForHelps = request.RequisitesForHelps;
+        var requisitesForHelps = request.CollectionRequisitesForHelp.RequisitesForHelps;
         var requisitesForHelpList = new List<RequisitesForHelp>();
         foreach (var requisitesForHelp in requisitesForHelps)
         {

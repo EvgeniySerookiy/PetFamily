@@ -2,7 +2,7 @@ using CSharpFunctionalExtensions;
 using FluentValidation;
 using PetFamily.Domain.Shared.ErrorContext;
 
-namespace PetFamily.Application.Validation;
+namespace PetFamily.Application.Volunteers.Create;
 
 public static class CustomValidators
 {

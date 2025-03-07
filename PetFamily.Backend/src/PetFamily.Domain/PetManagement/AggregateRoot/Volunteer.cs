@@ -20,11 +20,13 @@ public sealed class Volunteer : Shared.Entity<VolunteerId>
     public TransferSocialNetworkList TransferSocialNetworkList { get; private set; }
     public TransferRequisitesForHelpsList TransferRequisitesForHelpsList { get; private set; }
     public IReadOnlyList<Pet> Pets => _pets;
-    
-    private Volunteer(VolunteerId id) : base(id){}
-    
+
+    private Volunteer(VolunteerId id) : base(id)
+    {
+    }
+
     private Volunteer(
-        VolunteerId id, 
+        VolunteerId id,
         FullName fullName,
         Email email,
         Description description,
@@ -61,22 +63,48 @@ public sealed class Volunteer : Shared.Entity<VolunteerId>
             phoneNumber,
             transferRequisitesForHelpsList,
             transferSocialNetworkList);
-        
+
         return volunteer;
     }
 
-   private int CountPetsRehomed()
-   {
-       return _pets.Count(pet => pet.Status == AssistanceStatus.FoundHome);
-   }
-   
-   private int CountPetsSeekingHome()
-   {
-       return _pets.Count(pet => pet.Status == AssistanceStatus.LookingForHome);
-   }
-   
-   private int CountPetsUnderTreatment()
-   {
-       return _pets.Count(pet => pet.Status == AssistanceStatus.NeedsHelp);
-   }
+    public void UpdateMainInfo(
+        FullName fullName,
+        Email email,
+        Description description,
+        YearsOfExperience yearsOfExperience,
+        PhoneNumber phoneNumber)
+    {
+        FullName = fullName;
+        Email = email;
+        Description = description;
+        YearsOfExperience = yearsOfExperience;
+        PhoneNumber = phoneNumber;
+    }
+
+    public void UpdateRequisitesForHelp(
+        IEnumerable<RequisitesForHelp> requisitesForHelpsList)
+    {
+        TransferRequisitesForHelpsList = TransferRequisitesForHelpsList.Create(requisitesForHelpsList).Value;
+    }
+
+    public void UpdateSocialNetworkList(
+        IEnumerable<SocialNetwork> socialNetworkList)
+    {
+        TransferSocialNetworkList = TransferSocialNetworkList.Create(socialNetworkList).Value;
+    }
+
+    private int CountPetsRehomed()
+    {
+        return _pets.Count(pet => pet.Status == AssistanceStatus.FoundHome);
+    }
+
+    private int CountPetsSeekingHome()
+    {
+        return _pets.Count(pet => pet.Status == AssistanceStatus.LookingForHome);
+    }
+
+    private int CountPetsUnderTreatment()
+    {
+        return _pets.Count(pet => pet.Status == AssistanceStatus.NeedsHelp);
+    }
 }

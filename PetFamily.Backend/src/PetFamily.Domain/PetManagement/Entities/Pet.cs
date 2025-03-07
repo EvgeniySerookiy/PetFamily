@@ -3,7 +3,6 @@ using PetFamily.Domain.PetManagement.PetVO;
 using PetFamily.Domain.PetManagement.SharedVO;
 using PetFamily.Domain.PetManagement.VolunteerVO;
 using PetFamily.Domain.SpesiesManagment.SpeciesVO;
-using Size = PetFamily.Domain.PetManagement.PetVO.Size;
 
 namespace PetFamily.Domain.PetManagement.Entities;
 
@@ -18,6 +17,8 @@ public class Pet : Shared.Entity<PetId>
     public PetHealthInformation PetHealthInformation { get; private set; }
     public Address PetAddress { get; private set; }
     public PhoneNumber OwnerPhoneNumber { get; private set; }
+    
+    // переделать с int в double Size
     public Size Size { get; private set; }
     public NeuteredStatus IsNeutered { get; private set; }
     public RabiesVaccinationStatus IsVaccinated { get; private set; }

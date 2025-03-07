@@ -1,4 +1,3 @@
-using System.Net;
 using PetFamily.API.Response;
 
 namespace PetFamily.API.Middlewares;
