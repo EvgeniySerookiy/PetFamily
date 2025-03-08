@@ -21,7 +21,8 @@ public class VolunteerConfiguration : IEntityTypeConfiguration<Volunteer>
         
         builder.HasMany(v => v.Pets)
                 .WithOne()
-                .HasForeignKey("pets_id");
+                .HasForeignKey("pets_id")
+                .OnDelete(DeleteBehavior.Cascade);
 
         builder.ComplexProperty(v => v.FullName, fb =>
         {
@@ -115,5 +116,9 @@ public class VolunteerConfiguration : IEntityTypeConfiguration<Volunteer>
                                 .HasColumnName("payment_details");
                 });
         });
+        
+        builder.Property<bool>("_isDeleted")
+                .UsePropertyAccessMode(PropertyAccessMode.Field)
+                .HasColumnName("is_deleted");
     }
 }
