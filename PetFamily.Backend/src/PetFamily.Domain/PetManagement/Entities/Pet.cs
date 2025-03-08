@@ -2,12 +2,14 @@
 using PetFamily.Domain.PetManagement.PetVO;
 using PetFamily.Domain.PetManagement.SharedVO;
 using PetFamily.Domain.PetManagement.VolunteerVO;
+using PetFamily.Domain.Shared;
 using PetFamily.Domain.SpesiesManagment.SpeciesVO;
 
 namespace PetFamily.Domain.PetManagement.Entities;
 
 public class Pet : Shared.Entity<PetId>
 {
+    private bool _isDeleted;
     public PetName PetName { get; private set; }
     public SpeciesId SpeciesId { get; private set; }
     public BreedId BreedId { get; private set; }
@@ -61,6 +63,16 @@ public class Pet : Shared.Entity<PetId>
         DateOfBirth = dateOfBirth;
         Status = status;
         DateOfCreation = dateOfCreation;
+    }
+
+    public void Delete()
+    {
+        _isDeleted = true;
+    }
+
+    public void Restore()
+    {
+        _isDeleted = false;
     }
 
     public static Result<Pet> Create(

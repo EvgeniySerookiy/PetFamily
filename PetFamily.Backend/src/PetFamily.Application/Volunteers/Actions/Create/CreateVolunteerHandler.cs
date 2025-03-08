@@ -8,7 +8,7 @@ using PetFamily.Domain.Shared.ErrorContext;
 using RequisitesForHelp = PetFamily.Domain.PetManagement.VolunteerVO.RequisitesForHelp;
 using SocialNetwork = PetFamily.Domain.PetManagement.VolunteerVO.SocialNetwork;
 
-namespace PetFamily.Application.Volunteers.Create;
+namespace PetFamily.Application.Volunteers.Actions.Create;
 
 public class CreateVolunteerHandler
 {
@@ -61,7 +61,7 @@ public class CreateVolunteerHandler
             requisitesForHelpList.Add(value);
         }
         
-        var volunteer = await _volunteersRepository.GetByEmail(email);
+        var volunteer = await _volunteersRepository.GetByEmail(email, cancellationToken);
         
         if (volunteer.IsSuccess)
             return Errors.Volunteer.AlreadyExist();

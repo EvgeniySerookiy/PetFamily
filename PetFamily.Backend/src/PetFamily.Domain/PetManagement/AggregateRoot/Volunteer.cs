@@ -2,12 +2,15 @@ using CSharpFunctionalExtensions;
 using PetFamily.Domain.PetManagement.Entities;
 using PetFamily.Domain.PetManagement.SharedVO;
 using PetFamily.Domain.PetManagement.VolunteerVO;
+using PetFamily.Domain.Shared;
 using PetFamily.Domain.Shared.ErrorContext;
 
 namespace PetFamily.Domain.PetManagement.AggregateRoot;
 
 public sealed class Volunteer : Shared.Entity<VolunteerId>
 {
+    private bool _isDeleted = false;
+    
     private readonly List<Pet> _pets = new();
     public FullName FullName { get; private set; }
     public Email Email { get; private set; }
@@ -91,6 +94,26 @@ public sealed class Volunteer : Shared.Entity<VolunteerId>
         IEnumerable<SocialNetwork> socialNetworkList)
     {
         TransferSocialNetworkList = TransferSocialNetworkList.Create(socialNetworkList).Value;
+    }
+
+    public void Delete()
+    {
+        _isDeleted = true;
+
+        foreach (var pet in _pets)
+        {
+            pet.Delete();
+        }
+    }
+
+    public void Restore()
+    {
+        _isDeleted = false;
+        
+        foreach (var pet in _pets)
+        {
+            pet.Restore();
+        }
     }
 
     private int CountPetsRehomed()

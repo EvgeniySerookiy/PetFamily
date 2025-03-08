@@ -4,7 +4,7 @@ using PetFamily.Application.Volunteers.Requests;
 using PetFamily.Domain.PetManagement.VolunteerVO;
 using PetFamily.Domain.Shared.ErrorContext;
 
-namespace PetFamily.Application.Volunteers.Update;
+namespace PetFamily.Application.Volunteers.Actions.Update;
 
 public class UpdateCollectionSocialNetworkHandler
 {
@@ -12,7 +12,7 @@ public class UpdateCollectionSocialNetworkHandler
     private readonly ILogger<UpdateCollectionSocialNetworkHandler> _logger;
 
     public UpdateCollectionSocialNetworkHandler(
-        IVolunteersRepository volunteersRepository, 
+        IVolunteersRepository volunteersRepository,
         ILogger<UpdateCollectionSocialNetworkHandler> logger)
     {
         _volunteersRepository = volunteersRepository;
@@ -32,16 +32,21 @@ public class UpdateCollectionSocialNetworkHandler
         foreach (var socialNetwork in socialNetworks)
         {
             var value = SocialNetwork.Create(
-                socialNetwork.NetworkName, 
+                socialNetwork.NetworkName,
                 socialNetwork.NetworkAddress).Value;
-            
+
             socialNetworkList.Add(value);
         }
-        
+
         volunteerResult.Value.UpdateSocialNetworkList(
             socialNetworkList);
 
         var result = await _volunteersRepository.Save(volunteerResult.Value, cancellationToken);
+        
+        _logger.LogInformation(
+            "Update volunteer {socialNetworkList} with id {volunteerId}", 
+            socialNetworkList,
+            request.VolunteerId);
 
         return result;
     }

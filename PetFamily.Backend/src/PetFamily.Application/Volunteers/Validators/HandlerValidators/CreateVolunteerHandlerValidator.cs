@@ -1,7 +1,8 @@
 using FluentValidation;
 using PetFamily.Application.Volunteers.Requests;
+using PetFamily.Application.Volunteers.Validators.DtoValidators;
 
-namespace PetFamily.Application.Volunteers.Validators;
+namespace PetFamily.Application.Volunteers.Validators.HandlerValidators;
 
 public class CreateVolunteerHandlerValidator : AbstractValidator<CreateVolunteerRequest>
 {

@@ -36,6 +36,16 @@ public class VolunteersRepository : IVolunteersRepository
         
         return volunteer.Id.Value;
     }
+    
+    // public async Task<Guid> Delete(
+    //     Volunteer volunteer, 
+    //     CancellationToken cancellationToken = default)
+    // {
+    //     _applicationDbContex.Volunteers.Remove(volunteer);
+    //     await _applicationDbContex.SaveChangesAsync(cancellationToken);
+    //     
+    //     return volunteer.Id.Value;
+    // }
 
     public async Task<Result<Volunteer, Error>> GetById(
         VolunteerId volunteerId, 
