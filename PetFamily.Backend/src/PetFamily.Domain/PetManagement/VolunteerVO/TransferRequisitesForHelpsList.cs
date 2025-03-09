@@ -21,6 +21,7 @@ public record TransferRequisitesForHelpsList
 
     public static Result<TransferRequisitesForHelpsList> Create(IEnumerable<RequisitesForHelp> requisitesForHelps)
     {
+        
         return new TransferRequisitesForHelpsList(requisitesForHelps);
     }
 }

@@ -2,12 +2,15 @@ using CSharpFunctionalExtensions;
 using PetFamily.Domain.PetManagement.Entities;
 using PetFamily.Domain.PetManagement.SharedVO;
 using PetFamily.Domain.PetManagement.VolunteerVO;
+using PetFamily.Domain.Shared;
 using PetFamily.Domain.Shared.ErrorContext;
 
 namespace PetFamily.Domain.PetManagement.AggregateRoot;
 
 public sealed class Volunteer : Shared.Entity<VolunteerId>
 {
+    private bool _isDeleted = false;
+    
     private readonly List<Pet> _pets = new();
     public FullName FullName { get; private set; }
     public Email Email { get; private set; }
@@ -20,11 +23,13 @@ public sealed class Volunteer : Shared.Entity<VolunteerId>
     public TransferSocialNetworkList TransferSocialNetworkList { get; private set; }
     public TransferRequisitesForHelpsList TransferRequisitesForHelpsList { get; private set; }
     public IReadOnlyList<Pet> Pets => _pets;
-    
-    private Volunteer(VolunteerId id) : base(id){}
-    
+
+    private Volunteer(VolunteerId id) : base(id)
+    {
+    }
+
     private Volunteer(
-        VolunteerId id, 
+        VolunteerId id,
         FullName fullName,
         Email email,
         Description description,
@@ -61,22 +66,68 @@ public sealed class Volunteer : Shared.Entity<VolunteerId>
             phoneNumber,
             transferRequisitesForHelpsList,
             transferSocialNetworkList);
-        
+
         return volunteer;
     }
 
-   private int CountPetsRehomed()
-   {
-       return _pets.Count(pet => pet.Status == AssistanceStatus.FoundHome);
-   }
-   
-   private int CountPetsSeekingHome()
-   {
-       return _pets.Count(pet => pet.Status == AssistanceStatus.LookingForHome);
-   }
-   
-   private int CountPetsUnderTreatment()
-   {
-       return _pets.Count(pet => pet.Status == AssistanceStatus.NeedsHelp);
-   }
+    public void UpdateMainInfo(
+        FullName fullName,
+        Email email,
+        Description description,
+        YearsOfExperience yearsOfExperience,
+        PhoneNumber phoneNumber)
+    {
+        FullName = fullName;
+        Email = email;
+        Description = description;
+        YearsOfExperience = yearsOfExperience;
+        PhoneNumber = phoneNumber;
+    }
+
+    public void UpdateRequisitesForHelp(
+        IEnumerable<RequisitesForHelp> requisitesForHelpsList)
+    {
+        TransferRequisitesForHelpsList = TransferRequisitesForHelpsList.Create(requisitesForHelpsList).Value;
+    }
+
+    public void UpdateSocialNetworkList(
+        IEnumerable<SocialNetwork> socialNetworkList)
+    {
+        TransferSocialNetworkList = TransferSocialNetworkList.Create(socialNetworkList).Value;
+    }
+
+    public void Delete()
+    {
+        _isDeleted = true;
+
+        foreach (var pet in _pets)
+        {
+            pet.Delete();
+        }
+    }
+
+    public void Restore()
+    {
+        _isDeleted = false;
+        
+        foreach (var pet in _pets)
+        {
+            pet.Restore();
+        }
+    }
+
+    private int CountPetsRehomed()
+    {
+        return _pets.Count(pet => pet.Status == AssistanceStatus.FoundHome);
+    }
+
+    private int CountPetsSeekingHome()
+    {
+        return _pets.Count(pet => pet.Status == AssistanceStatus.LookingForHome);
+    }
+
+    private int CountPetsUnderTreatment()
+    {
+        return _pets.Count(pet => pet.Status == AssistanceStatus.NeedsHelp);
+    }
 }
