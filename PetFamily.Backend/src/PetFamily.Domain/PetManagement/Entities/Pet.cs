@@ -7,9 +7,8 @@ using PetFamily.Domain.SpesiesManagment.SpeciesVO;
 
 namespace PetFamily.Domain.PetManagement.Entities;
 
-public class Pet : Shared.Entity<PetId>
+public class Pet : SoftDeletableEntity<PetId>
 {
-    private bool _isDeleted;
     public PetName PetName { get; private set; }
     public SpeciesId SpeciesId { get; private set; }
     public BreedId BreedId { get; private set; }
@@ -63,16 +62,6 @@ public class Pet : Shared.Entity<PetId>
         DateOfBirth = dateOfBirth;
         Status = status;
         DateOfCreation = dateOfCreation;
-    }
-
-    public void Delete()
-    {
-        _isDeleted = true;
-    }
-
-    public void Restore()
-    {
-        _isDeleted = false;
     }
 
     public static Result<Pet> Create(

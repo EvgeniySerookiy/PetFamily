@@ -7,10 +7,8 @@ using PetFamily.Domain.Shared.ErrorContext;
 
 namespace PetFamily.Domain.PetManagement.AggregateRoot;
 
-public sealed class Volunteer : Shared.Entity<VolunteerId>
+public sealed class Volunteer : SoftDeletableEntity<VolunteerId>
 {
-    private bool _isDeleted = false;
-    
     private readonly List<Pet> _pets = new();
     public FullName FullName { get; private set; }
     public Email Email { get; private set; }
@@ -96,9 +94,9 @@ public sealed class Volunteer : Shared.Entity<VolunteerId>
         TransferSocialNetworkList = TransferSocialNetworkList.Create(socialNetworkList).Value;
     }
 
-    public void Delete()
+    public override void Delete() 
     {
-        _isDeleted = true;
+        base.Delete();
 
         foreach (var pet in _pets)
         {
@@ -106,9 +104,9 @@ public sealed class Volunteer : Shared.Entity<VolunteerId>
         }
     }
 
-    public void Restore()
+    public override void Restore()
     {
-        _isDeleted = false;
+        base.Restore();
         
         foreach (var pet in _pets)
         {

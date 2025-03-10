@@ -29,6 +29,14 @@ namespace PetFamily.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
+                    b.Property<DateTime>("DeletionDate")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deletion_date");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
                     b.Property<int>("PetsRehomed")
                         .HasColumnType("integer")
                         .HasColumnName("pets_rehomed");
@@ -40,10 +48,6 @@ namespace PetFamily.Infrastructure.Migrations
                     b.Property<int>("PetsUnderTreatment")
                         .HasColumnType("integer")
                         .HasColumnName("pets_under_treatment");
-
-                    b.Property<bool>("_isDeleted")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_deleted");
 
                     b.ComplexProperty<Dictionary<string, object>>("Description", "PetFamily.Domain.PetManagement.AggregateRoot.Volunteer.Description#Description", b1 =>
                         {
@@ -129,15 +133,19 @@ namespace PetFamily.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("date_of_creation");
 
+                    b.Property<DateTime>("DeletionDate")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deletion_date");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(30)
                         .HasColumnType("character varying(30)")
                         .HasColumnName("status");
-
-                    b.Property<bool>("_isDeleted")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_deleted");
 
                     b.Property<Guid?>("pets_id")
                         .HasColumnType("uuid")

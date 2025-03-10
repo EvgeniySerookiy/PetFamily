@@ -117,8 +117,7 @@ public class VolunteerConfiguration : IEntityTypeConfiguration<Volunteer>
                 });
         });
         
-        builder.Property<bool>("_isDeleted")
-                .UsePropertyAccessMode(PropertyAccessMode.Field)
+        builder.Property(v => v.IsDeleted)
                 .HasColumnName("is_deleted");
     }
 }
