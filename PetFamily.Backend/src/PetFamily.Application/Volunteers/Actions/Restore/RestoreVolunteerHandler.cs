@@ -31,7 +31,7 @@ public class RestoreVolunteerHandler
         var result = await _volunteersRepository.Save(volunteerResult.Value, cancellationToken);
         
         _logger.LogInformation(
-            "Deleted volunteer with id {volunteerId}",
+            "Restored volunteer with id {volunteerId}",
             request.VolunteerId);
 
         return result;
