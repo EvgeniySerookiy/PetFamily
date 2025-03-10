@@ -1,4 +1,4 @@
-namespace PetFamily.Application.Volunteers.Requests;
+namespace PetFamily.Application.Volunteers.Actions.Delete;
 
 public record DeleteVolunteerRequest(
     Guid VolunteerId);

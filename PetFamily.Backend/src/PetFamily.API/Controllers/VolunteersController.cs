@@ -3,10 +3,13 @@ using Microsoft.AspNetCore.Mvc;
 using PetFamily.API.Extensions;
 using PetFamily.Application.Volunteers.Actions.Create;
 using PetFamily.Application.Volunteers.Actions.Delete;
+using PetFamily.Application.Volunteers.Actions.Restore;
 using PetFamily.Application.Volunteers.Actions.Update;
+using PetFamily.Application.Volunteers.Actions.Update.UpdateMainInfo;
+using PetFamily.Application.Volunteers.Actions.Update.UpdateRequisitesForHelp;
+using PetFamily.Application.Volunteers.Actions.Update.UpdateSocialNetwork;
 using PetFamily.Application.Volunteers.DTOs;
 using PetFamily.Application.Volunteers.DTOs.Collections;
-using PetFamily.Application.Volunteers.Requests;
 
 namespace PetFamily.API.Controllers;
 
@@ -84,6 +87,29 @@ public class VolunteersController : ApplicationController
         CancellationToken cancellationToken = default)
     {
         var request = new UpdateCollectionSocialNetworkRequest(id, dto);
+
+        var validationResult = await validator.ValidateAsync(request, cancellationToken);
+        if (validationResult.IsValid == false)
+        {
+            return validationResult.ToValidationErrorResponse();
+        }
+
+        var result = await handler.Handle(request, cancellationToken);
+
+        if (result.IsFailure)
+            return result.Error.ToResponse();
+
+        return Ok(result.Value);
+    }
+    
+    [HttpPut("{id:guid}/restore")]
+    public async Task<ActionResult> Restore(
+        [FromRoute] Guid id,
+        [FromServices] RestoreVolunteerHandler handler,
+        [FromServices] IValidator<RestoreVolunteerRequest> validator,
+        CancellationToken cancellationToken = default)
+    {
+        var request = new RestoreVolunteerRequest(id);
 
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
         if (validationResult.IsValid == false)

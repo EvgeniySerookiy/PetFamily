@@ -1,31 +1,32 @@
 using CSharpFunctionalExtensions;
 using Microsoft.Extensions.Logging;
+using PetFamily.Application.Volunteers.Actions.Delete;
 using PetFamily.Domain.Shared.ErrorContext;
 
-namespace PetFamily.Application.Volunteers.Actions.Delete;
+namespace PetFamily.Application.Volunteers.Actions.Restore;
 
-public class DeleteVolunteerHandler
+public class RestoreVolunteerHandler
 {
     private readonly IVolunteersRepository _volunteersRepository;
-    private readonly ILogger<DeleteVolunteerHandler> _logger;
-    
-    public DeleteVolunteerHandler(
+    private readonly ILogger<RestoreVolunteerHandler> _logger;
+
+    public RestoreVolunteerHandler(
         IVolunteersRepository volunteersRepository,
-        ILogger<DeleteVolunteerHandler> logger)
+        ILogger<RestoreVolunteerHandler> logger)
     {
         _volunteersRepository = volunteersRepository;
         _logger = logger;
     }
     
     public async Task<Result<Guid, Error>> Handle(
-        DeleteVolunteerRequest request,
+        RestoreVolunteerRequest request,
         CancellationToken cancellationToken = default)
     {
         var volunteerResult = await _volunteersRepository.GetById(request.VolunteerId, cancellationToken);
         if (volunteerResult.IsFailure)
             return volunteerResult.Error;
 
-        volunteerResult.Value.Delete();
+        volunteerResult.Value.Restore();
         
         var result = await _volunteersRepository.Save(volunteerResult.Value, cancellationToken);
         
@@ -36,4 +37,3 @@ public class DeleteVolunteerHandler
         return result;
     }
 }
-
