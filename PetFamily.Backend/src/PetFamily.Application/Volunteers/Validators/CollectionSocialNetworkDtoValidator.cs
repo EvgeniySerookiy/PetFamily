@@ -3,7 +3,7 @@ using PetFamily.Application.Volunteers.Actions.Create;
 using PetFamily.Application.Volunteers.DTOs.Collections;
 using PetFamily.Domain.PetManagement.VolunteerVO;
 
-namespace PetFamily.Application.Volunteers.Validators.DtoValidators;
+namespace PetFamily.Application.Volunteers.Actions.Update.UpdateSocialNetwork;
 
 public class CollectionSocialNetworkDtoValidator : AbstractValidator<CollectionSocialNetworkDto>
 {

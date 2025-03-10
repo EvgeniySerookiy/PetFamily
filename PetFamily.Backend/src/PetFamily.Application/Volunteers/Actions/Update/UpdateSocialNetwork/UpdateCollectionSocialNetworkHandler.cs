@@ -1,10 +1,9 @@
 using CSharpFunctionalExtensions;
 using Microsoft.Extensions.Logging;
-using PetFamily.Application.Volunteers.Requests;
 using PetFamily.Domain.PetManagement.VolunteerVO;
 using PetFamily.Domain.Shared.ErrorContext;
 
-namespace PetFamily.Application.Volunteers.Actions.Update;
+namespace PetFamily.Application.Volunteers.Actions.Update.UpdateSocialNetwork;
 
 public class UpdateCollectionSocialNetworkHandler
 {

@@ -4,7 +4,7 @@ using PetFamily.Application.Volunteers.DTOs;
 using PetFamily.Domain.PetManagement.SharedVO;
 using PetFamily.Domain.PetManagement.VolunteerVO;
 
-namespace PetFamily.Application.Volunteers.Validators.DtoValidators;
+namespace PetFamily.Application.Volunteers.Validators;
 
 public class MainInfoDtoValidator : AbstractValidator<MainInfoDto>
 {

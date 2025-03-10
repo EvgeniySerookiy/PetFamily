@@ -1,9 +1,8 @@
 using FluentValidation;
 using PetFamily.Application.Volunteers.Actions.Create;
-using PetFamily.Application.Volunteers.Requests;
 using PetFamily.Domain.Shared.ErrorContext;
 
-namespace PetFamily.Application.Volunteers.Validators.HandlerValidators;
+namespace PetFamily.Application.Volunteers.Actions.Delete;
 
 public class DeleteVolunteerHandlerValidator : AbstractValidator<DeleteVolunteerRequest>
 {

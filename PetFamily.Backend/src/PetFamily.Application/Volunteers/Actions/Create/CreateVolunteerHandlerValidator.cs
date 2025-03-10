@@ -1,6 +1,7 @@
 using FluentValidation;
-using PetFamily.Application.Volunteers.Requests;
-using PetFamily.Application.Volunteers.Validators.DtoValidators;
+using PetFamily.Application.Volunteers.Actions.Create;
+using PetFamily.Application.Volunteers.Actions.Update.UpdateRequisitesForHelp;
+using PetFamily.Application.Volunteers.Actions.Update.UpdateSocialNetwork;
 
 namespace PetFamily.Application.Volunteers.Validators.HandlerValidators;
 

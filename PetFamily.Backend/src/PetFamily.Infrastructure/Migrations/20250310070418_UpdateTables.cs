@@ -31,7 +31,6 @@ namespace PetFamily.Infrastructure.Migrations
                     pets_rehomed = table.Column<int>(type: "integer", nullable: false),
                     pets_seeking_home = table.Column<int>(type: "integer", nullable: false),
                     pets_under_treatment = table.Column<int>(type: "integer", nullable: false),
-                    is_deleted = table.Column<bool>(type: "boolean", nullable: false),
                     description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
                     email = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     first_name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
@@ -39,6 +38,8 @@ namespace PetFamily.Infrastructure.Migrations
                     middle_name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     phone_number = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
                     years_of_experience = table.Column<int>(type: "integer", nullable: false),
+                    is_deleted = table.Column<bool>(type: "boolean", nullable: false),
+                    deletion_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     transfer_requisites_for_help_list = table.Column<string>(type: "jsonb", nullable: false),
                     transfer_social_network_list = table.Column<string>(type: "jsonb", nullable: false)
                 },
@@ -73,7 +74,6 @@ namespace PetFamily.Infrastructure.Migrations
                     date_of_birth = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     status = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: false),
                     date_of_creation = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    is_deleted = table.Column<bool>(type: "boolean", nullable: false),
                     pets_id = table.Column<Guid>(type: "uuid", nullable: true),
                     breed_id = table.Column<Guid>(type: "uuid", nullable: false),
                     color = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
@@ -91,7 +91,9 @@ namespace PetFamily.Infrastructure.Migrations
                     height = table.Column<int>(type: "integer", nullable: false),
                     weight = table.Column<int>(type: "integer", nullable: false),
                     species_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    title = table.Column<string>(type: "character varying(70)", maxLength: 70, nullable: false)
+                    title = table.Column<string>(type: "character varying(70)", maxLength: 70, nullable: false),
+                    is_deleted = table.Column<bool>(type: "boolean", nullable: false),
+                    deletion_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
