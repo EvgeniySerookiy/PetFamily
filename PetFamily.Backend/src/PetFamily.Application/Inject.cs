@@ -1,5 +1,6 @@
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
+using PetFamily.Application.Volunteers.Actions.AddPet;
 using PetFamily.Application.Volunteers.Actions.Create;
 using PetFamily.Application.Volunteers.Actions.Delete;
 using PetFamily.Application.Volunteers.Actions.Restore;
@@ -20,6 +21,9 @@ public static class Inject
         services.AddScoped<DeleteVolunteerHandler>();
         services.AddScoped<RestoreVolunteerHandler>();
         services.AddValidatorsFromAssembly(typeof(Inject).Assembly);
+        services.AddScoped<AddPetHandler>();
+        services.AddScoped<DeletePetHandler>();
+        services.AddScoped<GetFileDownloadHandler>();
         return services;
     }
 }

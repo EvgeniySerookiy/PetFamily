@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using PetFamily.Infrastructure.Options;
 
 namespace PetFamily.Infrastructure.BackgroundServices;
 
@@ -8,8 +9,7 @@ public class SoftDeleteCleanupService : Microsoft.Extensions.Hosting.BackgroundS
 {
     private readonly ApplicationDbContex _context;
     private readonly ILogger<SoftDeleteCleanupService> _logger;
-    private readonly TimeSpan _checkPeriod;
-    private readonly TimeSpan _timeToRestore;
+    private readonly SoftDeleteOptions _softDeleteOptions;
 
     public SoftDeleteCleanupService(
         IDbContextFactory<ApplicationDbContex> dbContextFactory, 
@@ -17,8 +17,7 @@ public class SoftDeleteCleanupService : Microsoft.Extensions.Hosting.BackgroundS
         ILogger<SoftDeleteCleanupService> logger)
     {
         _context = dbContextFactory.CreateDbContext();
-        _checkPeriod = options.Value.CheckPeriod;
-        _timeToRestore = options.Value.TimeToRestore;
+        _softDeleteOptions = options.Value;
         _logger = logger;
     }
     
@@ -26,7 +25,7 @@ public class SoftDeleteCleanupService : Microsoft.Extensions.Hosting.BackgroundS
     {
         _logger.LogInformation("SoftDeleteCleanupService is starting.");
         
-        using PeriodicTimer timer = new(_checkPeriod);
+        using PeriodicTimer timer = new(_softDeleteOptions.CheckPeriod);
 
         while (stoppingToken.IsCancellationRequested == false &&
                await timer.WaitForNextTickAsync(stoppingToken))
@@ -34,7 +33,7 @@ public class SoftDeleteCleanupService : Microsoft.Extensions.Hosting.BackgroundS
         {
             var deletedVolunteers = _context.Volunteers
                 .Where(v => v.IsDeleted &&
-                            DateTime.UtcNow - v.DeletionDate >= _timeToRestore);
+                            DateTime.UtcNow - v.DeletionDate >= _softDeleteOptions.TimeToRestore);
             
             _context.Volunteers.RemoveRange(deletedVolunteers);
             

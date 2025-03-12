@@ -29,7 +29,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSerilog();
 
 builder.Services
-    .AddInfrastructure()
+    .AddInfrastructure(builder.Configuration)
     .AddAplication();
 
 builder.Services.AddFluentValidationAutoValidation(configuration =>
