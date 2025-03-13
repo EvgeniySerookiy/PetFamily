@@ -40,7 +40,7 @@ public class VolunteersController : ApplicationController
         CancellationToken cancellationToken = default)
     {
         var request = new UpdateMainInfoRequest(id, dto);
-
+        
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
         if (validationResult.IsValid == false)
         {
@@ -54,8 +54,8 @@ public class VolunteersController : ApplicationController
 
         return Ok(result.Value);
     }
-    
-    
+
+
     [HttpPut("{id:guid}/requisites-for-help")]
     public async Task<ActionResult> Create(
         [FromRoute] Guid id,
@@ -79,7 +79,7 @@ public class VolunteersController : ApplicationController
 
         return Ok(result.Value);
     }
-    
+
     [HttpPut("{id:guid}/social-network")]
     public async Task<ActionResult> Create(
         [FromRoute] Guid id,
@@ -103,7 +103,7 @@ public class VolunteersController : ApplicationController
 
         return Ok(result.Value);
     }
-    
+
     [HttpPut("{id:guid}/restore")]
     public async Task<ActionResult> Restore(
         [FromRoute] Guid id,
@@ -126,7 +126,7 @@ public class VolunteersController : ApplicationController
 
         return Ok(result.Value);
     }
-    
+
     [HttpDelete("{id:guid}")]
     public async Task<ActionResult> Delete(
         [FromRoute] Guid id,
@@ -149,17 +149,17 @@ public class VolunteersController : ApplicationController
 
         return Ok(result.Value);
     }
-    
+
     [HttpPost("pet-file")]
-    public async Task<ActionResult> Add(
+    public async Task<ActionResult> AddPetFile(
         IFormFile file,
         [FromServices] AddPetHandler handler,
         CancellationToken cancellationToken = default)
     {
-        var stream = file.OpenReadStream();
-
+        await using var stream = file.OpenReadStream();
+        
         var path = Guid.NewGuid().ToString();
-
+        
         var fileData = new FileData(stream, "photos", path);
         
         var result = await handler.Handle(fileData, cancellationToken);
@@ -169,7 +169,7 @@ public class VolunteersController : ApplicationController
         
         return Ok(result.Value);
     }
-    
+
     [HttpDelete("{id:guid}/pet-file")]
     public async Task<ActionResult> Delete(
         [FromRoute] Guid id,
