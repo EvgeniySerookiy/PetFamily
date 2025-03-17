@@ -157,7 +157,8 @@ public sealed class Volunteer : SoftDeletableEntity<VolunteerId>
         var currentSerialNumber = pet.SerialNumber.Value;
 
         if (currentSerialNumber == nextSerialNumber)
-            return UnitResult.Failure(Errors.General.SameSerialNumber(nextSerialNumber));
+            return Result.Success<Error>();
+            // return UnitResult.Failure(Errors.General.SameSerialNumber(nextSerialNumber));
         
         ShiftSerialNumbers(currentSerialNumber, nextSerialNumber);
 
