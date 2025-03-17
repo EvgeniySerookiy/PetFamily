@@ -5,7 +5,6 @@ using PetFamily.Application.Volunteers.Actions.AddPet;
 using PetFamily.Application.Volunteers.Actions.Create;
 using PetFamily.Application.Volunteers.Actions.Delete;
 using PetFamily.Application.Volunteers.Actions.Restore;
-using PetFamily.Application.Volunteers.Actions.Update;
 using PetFamily.Application.Volunteers.Actions.Update.UpdateMainInfo;
 using PetFamily.Application.Volunteers.Actions.Update.UpdateRequisitesForHelp;
 using PetFamily.Application.Volunteers.Actions.Update.UpdateSocialNetwork;

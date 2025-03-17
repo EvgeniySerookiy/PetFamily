@@ -1,7 +1,6 @@
 using CSharpFunctionalExtensions;
 using PetFamily.Application.Providers;
 using PetFamily.Domain.Shared.ErrorContext;
-using PetFamily.Infrastructure.Models;
 
 namespace PetFamily.Application.Volunteers.Actions.AddPet;
 

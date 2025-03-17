@@ -88,6 +88,7 @@ namespace PetFamily.Infrastructure.Migrations
                     street = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: false),
                     pet_health_information = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
                     pet_name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    serial_number = table.Column<int>(type: "integer", nullable: false),
                     height = table.Column<int>(type: "integer", nullable: false),
                     weight = table.Column<int>(type: "integer", nullable: false),
                     species_id = table.Column<Guid>(type: "uuid", nullable: false),

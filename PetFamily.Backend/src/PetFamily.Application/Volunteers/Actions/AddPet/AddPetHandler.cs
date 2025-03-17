@@ -1,6 +1,4 @@
 using CSharpFunctionalExtensions;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using PetFamily.Application.Providers;
 using PetFamily.Domain.Shared.ErrorContext;
 using PetFamily.Infrastructure.Models;

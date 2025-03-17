@@ -3,6 +3,7 @@ using PetFamily.Domain.PetManagement.PetVO;
 using PetFamily.Domain.PetManagement.SharedVO;
 using PetFamily.Domain.PetManagement.VolunteerVO;
 using PetFamily.Domain.Shared;
+using PetFamily.Domain.Shared.ErrorContext;
 using PetFamily.Domain.SpesiesManagment.SpeciesVO;
 
 namespace PetFamily.Domain.PetManagement.Entities;
@@ -14,6 +15,8 @@ public class Pet : SoftDeletableEntity<PetId>
     public BreedId BreedId { get; private set; }
     public Title Title { get; private set; }
     public Description Description { get; private set; }
+    
+    public SerialNumber SerialNumber { get; private set; }
     public Color Color { get; private set; }
     public PetHealthInformation PetHealthInformation { get; private set; }
     public Address PetAddress { get; private set; }
@@ -64,7 +67,7 @@ public class Pet : SoftDeletableEntity<PetId>
         DateOfCreation = dateOfCreation;
     }
 
-    public static Result<Pet> Create(
+    public static Result<Pet, Error> Create(
         PetId id,
         PetName petName,
         SpeciesId speciesId,
@@ -103,4 +106,6 @@ public class Pet : SoftDeletableEntity<PetId>
         
         return pet;
     }
+    
+    public void SetSerialNumber(SerialNumber serialNumber) => SerialNumber = serialNumber;
 }

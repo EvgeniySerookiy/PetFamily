@@ -1,6 +1,5 @@
 using CSharpFunctionalExtensions;
 using Microsoft.Extensions.Logging;
-using PetFamily.Application.Volunteers.Actions.Delete;
 using PetFamily.Domain.Shared.ErrorContext;
 
 namespace PetFamily.Application.Volunteers.Actions.Restore;

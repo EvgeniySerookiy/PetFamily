@@ -1,5 +1,6 @@
 using CSharpFunctionalExtensions;
 using PetFamily.Domain.PetManagement.Entities;
+using PetFamily.Domain.PetManagement.PetVO;
 using PetFamily.Domain.PetManagement.SharedVO;
 using PetFamily.Domain.PetManagement.VolunteerVO;
 using PetFamily.Domain.Shared;
@@ -94,7 +95,7 @@ public sealed class Volunteer : SoftDeletableEntity<VolunteerId>
         TransferSocialNetworkList = TransferSocialNetworkList.Create(socialNetworkList).Value;
     }
 
-    public override void Delete() 
+    public override void Delete()
     {
         base.Delete();
 
@@ -107,11 +108,71 @@ public sealed class Volunteer : SoftDeletableEntity<VolunteerId>
     public override void Restore()
     {
         base.Restore();
-        
+
         foreach (var pet in _pets)
         {
             pet.Restore();
         }
+    }
+
+    public UnitResult<Error> AddPet(Pet pet)
+    {
+        var serialNumberResult = SerialNumber.Create(_pets.Count + 1);
+        if (serialNumberResult.IsFailure)
+            return serialNumberResult.Error;
+
+        pet.SetSerialNumber(serialNumberResult.Value);
+
+        _pets.Add(pet);
+        return Result.Success<Error>();
+    }
+
+    private void ShiftSerialNumbers(int currentSerialNumber, int nextSerialNumber)
+    {
+        var petsToUpdate = Pets.Where(p =>
+            (currentSerialNumber > nextSerialNumber && p.SerialNumber.Value >= nextSerialNumber &&
+             p.SerialNumber.Value < currentSerialNumber) ||
+            (currentSerialNumber < nextSerialNumber && p.SerialNumber.Value <= nextSerialNumber &&
+             p.SerialNumber.Value > currentSerialNumber)
+        ).ToList();
+
+        foreach (var p in petsToUpdate)
+        {
+            var newSerialNumber =
+                SerialNumber.Create(
+                    p.SerialNumber.Value + (currentSerialNumber > nextSerialNumber ? 1 : -1));
+            p.SetSerialNumber(newSerialNumber.Value);
+        }
+    }
+    
+    public UnitResult<Error> MovePet(Pet pet, int nextSerialNumber)
+    {
+        if (nextSerialNumber > Pets.Count || nextSerialNumber < 1)
+            return UnitResult.Failure(Errors.General.OutOfRange(nextSerialNumber));
+
+        var result = Pets.FirstOrDefault(p => p.Id == pet.Id);
+        if (result == null)
+            return Errors.General.NotFound(pet.Id);
+
+        var currentSerialNumber = pet.SerialNumber.Value;
+
+        if (currentSerialNumber == nextSerialNumber)
+            return UnitResult.Failure(Errors.General.SameSerialNumber(nextSerialNumber));
+        
+        ShiftSerialNumbers(currentSerialNumber, nextSerialNumber);
+
+        var serialNumber = SerialNumber.Create(nextSerialNumber);
+        pet.SetSerialNumber(serialNumber.Value);
+        return Result.Success<Error>();
+    }
+
+    public Result<Pet, Error> GetPetById(Guid petId)
+    {
+        var pet = Pets.FirstOrDefault(p => p.Id == petId);
+        if (pet == null)
+            return Errors.General.NotFound(petId);
+
+        return pet;
     }
 
     private int CountPetsRehomed()
