@@ -193,29 +193,27 @@ public class VolunteerTests
         result.Should().BeEquivalentTo(UnitResult.Failure(Errors.General.NotFound(petNotAVolunteer.Value.Id)));
     }
 
-    // [Fact]
-    // public void Move_Pet_Should_Return_Success_When_Serial_Numbers_Are_Equal()
-    // {
-    //     // Arrange
-    //     var volunteer = CreateVolunteer();
-    //     var pets = CreatePets();
-    //     var petToMove = CreatePet();
-    //     
-    //     foreach (var pet in pets)
-    //         volunteer.Value.AddPet(pet.Value);
-    //     
-    //     volunteer.Value.AddPet(petToMove.Value);
-    //     
-    //     var currentSerialNumber = petToMove.Value.SerialNumber.Value;
-    //     
-    //     // Act
-    //     var result = volunteer.Value.MovePet(petToMove.Value, currentSerialNumber);
-    //     
-    //     // Assert
-    //     using var scope = new AssertionScope();
-    //     result.IsSuccess.Should().BeFalse();
-    //     result.Should().BeEquivalentTo(UnitResult.Failure(Errors.General.SameSerialNumber(currentSerialNumber)));
-    // }
+    [Fact]
+    public void Move_Pet_Should_Return_Success_When_Serial_Numbers_Are_Equal()
+    {
+        // Arrange
+        var volunteer = CreateVolunteer();
+        var petToMove = CreatePet();
+        var petToCheck = CreatePet();
+        
+        volunteer.Value.AddPet(petToMove.Value);
+        volunteer.Value.AddPet(petToCheck.Value);
+        
+        var currentSerialNumber = petToMove.Value.SerialNumber.Value;
+        
+        // Act
+        var result = volunteer.Value.MovePet(petToMove.Value, currentSerialNumber);
+        
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        petToMove.Value.SerialNumber.Value.Should().Be(1);
+        petToCheck.Value.SerialNumber.Value.Should().Be(2);
+    }
 
     [Fact]
     public void Move_Pet_Should_Update_Serial_Number()
