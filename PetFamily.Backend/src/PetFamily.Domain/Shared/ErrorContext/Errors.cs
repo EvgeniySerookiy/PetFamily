@@ -16,6 +16,18 @@ public static class Errors
             return Error.Validation(
                 "value.is.too.long", $"{label} is too long. Max length is {maxLength}.");
         }
+        
+        public static Error OutOfRange(int value)
+        {
+            return Error.Validation(
+                "out.of.range", $"out of range {value}");
+        }
+        
+        public static Error SameSerialNumber(int value)
+        {
+            return Error.Validation(
+                "some.serial.number", $"same serial number {value}");
+        }
 
         public static Error ValueCannotBeNegative(string? name = null, int? value = null)
         {
@@ -24,7 +36,6 @@ public static class Errors
             return Error.Validation(
                 "value.cannot.be.negative", $"{label} cannot be negative.{valueInfo}");
         }
-
 
         public static Error NotFound(Guid? id = null)
         {

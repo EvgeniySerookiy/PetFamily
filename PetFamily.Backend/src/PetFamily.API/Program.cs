@@ -1,4 +1,3 @@
-using PetFamily.API;
 using PetFamily.API.Extensions;
 using PetFamily.API.Middlewares;
 using PetFamily.API.Validation;
@@ -29,7 +28,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSerilog();
 
 builder.Services
-    .AddInfrastructure()
+    .AddInfrastructure(builder.Configuration)
     .AddAplication();
 
 builder.Services.AddFluentValidationAutoValidation(configuration =>

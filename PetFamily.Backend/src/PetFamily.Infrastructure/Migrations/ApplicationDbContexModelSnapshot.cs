@@ -267,6 +267,15 @@ namespace PetFamily.Infrastructure.Migrations
                                 .HasColumnName("pet_name");
                         });
 
+                    b.ComplexProperty<Dictionary<string, object>>("SerialNumber", "PetFamily.Domain.PetManagement.Entities.Pet.SerialNumber#SerialNumber", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<int>("Value")
+                                .HasColumnType("integer")
+                                .HasColumnName("serial_number");
+                        });
+
                     b.ComplexProperty<Dictionary<string, object>>("Size", "PetFamily.Domain.PetManagement.Entities.Pet.Size#Size", b1 =>
                         {
                             b1.IsRequired();
