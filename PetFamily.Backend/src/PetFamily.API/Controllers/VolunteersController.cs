@@ -16,6 +16,8 @@ namespace PetFamily.API.Controllers;
 
 public class VolunteersController : ApplicationController
 {
+    private const string BUCKET_NAME = "photos";
+    
     [HttpPost]
     public async Task<ActionResult> Create(
         [FromBody] CreateVolunteerRequest request,
@@ -159,7 +161,7 @@ public class VolunteersController : ApplicationController
         
         var path = Guid.NewGuid().ToString();
         
-        var fileData = new FileData(stream, "photos", path);
+        var fileData = new FileData(stream, BUCKET_NAME, path);
         
         var result = await handler.Handle(fileData, cancellationToken);
         
@@ -186,8 +188,7 @@ public class VolunteersController : ApplicationController
     [HttpPut("{id:guid}/pet-file")]
     public async Task<ActionResult> GetFileUrl(
         [FromRoute] Guid id,
-        [FromServices] GetFileDownloadHandler handler,
-        CancellationToken cancellationToken = default)
+        [FromServices] GetFileDownloadHandler handler)
     {
         var result = await handler.Handle(id);
         

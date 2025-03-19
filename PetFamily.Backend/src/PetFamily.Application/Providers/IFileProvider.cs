@@ -14,6 +14,6 @@ public interface IFileProvider
         Guid fieldId,
         CancellationToken cancellationToken = default);
     
-    Task<Result<string, Error>> GetFileDownload(
+    Task<Result<string, Error>> GetFileDownloadUrl(
         Guid fieldId);
 }

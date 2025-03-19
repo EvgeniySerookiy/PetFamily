@@ -16,6 +16,6 @@ public class GetFileDownloadHandler
     public async Task<Result<string, Error>> Handle(
         Guid fieldId)
     {
-        return await _fileProvider.GetFileDownload(fieldId);
+        return await _fileProvider.GetFileDownloadUrl(fieldId);
     }
 }

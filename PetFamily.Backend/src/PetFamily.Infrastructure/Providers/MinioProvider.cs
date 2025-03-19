@@ -74,12 +74,12 @@ public class MinioProvider : IFileProvider
         }
         catch (Exception exception)
         {
-            _logger.LogError(exception, "Fail to upload file in minio");
-            return Error.Failure("file.upload", "Fail to upload file in minio");
+            _logger.LogError(exception, "Fail to delete file in minio");
+            return Error.Failure("file.delete", "Fail to delete file in minio");
         }
     }
     
-    public async Task<Result<string, Error>> GetFileDownload(
+    public async Task<Result<string, Error>> GetFileDownloadUrl(
         Guid fieldId)
     {
         try
@@ -96,8 +96,8 @@ public class MinioProvider : IFileProvider
         }
         catch (Exception exception)
         {
-            _logger.LogError(exception, "Fail to upload file in minio");
-            return Error.Failure("file.upload", "Fail to upload file in minio");
+            _logger.LogError(exception, "Failed to generate presigned URL for file in minio");
+            return Error.Failure("file.download", "Failed to generate presigned URL for file in minio");
         }
     }
 }
