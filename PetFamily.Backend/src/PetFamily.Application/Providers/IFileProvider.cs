@@ -1,17 +1,18 @@
 using CSharpFunctionalExtensions;
+using PetFamily.Application.FileProvider;
+using PetFamily.Application.Volunteers.Actions.Pets.AddPet;
 using PetFamily.Domain.Shared.ErrorContext;
-using PetFamily.Infrastructure.Models;
 
 namespace PetFamily.Application.Providers;
 
 public interface IFileProvider
 {
-    Task<Result<string, Error>> UploadFile(
+    Task<UnitResult<Error>> UploadFiles(
         FileData fileData,
         CancellationToken cancellationToken = default);
     
-    Task<Result<string, Error>> DeleteFile(
-        Guid fieldId,
+    Task<UnitResult<Error>> DeleteFiles(
+        CollectionsObjectName collectionsObjectName,
         CancellationToken cancellationToken = default);
     
     Task<Result<string, Error>> GetFileDownloadUrl(

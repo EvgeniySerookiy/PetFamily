@@ -13,16 +13,14 @@ public class Pet : SoftDeletableEntity<PetId>
     public PetName PetName { get; private set; }
     public SpeciesId SpeciesId { get; private set; }
     public BreedId BreedId { get; private set; }
+    public TransferFilesList TransferFilesList { get; private set; }
     public Title Title { get; private set; }
     public Description Description { get; private set; }
-    
     public SerialNumber SerialNumber { get; private set; }
     public Color Color { get; private set; }
     public PetHealthInformation PetHealthInformation { get; private set; }
     public Address PetAddress { get; private set; }
     public PhoneNumber OwnerPhoneNumber { get; private set; }
-    
-    // переделать с int в double Size
     public Size Size { get; private set; }
     public NeuteredStatus IsNeutered { get; private set; }
     public RabiesVaccinationStatus IsVaccinated { get; private set; }
@@ -37,6 +35,7 @@ public class Pet : SoftDeletableEntity<PetId>
         PetName petName,
         SpeciesId speciesId,
         BreedId breedId,
+        TransferFilesList transferFilesList,
         Title title,
         Description description,
         Color color,
@@ -53,6 +52,7 @@ public class Pet : SoftDeletableEntity<PetId>
         PetName = petName;
         SpeciesId = speciesId;
         BreedId = breedId;
+        TransferFilesList = transferFilesList;
         Title = title;
         Description = description;
         Color = color;
@@ -72,6 +72,7 @@ public class Pet : SoftDeletableEntity<PetId>
         PetName petName,
         SpeciesId speciesId,
         BreedId breedId,
+        TransferFilesList transferFilesList,
         Title title,
         Description description,
         Color color,
@@ -83,7 +84,6 @@ public class Pet : SoftDeletableEntity<PetId>
         RabiesVaccinationStatus isVaccinated,
         DateTime dateOfBirth,
         AssistanceStatus status,
-        TransferRequisitesForHelpsList transferRequisitesForHelpsList,
         DateTime dateOfCreation)
     {
         var pet = new Pet(
@@ -91,6 +91,7 @@ public class Pet : SoftDeletableEntity<PetId>
             petName,
             speciesId,
             breedId,
+            transferFilesList,
             title,
             description,
             color,

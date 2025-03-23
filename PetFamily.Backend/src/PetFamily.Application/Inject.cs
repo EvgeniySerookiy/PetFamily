@@ -3,6 +3,8 @@ using Microsoft.Extensions.DependencyInjection;
 using PetFamily.Application.Volunteers.Actions.AddPet;
 using PetFamily.Application.Volunteers.Actions.Create;
 using PetFamily.Application.Volunteers.Actions.Delete;
+using PetFamily.Application.Volunteers.Actions.Pets.AddPet;
+using PetFamily.Application.Volunteers.Actions.Pets.Delete;
 using PetFamily.Application.Volunteers.Actions.Restore;
 using PetFamily.Application.Volunteers.Actions.Update.UpdateMainInfo;
 using PetFamily.Application.Volunteers.Actions.Update.UpdateRequisitesForHelp;
@@ -22,8 +24,8 @@ public static class Inject
         services.AddScoped<RestoreVolunteerHandler>();
         services.AddValidatorsFromAssembly(typeof(Inject).Assembly);
         services.AddScoped<AddPetHandler>();
-        services.AddScoped<DeletePetHandler>();
-        services.AddScoped<GetFileDownloadHandler>();
+        services.AddScoped<DeletePetPhotosHandler>();
+        //services.AddScoped<GetFileDownloadHandler>();
         return services;
     }
 }

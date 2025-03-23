@@ -81,7 +81,7 @@ public class VolunteerConfiguration : IEntityTypeConfiguration<Volunteer>
                         .HasColumnName("phone_number");
         });
         
-        builder.OwnsOne(p => p.TransferSocialNetworkList, tb =>
+        builder.OwnsOne(v => v.TransferSocialNetworkList, tb =>
         {
                 tb.ToJson("transfer_social_network_list");
                 
@@ -99,7 +99,7 @@ public class VolunteerConfiguration : IEntityTypeConfiguration<Volunteer>
                 });
         });
         
-        builder.OwnsOne(p => p.TransferRequisitesForHelpsList, tb =>
+        builder.OwnsOne(v => v.TransferRequisitesForHelpsList, tb =>
         {
                 tb.ToJson("transfer_requisites_for_help_list");
                 

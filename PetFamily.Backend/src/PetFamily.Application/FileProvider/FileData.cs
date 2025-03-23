@@ -1,6 +1,5 @@
-namespace PetFamily.Infrastructure.Models;
+namespace PetFamily.Application.FileProvider;
 
 public record  FileData(
-    Stream Stream, 
-    string BucketName, 
-    string ObjectName);
+    IEnumerable<FileContent> Files, 
+    string BucketName);

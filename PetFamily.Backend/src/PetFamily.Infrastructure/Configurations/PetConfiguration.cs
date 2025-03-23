@@ -42,6 +42,21 @@ public class PetConfiguration : IEntityTypeConfiguration<Pet>
                 .IsRequired()
                 .HasColumnName("breed_id");
         });
+        
+        builder.OwnsOne(p => p.TransferFilesList, pb =>
+        {
+            pb.ToJson("transfer_files_list");
+                
+            pb.OwnsMany(t => t.Photos, fb =>
+            {
+                fb.Property(p => p.PathToStorage)
+                    .HasConversion(
+                        p => p.Path,
+                        value => PhotoPath.Create(value).Value)
+                    .IsRequired()
+                    .HasColumnName("photos");
+            });
+        });
 
         builder.ComplexProperty(p => p.Title, tb =>
         {

@@ -13,7 +13,7 @@ using PetFamily.Infrastructure;
 namespace PetFamily.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContex))]
-    [Migration("20250313072554_UpdateTables")]
+    [Migration("20250323105029_UpdateTables")]
     partial class UpdateTables
     {
         /// <inheritdoc />
@@ -283,12 +283,12 @@ namespace PetFamily.Infrastructure.Migrations
                         {
                             b1.IsRequired();
 
-                            b1.Property<int>("Height")
-                                .HasColumnType("integer")
+                            b1.Property<double>("Height")
+                                .HasColumnType("double precision")
                                 .HasColumnName("height");
 
-                            b1.Property<int>("Weight")
-                                .HasColumnType("integer")
+                            b1.Property<double>("Weight")
+                                .HasColumnType("double precision")
                                 .HasColumnName("weight");
                         });
 
@@ -490,6 +490,51 @@ namespace PetFamily.Infrastructure.Migrations
                         .HasForeignKey("pets_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .HasConstraintName("fk_pets_volunteers_pets_id");
+
+                    b.OwnsOne("PetFamily.Domain.PetManagement.PetVO.TransferFilesList", "TransferFilesList", b1 =>
+                        {
+                            b1.Property<Guid>("PetId")
+                                .HasColumnType("uuid")
+                                .HasColumnName("id");
+
+                            b1.HasKey("PetId");
+
+                            b1.ToTable("Pets");
+
+                            b1.ToJson("transfer_files_list");
+
+                            b1.WithOwner()
+                                .HasForeignKey("PetId")
+                                .HasConstraintName("fk_pets_pets_id");
+
+                            b1.OwnsMany("PetFamily.Domain.PetManagement.PetVO.PetPhoto", "Photos", b2 =>
+                                {
+                                    b2.Property<Guid>("TransferFilesListPetId")
+                                        .HasColumnType("uuid");
+
+                                    b2.Property<int>("__synthesizedOrdinal")
+                                        .ValueGeneratedOnAdd()
+                                        .HasColumnType("integer");
+
+                                    b2.Property<string>("PathToStorage")
+                                        .IsRequired()
+                                        .HasColumnType("text")
+                                        .HasColumnName("photos");
+
+                                    b2.HasKey("TransferFilesListPetId", "__synthesizedOrdinal");
+
+                                    b2.ToTable("Pets");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("TransferFilesListPetId")
+                                        .HasConstraintName("fk_pets_pets_transfer_files_list_pet_id");
+                                });
+
+                            b1.Navigation("Photos");
+                        });
+
+                    b.Navigation("TransferFilesList")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("PetFamily.Domain.SpesiesManagment.Entities.Breed", b =>

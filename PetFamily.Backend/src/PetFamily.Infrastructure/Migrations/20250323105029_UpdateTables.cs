@@ -89,12 +89,13 @@ namespace PetFamily.Infrastructure.Migrations
                     pet_health_information = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
                     pet_name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     serial_number = table.Column<int>(type: "integer", nullable: false),
-                    height = table.Column<int>(type: "integer", nullable: false),
-                    weight = table.Column<int>(type: "integer", nullable: false),
+                    height = table.Column<double>(type: "double precision", nullable: false),
+                    weight = table.Column<double>(type: "double precision", nullable: false),
                     species_id = table.Column<Guid>(type: "uuid", nullable: false),
                     title = table.Column<string>(type: "character varying(70)", maxLength: 70, nullable: false),
                     is_deleted = table.Column<bool>(type: "boolean", nullable: false),
-                    deletion_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    deletion_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    transfer_files_list = table.Column<string>(type: "jsonb", nullable: false)
                 },
                 constraints: table =>
                 {
