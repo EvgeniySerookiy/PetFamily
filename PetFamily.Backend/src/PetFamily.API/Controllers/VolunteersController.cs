@@ -2,6 +2,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using PetFamily.API.Contracts;
 using PetFamily.API.Extensions;
+using PetFamily.API.Processors;
 using PetFamily.Application.Volunteers.Actions.AddPet;
 using PetFamily.Application.Volunteers.Actions.Create;
 using PetFamily.Application.Volunteers.Actions.Delete;
@@ -174,36 +175,20 @@ public class VolunteersController : ApplicationController
         [FromServices] AddPetHandler handler,
         CancellationToken cancellationToken)
     {
-        
-        List<FileDto> filesDto = [];
 
-        try
-        {
-            foreach (var file in request.Files)
-            {
-                var stream = file.OpenReadStream(); 
-                filesDto.Add(new FileDto(stream, file.FileName, file.ContentType));
-            }
-            
-            var command = new AddPetCommand(
-                id,
-                request.MainPetInfo,
-                new CollectionFilesDto(filesDto));
+        await using var fileProcessor = new FormFileProcessor();
+        var fileDtos = fileProcessor.Process(request.Files);
         
-            var result = await handler.Handle(command, cancellationToken);
+        var command = new AddPetCommand(
+            id,
+            request.MainPetInfo,
+            new CollectionFilesDto(fileDtos));
         
-            if(result.IsFailure)
-                return result.Error.ToResponse();
+        var result = await handler.Handle(command, cancellationToken);
+        if(result.IsFailure)
+            return result.Error.ToResponse();
         
-            return Ok(result.Value);
-        }
-        finally
-        {
-            foreach (var fileDto in filesDto)
-            {
-                await fileDto.Content.DisposeAsync();
-            }
-        }
+        return Ok(result.Value);
     }
     
     [HttpDelete("{volunteerId:guid}/pets/{petId:guid}/photos")]
