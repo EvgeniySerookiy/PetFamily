@@ -1,21 +1,25 @@
 using CSharpFunctionalExtensions;
 using Microsoft.Extensions.Logging;
+using PetFamily.Application.Database;
 using PetFamily.Domain.PetManagement.SharedVO;
 using PetFamily.Domain.PetManagement.VolunteerVO;
 using PetFamily.Domain.Shared.ErrorContext;
 
-namespace PetFamily.Application.Volunteers.Actions.Update.UpdateMainInfo;
+namespace PetFamily.Application.Volunteers.Actions.Volunteers.Update.UpdateMainInfo;
 
 public class UpdateMainInfoHandler
 {
     private readonly IVolunteersRepository _volunteersRepository;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<UpdateMainInfoHandler> _logger;
 
     public UpdateMainInfoHandler(
         IVolunteersRepository volunteersRepository,
+        IUnitOfWork unitOfWork,
         ILogger<UpdateMainInfoHandler> logger)
     {
         _volunteersRepository = volunteersRepository;
+        _unitOfWork = unitOfWork;
         _logger = logger;
     }
 
@@ -43,8 +47,8 @@ public class UpdateMainInfoHandler
             description,
             yearsOfExperience,
             phoneNumber);
-
-        var result = await _volunteersRepository.Save(volunteerResult.Value, cancellationToken);
+        
+        await _unitOfWork.SaveChanges(cancellationToken);
         
         _logger.LogInformation(
             "Update volunteer {fullName}, {email}, {description}, " +
@@ -56,6 +60,6 @@ public class UpdateMainInfoHandler
             phoneNumber,
             request.VolunteerId);
 
-        return result;
+        return volunteerResult.Value.Id.Value;
     }
 }

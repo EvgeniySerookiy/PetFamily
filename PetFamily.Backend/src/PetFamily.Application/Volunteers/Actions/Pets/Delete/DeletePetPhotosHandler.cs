@@ -1,5 +1,6 @@
 using System.Text.RegularExpressions;
 using CSharpFunctionalExtensions;
+using PetFamily.Application.Database;
 using PetFamily.Application.FileProvider;
 using PetFamily.Application.Providers;
 using PetFamily.Domain.PetManagement.PetVO;
@@ -13,6 +14,7 @@ public class DeletePetPhotosHandler
     private const string BUCKET_NAME = "photos";
     
     private readonly IFileProvider _fileProvider;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly IVolunteersRepository _volunteersRepository;
     
     private Guid ExtractGuidFromPath(string path)
@@ -25,9 +27,11 @@ public class DeletePetPhotosHandler
     
     public DeletePetPhotosHandler(
         IFileProvider fileProvider,
+        IUnitOfWork unitOfWork,
         IVolunteersRepository volunteersRepository)
     {
         _fileProvider = fileProvider;
+        _unitOfWork = unitOfWork;
         _volunteersRepository = volunteersRepository;
     }
 
@@ -72,8 +76,8 @@ public class DeletePetPhotosHandler
             return deleteResult.Error;
         
         pet.TransferFilesList.DeletePhotos(deletePhotos);
-
-        await _volunteersRepository.Save(volunteerResult.Value, cancellationToken);
+        
+        await _unitOfWork.SaveChanges(cancellationToken);
         
         return pet.Id.Value;
     }

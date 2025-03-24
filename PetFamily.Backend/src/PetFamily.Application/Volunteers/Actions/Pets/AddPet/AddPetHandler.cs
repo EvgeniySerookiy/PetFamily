@@ -1,4 +1,5 @@
 using CSharpFunctionalExtensions;
+using PetFamily.Application.Database;
 using PetFamily.Application.FileProvider;
 using PetFamily.Application.Providers;
 using PetFamily.Domain.PetManagement.Entities;
@@ -15,13 +16,16 @@ public class AddPetHandler
     private const string BUCKET_NAME = "photos";
     
     private readonly IFileProvider _fileProvider;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly IVolunteersRepository _volunteersRepository;
 
     public AddPetHandler(
         IFileProvider fileProvider,
+        IUnitOfWork unitOfWork,
         IVolunteersRepository volunteersRepository)
     {
         _fileProvider = fileProvider;
+        _unitOfWork = unitOfWork;
         _volunteersRepository = volunteersRepository;
     }
 
@@ -114,9 +118,9 @@ public class AddPetHandler
             dateOfCreation);
 
         volunteerResult.Value.AddPet(pet.Value);
-        
-        await _volunteersRepository.Save(volunteerResult.Value, cancellationToken);
 
-        return petId.Value;
+        await _unitOfWork.SaveChanges(cancellationToken);
+
+        return pet.Value.Id.Value;
     }
 }

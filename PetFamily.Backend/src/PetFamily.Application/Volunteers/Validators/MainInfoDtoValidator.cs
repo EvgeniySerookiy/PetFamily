@@ -1,6 +1,6 @@
 using FluentValidation;
-using PetFamily.Application.Volunteers.Actions.Create;
-using PetFamily.Application.Volunteers.DTOs;
+using PetFamily.Application.Volunteers.Actions.Volunteers.Create;
+using PetFamily.Application.Volunteers.VolunteerDTOs;
 using PetFamily.Domain.PetManagement.SharedVO;
 using PetFamily.Domain.PetManagement.VolunteerVO;
 

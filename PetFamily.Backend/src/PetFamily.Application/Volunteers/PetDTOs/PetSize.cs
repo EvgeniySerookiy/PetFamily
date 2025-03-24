@@ -1,4 +1,4 @@
-namespace PetFamily.Application.Volunteers.DTOs;
+namespace PetFamily.Application.Volunteers.PetDTOs;
 
 public record PetSize(
     double Weight,

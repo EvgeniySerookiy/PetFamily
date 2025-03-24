@@ -1,5 +1,6 @@
 using CSharpFunctionalExtensions;
 using Microsoft.EntityFrameworkCore;
+using PetFamily.Application.Database;
 using PetFamily.Application.Volunteers;
 using PetFamily.Domain.PetManagement.AggregateRoot;
 using PetFamily.Domain.PetManagement.VolunteerVO;
@@ -11,10 +12,14 @@ namespace PetFamily.Infrastructure.Repositories;
 public class VolunteersRepository : IVolunteersRepository
 {
     private readonly ApplicationDbContex _applicationDbContex;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public VolunteersRepository(ApplicationDbContex applicationDbContex)
+    public VolunteersRepository(
+        ApplicationDbContex applicationDbContex,
+        IUnitOfWork unitOfWork)
     {
         _applicationDbContex = applicationDbContex;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<Guid> Add(
@@ -22,17 +27,25 @@ public class VolunteersRepository : IVolunteersRepository
         CancellationToken cancellationToken = default)
     {
         await _applicationDbContex.Volunteers.AddAsync(volunteer, cancellationToken);
-        await _applicationDbContex.SaveChangesAsync(cancellationToken);
+        await _unitOfWork.SaveChanges(cancellationToken);
         
         return volunteer.Id.Value;
     }
     
-    public async Task<Guid> Save(
+    public Guid Save(
         Volunteer volunteer, 
         CancellationToken cancellationToken = default)
     {
         _applicationDbContex.Volunteers.Attach(volunteer);
-        await _applicationDbContex.SaveChangesAsync(cancellationToken);
+        
+        return volunteer.Id.Value;
+    }
+
+    public Guid Delete(
+        Volunteer volunteer, 
+        CancellationToken cancellationToken = default)
+    {
+        _applicationDbContex.Volunteers.Remove(volunteer);
         
         return volunteer.Id.Value;
     }

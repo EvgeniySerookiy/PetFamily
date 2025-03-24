@@ -1,20 +1,24 @@
 using CSharpFunctionalExtensions;
 using Microsoft.Extensions.Logging;
+using PetFamily.Application.Database;
 using PetFamily.Domain.PetManagement.VolunteerVO;
 using PetFamily.Domain.Shared.ErrorContext;
 
-namespace PetFamily.Application.Volunteers.Actions.Update.UpdateRequisitesForHelp;
+namespace PetFamily.Application.Volunteers.Actions.Volunteers.Update.UpdateRequisitesForHelp;
 
 public class UpdateCollectionRequisitesForHelpHandler
 {
     private readonly IVolunteersRepository _volunteersRepository;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<UpdateCollectionRequisitesForHelpHandler> _logger;
 
     public UpdateCollectionRequisitesForHelpHandler(
         IVolunteersRepository volunteersRepository,
+        IUnitOfWork unitOfWork,
         ILogger<UpdateCollectionRequisitesForHelpHandler> logger)
     {
         _volunteersRepository = volunteersRepository;
+        _unitOfWork = unitOfWork;
         _logger = logger;
     }
 
@@ -40,13 +44,13 @@ public class UpdateCollectionRequisitesForHelpHandler
         volunteerResult.Value.UpdateRequisitesForHelp(
             requisitesForHelpList);
 
-        var result = await _volunteersRepository.Save(volunteerResult.Value, cancellationToken);
+        await _unitOfWork.SaveChanges(cancellationToken);
         
         _logger.LogInformation(
             "Update volunteer {requisitesForHelpList} with id {volunteerId}", 
             requisitesForHelpList,
             request.VolunteerId);
 
-        return result;
+        return volunteerResult.Value.Id.Value;
     }
 }

@@ -1,6 +1,6 @@
-using PetFamily.Application.Volunteers.DTOs.Collections;
+using PetFamily.Application.Volunteers.VolunteerDTOs.Collections;
 
-namespace PetFamily.Application.Volunteers.Actions.Update.UpdateSocialNetwork;
+namespace PetFamily.Application.Volunteers.Actions.Volunteers.Update.UpdateSocialNetwork;
 
 public record UpdateCollectionSocialNetworkRequest(
     Guid VolunteerId,

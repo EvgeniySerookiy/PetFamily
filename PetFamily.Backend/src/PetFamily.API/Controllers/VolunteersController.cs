@@ -3,18 +3,17 @@ using Microsoft.AspNetCore.Mvc;
 using PetFamily.API.Contracts;
 using PetFamily.API.Extensions;
 using PetFamily.API.Processors;
-using PetFamily.Application.Volunteers.Actions.AddPet;
-using PetFamily.Application.Volunteers.Actions.Create;
-using PetFamily.Application.Volunteers.Actions.Delete;
 using PetFamily.Application.Volunteers.Actions.Pets.AddPet;
 using PetFamily.Application.Volunteers.Actions.Pets.Delete;
-using PetFamily.Application.Volunteers.Actions.Restore;
-using PetFamily.Application.Volunteers.Actions.Update.UpdateMainInfo;
-using PetFamily.Application.Volunteers.Actions.Update.UpdateRequisitesForHelp;
-using PetFamily.Application.Volunteers.Actions.Update.UpdateSocialNetwork;
-using PetFamily.Application.Volunteers.DTOs;
-using PetFamily.Application.Volunteers.DTOs.Collections;
-using PetFamily.Application.Volunteers.PetDTOs;
+using PetFamily.Application.Volunteers.Actions.Volunteers.Create;
+using PetFamily.Application.Volunteers.Actions.Volunteers.Delete;
+using PetFamily.Application.Volunteers.Actions.Volunteers.Restore;
+using PetFamily.Application.Volunteers.Actions.Volunteers.Update.UpdateMainInfo;
+using PetFamily.Application.Volunteers.Actions.Volunteers.Update.UpdateRequisitesForHelp;
+using PetFamily.Application.Volunteers.Actions.Volunteers.Update.UpdateSocialNetwork;
+using PetFamily.Application.Volunteers.PetDTOs.Collections;
+using PetFamily.Application.Volunteers.VolunteerDTOs;
+using PetFamily.Application.Volunteers.VolunteerDTOs.Collections;
 
 namespace PetFamily.API.Controllers;
 

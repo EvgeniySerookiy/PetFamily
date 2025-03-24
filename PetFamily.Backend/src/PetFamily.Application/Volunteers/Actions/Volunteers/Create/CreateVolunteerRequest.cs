@@ -1,7 +1,7 @@
-using PetFamily.Application.Volunteers.DTOs;
-using PetFamily.Application.Volunteers.DTOs.Collections;
+using PetFamily.Application.Volunteers.VolunteerDTOs;
+using PetFamily.Application.Volunteers.VolunteerDTOs.Collections;
 
-namespace PetFamily.Application.Volunteers.Actions.Create;
+namespace PetFamily.Application.Volunteers.Actions.Volunteers.Create;
 
 public record CreateVolunteerRequest(
     MainInfoDto MainInfo,

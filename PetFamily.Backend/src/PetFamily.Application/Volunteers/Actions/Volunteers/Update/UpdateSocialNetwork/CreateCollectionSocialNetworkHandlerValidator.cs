@@ -1,9 +1,9 @@
 using FluentValidation;
-using PetFamily.Application.Volunteers.Actions.Create;
-using PetFamily.Application.Volunteers.Actions.Update.UpdateSocialNetwork;
+using PetFamily.Application.Volunteers.Actions.Volunteers.Create;
+using PetFamily.Application.Volunteers.Validators;
 using PetFamily.Domain.Shared.ErrorContext;
 
-namespace PetFamily.Application.Volunteers.Validators.HandlerValidators;
+namespace PetFamily.Application.Volunteers.Actions.Volunteers.Update.UpdateSocialNetwork;
 
 public class CreateCollectionSocialNetworkHandlerValidator : AbstractValidator<UpdateCollectionSocialNetworkRequest>
 {

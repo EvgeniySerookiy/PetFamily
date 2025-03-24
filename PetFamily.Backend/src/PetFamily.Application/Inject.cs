@@ -1,14 +1,13 @@
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
-using PetFamily.Application.Volunteers.Actions.AddPet;
-using PetFamily.Application.Volunteers.Actions.Create;
-using PetFamily.Application.Volunteers.Actions.Delete;
 using PetFamily.Application.Volunteers.Actions.Pets.AddPet;
 using PetFamily.Application.Volunteers.Actions.Pets.Delete;
-using PetFamily.Application.Volunteers.Actions.Restore;
-using PetFamily.Application.Volunteers.Actions.Update.UpdateMainInfo;
-using PetFamily.Application.Volunteers.Actions.Update.UpdateRequisitesForHelp;
-using PetFamily.Application.Volunteers.Actions.Update.UpdateSocialNetwork;
+using PetFamily.Application.Volunteers.Actions.Volunteers.Create;
+using PetFamily.Application.Volunteers.Actions.Volunteers.Delete;
+using PetFamily.Application.Volunteers.Actions.Volunteers.Restore;
+using PetFamily.Application.Volunteers.Actions.Volunteers.Update.UpdateMainInfo;
+using PetFamily.Application.Volunteers.Actions.Volunteers.Update.UpdateRequisitesForHelp;
+using PetFamily.Application.Volunteers.Actions.Volunteers.Update.UpdateSocialNetwork;
 
 namespace PetFamily.Application;
 

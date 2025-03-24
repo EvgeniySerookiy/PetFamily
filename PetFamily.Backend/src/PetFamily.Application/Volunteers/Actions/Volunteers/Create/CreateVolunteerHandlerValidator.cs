@@ -1,9 +1,7 @@
 using FluentValidation;
-using PetFamily.Application.Volunteers.Actions.Create;
-using PetFamily.Application.Volunteers.Actions.Update.UpdateRequisitesForHelp;
-using PetFamily.Application.Volunteers.Actions.Update.UpdateSocialNetwork;
+using PetFamily.Application.Volunteers.Validators;
 
-namespace PetFamily.Application.Volunteers.Validators.HandlerValidators;
+namespace PetFamily.Application.Volunteers.Actions.Volunteers.Create;
 
 public class CreateVolunteerHandlerValidator : AbstractValidator<CreateVolunteerRequest>
 {

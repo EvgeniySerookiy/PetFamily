@@ -1,6 +1,6 @@
-using PetFamily.Application.Volunteers.DTOs.Collections;
+using PetFamily.Application.Volunteers.VolunteerDTOs.Collections;
 
-namespace PetFamily.Application.Volunteers.Actions.Update.UpdateRequisitesForHelp;
+namespace PetFamily.Application.Volunteers.Actions.Volunteers.Update.UpdateRequisitesForHelp;
 
 public record UpdateCollectionRequisitesForHelpRequest(
     Guid VolunteerId,

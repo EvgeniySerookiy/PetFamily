@@ -2,7 +2,7 @@ using CSharpFunctionalExtensions;
 using PetFamily.Application.Providers;
 using PetFamily.Domain.Shared.ErrorContext;
 
-namespace PetFamily.Application.Volunteers.Actions.AddPet;
+namespace PetFamily.Application.Volunteers.Actions.Pets.AddPet;
 
 public class GetFileDownloadHandler
 {

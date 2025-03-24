@@ -1,6 +1,4 @@
-using PetFamily.Application.Volunteers.PetDTOs;
-
-namespace PetFamily.Application.Volunteers.DTOs.Collections;
+namespace PetFamily.Application.Volunteers.PetDTOs.Collections;
 
 public record CollectionFilesDto(
     IEnumerable<CreateFileDto> Files);

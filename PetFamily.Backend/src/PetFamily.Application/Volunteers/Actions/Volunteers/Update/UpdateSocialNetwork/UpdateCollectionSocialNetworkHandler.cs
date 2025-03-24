@@ -1,20 +1,24 @@
 using CSharpFunctionalExtensions;
 using Microsoft.Extensions.Logging;
+using PetFamily.Application.Database;
 using PetFamily.Domain.PetManagement.VolunteerVO;
 using PetFamily.Domain.Shared.ErrorContext;
 
-namespace PetFamily.Application.Volunteers.Actions.Update.UpdateSocialNetwork;
+namespace PetFamily.Application.Volunteers.Actions.Volunteers.Update.UpdateSocialNetwork;
 
 public class UpdateCollectionSocialNetworkHandler
 {
     private readonly IVolunteersRepository _volunteersRepository;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<UpdateCollectionSocialNetworkHandler> _logger;
 
     public UpdateCollectionSocialNetworkHandler(
         IVolunteersRepository volunteersRepository,
+        IUnitOfWork unitOfWork,
         ILogger<UpdateCollectionSocialNetworkHandler> logger)
     {
         _volunteersRepository = volunteersRepository;
+        _unitOfWork = unitOfWork;
         _logger = logger;
     }
 
@@ -40,13 +44,13 @@ public class UpdateCollectionSocialNetworkHandler
         volunteerResult.Value.UpdateSocialNetworkList(
             socialNetworkList);
 
-        var result = await _volunteersRepository.Save(volunteerResult.Value, cancellationToken);
+        await _unitOfWork.SaveChanges(cancellationToken);
         
         _logger.LogInformation(
             "Update volunteer {socialNetworkList} with id {volunteerId}", 
             socialNetworkList,
             request.VolunteerId);
 
-        return result;
+        return volunteerResult.Value.Id.Value;
     }
 }

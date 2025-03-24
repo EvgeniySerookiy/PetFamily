@@ -1,19 +1,23 @@
 using CSharpFunctionalExtensions;
 using Microsoft.Extensions.Logging;
+using PetFamily.Application.Database;
 using PetFamily.Domain.Shared.ErrorContext;
 
-namespace PetFamily.Application.Volunteers.Actions.Restore;
+namespace PetFamily.Application.Volunteers.Actions.Volunteers.Restore;
 
 public class RestoreVolunteerHandler
 {
     private readonly IVolunteersRepository _volunteersRepository;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<RestoreVolunteerHandler> _logger;
 
     public RestoreVolunteerHandler(
         IVolunteersRepository volunteersRepository,
+        IUnitOfWork unitOfWork,
         ILogger<RestoreVolunteerHandler> logger)
     {
         _volunteersRepository = volunteersRepository;
+        _unitOfWork = unitOfWork;
         _logger = logger;
     }
     
@@ -26,13 +30,11 @@ public class RestoreVolunteerHandler
             return volunteerResult.Error;
 
         volunteerResult.Value.Restore();
-        
-        var result = await _volunteersRepository.Save(volunteerResult.Value, cancellationToken);
-        
-        _logger.LogInformation(
-            "Restored volunteer with id {volunteerId}",
-            request.VolunteerId);
 
-        return result;
+        await _unitOfWork.SaveChanges(cancellationToken);
+        
+        _logger.LogInformation("Restored volunteer with id {volunteerId}", request.VolunteerId);
+
+        return volunteerResult.Value.Id.Value;
     }
 }

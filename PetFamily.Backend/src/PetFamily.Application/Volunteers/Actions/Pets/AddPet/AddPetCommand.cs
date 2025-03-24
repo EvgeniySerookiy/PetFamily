@@ -1,5 +1,5 @@
-using PetFamily.Application.Volunteers.DTOs.Collections;
 using PetFamily.Application.Volunteers.PetDTOs;
+using PetFamily.Application.Volunteers.PetDTOs.Collections;
 
 namespace PetFamily.Application.Volunteers.Actions.Pets.AddPet;
 
