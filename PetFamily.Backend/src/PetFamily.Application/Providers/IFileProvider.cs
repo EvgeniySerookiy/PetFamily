@@ -14,7 +14,4 @@ public interface IFileProvider
     Task<UnitResult<Error>> DeleteFiles(
         PhotosPathWithBucket pathWithBucket,
         CancellationToken cancellationToken = default);
-    
-    Task<Result<string, Error>> GetFileDownloadUrl(
-        Guid fieldId);
 }

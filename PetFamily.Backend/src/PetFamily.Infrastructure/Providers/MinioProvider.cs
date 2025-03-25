@@ -76,27 +76,7 @@ public class MinioProvider : IFileProvider
             return Error.Failure("file.delete", "Fail to delete file in minio");
         }
     }
-
-    public async Task<Result<string, Error>> GetFileDownloadUrl(
-        Guid fieldId)
-    {
-        try
-        {
-            var presignedGetObjectArgs = new PresignedGetObjectArgs()
-                .WithBucket("photos")
-                .WithObject(fieldId.ToString())
-                .WithExpiry(60 * 60 * 24);
-
-            var url = await _minioClient.PresignedGetObjectAsync(presignedGetObjectArgs);
-            Console.WriteLine(url);
-            return Result.Success<string, Error>(fieldId.ToString());
-        }
-        catch (Exception exception)
-        {
-            _logger.LogError(exception, "Failed to generate presigned URL for file in minio");
-            return Error.Failure("file.download", "Failed to generate presigned URL for file in minio");
-        }
-    }
+    
 
     private async Task<Result<PhotoPath, Error>> PutObject(
         PhotoData photoData,

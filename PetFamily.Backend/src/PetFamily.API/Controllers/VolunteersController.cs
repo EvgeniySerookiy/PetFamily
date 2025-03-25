@@ -6,6 +6,7 @@ using PetFamily.API.Processors;
 using PetFamily.Application.Volunteers.Actions.Pets.AddPet;
 using PetFamily.Application.Volunteers.Actions.Pets.AddPetPhotos;
 using PetFamily.Application.Volunteers.Actions.Pets.DeletePetPhotos;
+using PetFamily.Application.Volunteers.Actions.Pets.MovePets;
 using PetFamily.Application.Volunteers.Actions.Volunteers.Create;
 using PetFamily.Application.Volunteers.Actions.Volunteers.Delete;
 using PetFamily.Application.Volunteers.Actions.Volunteers.Restore;
@@ -132,6 +133,23 @@ public class VolunteersController : ApplicationController
 
         return Ok(result.Value);
     }
+    
+    [HttpPut("{volunteerId:guid}/move-pets/{petIdMove:guid}/{petIdTarget:guid}")]
+    public async Task<ActionResult> MovePets(
+        [FromRoute] Guid volunteerId,
+        [FromRoute] Guid petIdMove,
+        [FromRoute] Guid petIdTarget,
+        [FromServices] MovePetsHandler handler,
+        CancellationToken cancellationToken = default)
+    {
+        var command = new MovePetsCommand(volunteerId, petIdMove, petIdTarget);
+        
+        var result = await handler.Handle(command, cancellationToken);
+        if(result.IsFailure)
+            return result.Error.ToResponse();
+        
+        return Ok(result.Value);
+    }
 
     [HttpDelete("{id:guid}")]
     public async Task<ActionResult> Delete(
@@ -149,7 +167,6 @@ public class VolunteersController : ApplicationController
         }
 
         var result = await handler.Handle(request, cancellationToken);
-
         if (result.IsFailure)
             return result.Error.ToResponse();
 
@@ -193,7 +210,7 @@ public class VolunteersController : ApplicationController
         if(result.IsFailure)
             return result.Error.ToResponse();
         
-        return Ok();
+        return Ok(result.Value);
     }
 
     [HttpDelete("{volunteerId:guid}/pets/{petId:guid}/photos")]
@@ -207,8 +224,9 @@ public class VolunteersController : ApplicationController
         var command = new DeletePetPhotosCommand(volunteerId, petId, request.PhotosId);
         
         var result = await handler.Handle(command, cancellationToken);
+        if(result.IsFailure)
+            return result.Error.ToResponse();
         
         return Ok(result.Value);
     }
-    
 }
