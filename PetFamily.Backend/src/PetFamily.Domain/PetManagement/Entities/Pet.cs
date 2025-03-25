@@ -1,7 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 using PetFamily.Domain.PetManagement.PetVO;
 using PetFamily.Domain.PetManagement.SharedVO;
-using PetFamily.Domain.PetManagement.VolunteerVO;
 using PetFamily.Domain.Shared;
 using PetFamily.Domain.Shared.ErrorContext;
 using PetFamily.Domain.SpesiesManagment.SpeciesVO;
@@ -13,7 +12,7 @@ public class Pet : SoftDeletableEntity<PetId>
     public PetName PetName { get; private set; }
     public SpeciesId SpeciesId { get; private set; }
     public BreedId BreedId { get; private set; }
-    public TransferFilesList TransferFilesList { get; private set; }
+    public ValueObjectList<PetPhoto> PetPhotos { get; private set; } = new ([]);
     public Title Title { get; private set; }
     public Description Description { get; private set; }
     public SerialNumber SerialNumber { get; private set; }
@@ -35,7 +34,7 @@ public class Pet : SoftDeletableEntity<PetId>
         PetName petName,
         SpeciesId speciesId,
         BreedId breedId,
-        TransferFilesList transferFilesList,
+        ValueObjectList<PetPhoto> petPhotos,
         Title title,
         Description description,
         Color color,
@@ -52,7 +51,7 @@ public class Pet : SoftDeletableEntity<PetId>
         PetName = petName;
         SpeciesId = speciesId;
         BreedId = breedId;
-        TransferFilesList = transferFilesList;
+        PetPhotos = petPhotos;
         Title = title;
         Description = description;
         Color = color;
@@ -72,7 +71,7 @@ public class Pet : SoftDeletableEntity<PetId>
         PetName petName,
         SpeciesId speciesId,
         BreedId breedId,
-        TransferFilesList transferFilesList,
+        ValueObjectList<PetPhoto> petPhotos,
         Title title,
         Description description,
         Color color,
@@ -91,7 +90,7 @@ public class Pet : SoftDeletableEntity<PetId>
             petName,
             speciesId,
             breedId,
-            transferFilesList,
+            petPhotos,
             title,
             description,
             color,
@@ -106,6 +105,11 @@ public class Pet : SoftDeletableEntity<PetId>
             dateOfCreation); 
         
         return pet;
+    }
+
+    public void UpdatePetPhotos(ValueObjectList<PetPhoto> petPhotos)
+    {
+        PetPhotos = petPhotos;
     }
     
     public void SetSerialNumber(SerialNumber serialNumber) => SerialNumber = serialNumber;

@@ -2,6 +2,5 @@ using PetFamily.Application.Volunteers.PetDTOs;
 
 namespace PetFamily.API.Contracts;
 
-public record AddPetRequest(
-    MainPetInfoDto MainPetInfo,
+public record AddPetPhotosRequest(
     IFormFileCollection Files);

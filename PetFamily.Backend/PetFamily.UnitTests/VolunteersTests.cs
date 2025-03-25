@@ -57,7 +57,7 @@ public class VolunteerTests
         var petName = PetName.Create("Test");
         var speciesId = SpeciesId.EmptySpeciesId();
         var breedId = BreedId.EmptyBreedId();
-        var transferFilesList = TransferFilesList.Create(
+        var petPhotos = new ValueObjectList<PetPhoto>(
             new List<PetPhoto>
             {
                 PetPhoto.Create(PhotoPath.Create(Guid.NewGuid(), ".pdf").Value).Value,
@@ -87,7 +87,7 @@ public class VolunteerTests
             petName.Value,
             speciesId,
             breedId,
-            transferFilesList.Value,
+            petPhotos,
             title.Value,
             descriptionPet.Value,
             color.Value,

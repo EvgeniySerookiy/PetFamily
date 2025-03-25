@@ -95,7 +95,7 @@ namespace PetFamily.Infrastructure.Migrations
                     title = table.Column<string>(type: "character varying(70)", maxLength: 70, nullable: false),
                     is_deleted = table.Column<bool>(type: "boolean", nullable: false),
                     deletion_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    transfer_files_list = table.Column<string>(type: "jsonb", nullable: false)
+                    photos = table.Column<string>(type: "jsonb", nullable: false)
                 },
                 constraints: table =>
                 {

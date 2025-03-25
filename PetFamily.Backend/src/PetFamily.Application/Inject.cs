@@ -1,7 +1,8 @@
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using PetFamily.Application.Volunteers.Actions.Pets.AddPet;
-using PetFamily.Application.Volunteers.Actions.Pets.Delete;
+using PetFamily.Application.Volunteers.Actions.Pets.AddPetPhotos;
+using PetFamily.Application.Volunteers.Actions.Pets.DeletePetPhotos;
 using PetFamily.Application.Volunteers.Actions.Volunteers.Create;
 using PetFamily.Application.Volunteers.Actions.Volunteers.Delete;
 using PetFamily.Application.Volunteers.Actions.Volunteers.Restore;
@@ -13,7 +14,7 @@ namespace PetFamily.Application;
 
 public static class Inject
 {
-    public static IServiceCollection AddAplication(this IServiceCollection services)
+    public static IServiceCollection AddApplication(this IServiceCollection services)
     {
         services.AddScoped<CreateVolunteerHandler>();
         services.AddScoped<UpdateMainInfoHandler>();
@@ -23,8 +24,8 @@ public static class Inject
         services.AddScoped<RestoreVolunteerHandler>();
         services.AddValidatorsFromAssembly(typeof(Inject).Assembly);
         services.AddScoped<AddPetHandler>();
+        services.AddScoped<AddPetPhotosHandler>();
         services.AddScoped<DeletePetPhotosHandler>();
-        //services.AddScoped<GetFileDownloadHandler>();
         return services;
     }
 }

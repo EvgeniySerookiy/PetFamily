@@ -29,7 +29,7 @@ builder.Services.AddSerilog();
 
 builder.Services
     .AddInfrastructure(builder.Configuration)
-    .AddAplication();
+    .AddApplication();
 
 builder.Services.AddFluentValidationAutoValidation(configuration =>
 {

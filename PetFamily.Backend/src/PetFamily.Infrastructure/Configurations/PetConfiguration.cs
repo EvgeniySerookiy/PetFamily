@@ -43,18 +43,17 @@ public class PetConfiguration : IEntityTypeConfiguration<Pet>
                 .HasColumnName("breed_id");
         });
         
-        builder.OwnsOne(p => p.TransferFilesList, pb =>
+        builder.OwnsOne(p => p.PetPhotos, pb =>
         {
-            pb.ToJson("transfer_files_list");
+            pb.ToJson("photos");
                 
-            pb.OwnsMany(t => t.Photos, fb =>
+            pb.OwnsMany(p => p.Values, vb =>
             {
-                fb.Property(p => p.PathToStorage)
+                vb.Property(v => v.PathToStorage)
                     .HasConversion(
-                        p => p.Path,
+                        v => v.Path,
                         value => PhotoPath.Create(value).Value)
-                    .IsRequired()
-                    .HasColumnName("photos");
+                    .IsRequired();
             });
         });
 

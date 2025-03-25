@@ -13,7 +13,7 @@ using PetFamily.Infrastructure;
 namespace PetFamily.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContex))]
-    [Migration("20250324092632_UpdateTables")]
+    [Migration("20250324163747_UpdateTables")]
     partial class UpdateTables
     {
         /// <inheritdoc />
@@ -491,7 +491,7 @@ namespace PetFamily.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .HasConstraintName("fk_pets_volunteers_pets_id");
 
-                    b.OwnsOne("PetFamily.Domain.PetManagement.PetVO.TransferFilesList", "TransferFilesList", b1 =>
+                    b.OwnsOne("PetFamily.Domain.PetManagement.SharedVO.ValueObjectList<PetFamily.Domain.PetManagement.PetVO.PetPhoto>", "PetPhotos", b1 =>
                         {
                             b1.Property<Guid>("PetId")
                                 .HasColumnType("uuid")
@@ -501,15 +501,15 @@ namespace PetFamily.Infrastructure.Migrations
 
                             b1.ToTable("Pets");
 
-                            b1.ToJson("transfer_files_list");
+                            b1.ToJson("photos");
 
                             b1.WithOwner()
                                 .HasForeignKey("PetId")
                                 .HasConstraintName("fk_pets_pets_id");
 
-                            b1.OwnsMany("PetFamily.Domain.PetManagement.PetVO.PetPhoto", "Photos", b2 =>
+                            b1.OwnsMany("PetFamily.Domain.PetManagement.PetVO.PetPhoto", "Values", b2 =>
                                 {
-                                    b2.Property<Guid>("TransferFilesListPetId")
+                                    b2.Property<Guid>("ValueObjectListPetId")
                                         .HasColumnType("uuid");
 
                                     b2.Property<int>("__synthesizedOrdinal")
@@ -518,22 +518,21 @@ namespace PetFamily.Infrastructure.Migrations
 
                                     b2.Property<string>("PathToStorage")
                                         .IsRequired()
-                                        .HasColumnType("text")
-                                        .HasColumnName("photos");
+                                        .HasColumnType("text");
 
-                                    b2.HasKey("TransferFilesListPetId", "__synthesizedOrdinal");
+                                    b2.HasKey("ValueObjectListPetId", "__synthesizedOrdinal");
 
                                     b2.ToTable("Pets");
 
                                     b2.WithOwner()
-                                        .HasForeignKey("TransferFilesListPetId")
-                                        .HasConstraintName("fk_pets_pets_transfer_files_list_pet_id");
+                                        .HasForeignKey("ValueObjectListPetId")
+                                        .HasConstraintName("fk_pets_pets_value_object_list_pet_id");
                                 });
 
-                            b1.Navigation("Photos");
+                            b1.Navigation("Values");
                         });
 
-                    b.Navigation("TransferFilesList")
+                    b.Navigation("PetPhotos")
                         .IsRequired();
                 });
 

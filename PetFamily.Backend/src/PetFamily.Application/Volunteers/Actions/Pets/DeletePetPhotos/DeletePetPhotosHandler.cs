@@ -1,13 +1,15 @@
 using System.Text.RegularExpressions;
 using CSharpFunctionalExtensions;
+using Microsoft.Extensions.Logging;
 using PetFamily.Application.Database;
 using PetFamily.Application.FileProvider;
 using PetFamily.Application.Providers;
+using PetFamily.Application.Volunteers.Actions.Pets.AddPet;
 using PetFamily.Domain.PetManagement.PetVO;
 using PetFamily.Domain.PetManagement.VolunteerVO;
 using PetFamily.Domain.Shared.ErrorContext;
 
-namespace PetFamily.Application.Volunteers.Actions.Pets.Delete;
+namespace PetFamily.Application.Volunteers.Actions.Pets.DeletePetPhotos;
 
 public class DeletePetPhotosHandler
 {
@@ -16,23 +18,18 @@ public class DeletePetPhotosHandler
     private readonly IFileProvider _fileProvider;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IVolunteersRepository _volunteersRepository;
-    
-    private Guid ExtractGuidFromPath(string path)
-    {
-        string fileName = Path.GetFileName(path);
-        var match = Regex.Match(fileName, @"^([a-fA-F0-9\-]+)");
-
-        return match.Success && Guid.TryParse(match.Value, out var id) ? id : Guid.Empty;
-    }
+    private readonly ILogger<AddPetHandler> _logger;
     
     public DeletePetPhotosHandler(
         IFileProvider fileProvider,
         IUnitOfWork unitOfWork,
-        IVolunteersRepository volunteersRepository)
+        IVolunteersRepository volunteersRepository,
+        ILogger<AddPetHandler> logger)
     {
         _fileProvider = fileProvider;
         _unitOfWork = unitOfWork;
         _volunteersRepository = volunteersRepository;
+        _logger = logger;
     }
 
     public async Task<Result<Guid, Error>> Handle(
@@ -49,36 +46,43 @@ public class DeletePetPhotosHandler
         if(pet == null)
             return Errors.General.NotFound(command.PetId);
 
-        var photoIdsToDelete = command.PhotoIds;
+        var photosIdToDelete = command.PhotosId.ToList();
 
-        var transferFilesList = pet.TransferFilesList;
-
-        List<PetPhoto> deletePhotos = [];
-        List<ObjectName> objectNamesToDelete = [];
+        List<PetPhoto> photos = [];
         
-        foreach (var petPhoto in transferFilesList.Photos)
+        foreach (var photo in pet.PetPhotos)
         {
-            var petPhotoPath = petPhoto.PathToStorage.Path;
-            
-            var photoId = ExtractGuidFromPath(petPhotoPath);
+            var photoId = ExtractGuidFromPath(photo.PathToStorage.Path);
 
-            if(photoIdsToDelete.Contains(photoId))
+            if(photosIdToDelete.Contains(photoId))
             {
-                objectNamesToDelete.Add(new ObjectName(petPhotoPath));
-                deletePhotos.Add(petPhoto);
+                photos.Add(photo);
             }
         }
         
-        var deleteFilesRequest = new CollectionsObjectName(objectNamesToDelete, BUCKET_NAME);
+        var photosPathWithBucket = new PhotosPathWithBucket(
+            photos.Select(p => p.PathToStorage).ToList(), 
+            BUCKET_NAME);
         
-        var deleteResult = await _fileProvider.DeleteFiles(deleteFilesRequest, cancellationToken);
+        var deleteResult = await _fileProvider.DeleteFiles(photosPathWithBucket, cancellationToken);
         if(deleteResult.IsFailure)
             return deleteResult.Error;
-        
-        pet.TransferFilesList.DeletePhotos(deletePhotos);
+
+        pet.PetPhotos.RemoveAll(photos);
         
         await _unitOfWork.SaveChanges(cancellationToken);
         
+        _logger.LogInformation("Deleted photos to pet with id {PetId} from a volunteer with id {VolunteerId}",
+            command.PetId, command.VolunteerId);
+        
         return pet.Id.Value;
+    }
+    
+    private Guid ExtractGuidFromPath(string path)
+    {
+        string fileName = Path.GetFileName(path);
+        var match = Regex.Match(fileName, @"^([a-fA-F0-9\-]+)");
+
+        return match.Success && Guid.TryParse(match.Value, out var id) ? id : Guid.Empty;
     }
 }
