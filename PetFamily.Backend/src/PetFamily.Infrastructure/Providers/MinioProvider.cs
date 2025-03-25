@@ -2,14 +2,17 @@ using CSharpFunctionalExtensions;
 using Microsoft.Extensions.Logging;
 using Minio;
 using Minio.DataModel.Args;
+using PetFamily.Application.FileProvider;
 using PetFamily.Application.Providers;
+using PetFamily.Domain.PetManagement.PetVO;
 using PetFamily.Domain.Shared.ErrorContext;
-using PetFamily.Infrastructure.Models;
 
 namespace PetFamily.Infrastructure.Providers;
 
 public class MinioProvider : IFileProvider
 {
+    private const int MAX_DEGREE_OF_PARALLELISM = 5;
+
     private readonly IMinioClient _minioClient;
     private readonly ILogger<MinioProvider> _logger;
 
@@ -19,58 +22,53 @@ public class MinioProvider : IFileProvider
         _logger = logger;
     }
 
-    public async Task<Result<string, Error>> UploadFile(
-        FileData fileData,
+    public async Task<Result<IReadOnlyList<PhotoPath>, Error>> UploadFiles(
+        IEnumerable<PhotoData> photosData,
         CancellationToken cancellationToken = default)
     {
+        var semaphoreSlim = new SemaphoreSlim(MAX_DEGREE_OF_PARALLELISM);
+        var photosList = photosData.ToList();
+
         try
         {
-            var buketExistArgs = new BucketExistsArgs()
-                .WithBucket("photos");
+            await IfBucketsNotExistCreateBucket(photosList, cancellationToken);
 
-            var bucketExist = await _minioClient.BucketExistsAsync(buketExistArgs, cancellationToken);
+            var tasks = photosList.Select(async photo =>
+                await PutObject(photo, semaphoreSlim, cancellationToken));
 
-            if (bucketExist == false)
-            {
-                var makeBuketArgs = new MakeBucketArgs()
-                    .WithBucket("photos");
+            var pathsResult = await Task.WhenAll(tasks);
 
-                await _minioClient.MakeBucketAsync(makeBuketArgs, cancellationToken);
-            }
+            if (pathsResult.Any(p => p.IsFailure))
+                return pathsResult.First().Error;
 
-            var path = Guid.NewGuid();
+            var results = pathsResult.Select(p => p.Value).ToList();
 
-            var putObjectsArgs = new PutObjectArgs()
-                .WithBucket("photos")
-                .WithStreamData(fileData.Stream)
-                .WithObjectSize(fileData.Stream.Length)
-                .WithObject(path.ToString());
-
-            var result = await _minioClient.PutObjectAsync(putObjectsArgs, cancellationToken);
-
-            return result.ObjectName;
+            return results;
         }
-        catch (Exception exception)
+        catch (Exception ex)
         {
-            _logger.LogError(exception, "Fail to upload file in minio");
-            return Error.Failure("file.upload", "Fail to upload file in minio");
+            _logger.LogError(ex,
+                "Fail to upload files in minio, files amount: {amount}", photosList.Count);
+
+            return Error.Failure("file.upload", "Fail to upload files in minio");
         }
     }
 
-    public async Task<Result<string, Error>> DeleteFile(
-        Guid fieldId, 
+    public async Task<UnitResult<Error>> DeleteFiles(
+        PhotosPathWithBucket photosPathWithBucket,
         CancellationToken cancellationToken = default)
     {
         try
         {
-            var removeObjectArgs = new RemoveObjectArgs()
-                .WithBucket("photos")
-                .WithObject(fieldId.ToString());
-            
-            await _minioClient.RemoveObjectAsync(removeObjectArgs, cancellationToken);
-            
-            return Result.Success<string, Error>(fieldId.ToString());
-            
+            var removeObjectArgs = new RemoveObjectsArgs()
+                .WithBucket(photosPathWithBucket.BucketName)
+                .WithObjects(photosPathWithBucket.PhotosPath
+                    .Select(obj => obj.Path)
+                    .ToList());
+
+            await _minioClient.RemoveObjectsAsync(removeObjectArgs, cancellationToken);
+
+            return Result.Success<Error>();
         }
         catch (Exception exception)
         {
@@ -79,25 +77,63 @@ public class MinioProvider : IFileProvider
         }
     }
     
-    public async Task<Result<string, Error>> GetFileDownloadUrl(
-        Guid fieldId)
+
+    private async Task<Result<PhotoPath, Error>> PutObject(
+        PhotoData photoData,
+        SemaphoreSlim semaphoreSlim,
+        CancellationToken cancellationToken)
     {
+        await semaphoreSlim.WaitAsync(cancellationToken);
+
+        var putObjectArgs = new PutObjectArgs()
+            .WithBucket(photoData.BucketName)
+            .WithStreamData(photoData.Stream)
+            .WithObjectSize(photoData.Stream.Length)
+            .WithObject(photoData.PhotoPath.Path);
+
         try
         {
-            var presignedGetObjectArgs = new PresignedGetObjectArgs()
-                .WithBucket("photos")
-                .WithObject(fieldId.ToString())
-                .WithExpiry(60 * 60 * 24);
-            
-            var url = await _minioClient.PresignedGetObjectAsync(presignedGetObjectArgs);
-            Console.WriteLine(url);
-            return Result.Success<string, Error>(fieldId.ToString());
-            
+            await _minioClient
+                .PutObjectAsync(putObjectArgs, cancellationToken);
+
+            return photoData.PhotoPath;
         }
-        catch (Exception exception)
+        catch (Exception ex)
         {
-            _logger.LogError(exception, "Failed to generate presigned URL for file in minio");
-            return Error.Failure("file.download", "Failed to generate presigned URL for file in minio");
+            _logger.LogError(ex,
+                "Fail to upload file in minio with path {path} in bucket {bucket}",
+                photoData.PhotoPath.Path,
+                photoData.BucketName);
+
+            return Error.Failure("file.upload", "Fail to upload file in minio");
+        }
+        finally
+        {
+            semaphoreSlim.Release();
+        }
+    }
+
+    private async Task IfBucketsNotExistCreateBucket(
+        IEnumerable<PhotoData> photosData,
+        CancellationToken cancellationToken)
+    {
+        HashSet<string> bucketNames = [..photosData.Select(file => file.BucketName)];
+
+        foreach (var bucketName in bucketNames)
+        {
+            var bucketExistArgs = new BucketExistsArgs()
+                .WithBucket(bucketName);
+
+            var bucketExist = await _minioClient
+                .BucketExistsAsync(bucketExistArgs, cancellationToken);
+
+            if (bucketExist == false)
+            {
+                var makeBucketArgs = new MakeBucketArgs()
+                    .WithBucket(bucketName);
+
+                await _minioClient.MakeBucketAsync(makeBucketArgs, cancellationToken);
+            }
         }
     }
 }

@@ -1,9 +1,9 @@
 using FluentValidation;
-using PetFamily.Application.Volunteers.Actions.Create;
-using PetFamily.Application.Volunteers.DTOs.Collections;
+using PetFamily.Application.Volunteers.Actions.Volunteers.Create;
+using PetFamily.Application.Volunteers.VolunteerDTOs.Collections;
 using PetFamily.Domain.PetManagement.VolunteerVO;
 
-namespace PetFamily.Application.Volunteers.Actions.Update.UpdateSocialNetwork;
+namespace PetFamily.Application.Volunteers.Validators;
 
 public class CollectionSocialNetworkDtoValidator : AbstractValidator<CollectionSocialNetworkDto>
 {

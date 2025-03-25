@@ -280,12 +280,12 @@ namespace PetFamily.Infrastructure.Migrations
                         {
                             b1.IsRequired();
 
-                            b1.Property<int>("Height")
-                                .HasColumnType("integer")
+                            b1.Property<double>("Height")
+                                .HasColumnType("double precision")
                                 .HasColumnName("height");
 
-                            b1.Property<int>("Weight")
-                                .HasColumnType("integer")
+                            b1.Property<double>("Weight")
+                                .HasColumnType("double precision")
                                 .HasColumnName("weight");
                         });
 
@@ -487,6 +487,50 @@ namespace PetFamily.Infrastructure.Migrations
                         .HasForeignKey("pets_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .HasConstraintName("fk_pets_volunteers_pets_id");
+
+                    b.OwnsOne("PetFamily.Domain.PetManagement.SharedVO.ValueObjectList<PetFamily.Domain.PetManagement.PetVO.PetPhoto>", "PetPhotos", b1 =>
+                        {
+                            b1.Property<Guid>("PetId")
+                                .HasColumnType("uuid")
+                                .HasColumnName("id");
+
+                            b1.HasKey("PetId");
+
+                            b1.ToTable("Pets");
+
+                            b1.ToJson("photos");
+
+                            b1.WithOwner()
+                                .HasForeignKey("PetId")
+                                .HasConstraintName("fk_pets_pets_id");
+
+                            b1.OwnsMany("PetFamily.Domain.PetManagement.PetVO.PetPhoto", "Values", b2 =>
+                                {
+                                    b2.Property<Guid>("ValueObjectListPetId")
+                                        .HasColumnType("uuid");
+
+                                    b2.Property<int>("__synthesizedOrdinal")
+                                        .ValueGeneratedOnAdd()
+                                        .HasColumnType("integer");
+
+                                    b2.Property<string>("PathToStorage")
+                                        .IsRequired()
+                                        .HasColumnType("text");
+
+                                    b2.HasKey("ValueObjectListPetId", "__synthesizedOrdinal");
+
+                                    b2.ToTable("Pets");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("ValueObjectListPetId")
+                                        .HasConstraintName("fk_pets_pets_value_object_list_pet_id");
+                                });
+
+                            b1.Navigation("Values");
+                        });
+
+                    b.Navigation("PetPhotos")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("PetFamily.Domain.SpesiesManagment.Entities.Breed", b =>

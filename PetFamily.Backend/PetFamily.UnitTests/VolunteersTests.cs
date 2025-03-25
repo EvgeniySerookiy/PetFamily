@@ -57,6 +57,12 @@ public class VolunteerTests
         var petName = PetName.Create("Test");
         var speciesId = SpeciesId.EmptySpeciesId();
         var breedId = BreedId.EmptyBreedId();
+        var petPhotos = new ValueObjectList<PetPhoto>(
+            new List<PetPhoto>
+            {
+                PetPhoto.Create(PhotoPath.Create(Guid.NewGuid(), ".pdf").Value).Value,
+                PetPhoto.Create(PhotoPath.Create(Guid.NewGuid(), ".pdf").Value).Value
+            });
         var title = Title.Create("Test");
         var descriptionPet = Description.Create("Test");
         var color = Color.Create("Test");
@@ -81,6 +87,7 @@ public class VolunteerTests
             petName.Value,
             speciesId,
             breedId,
+            petPhotos,
             title.Value,
             descriptionPet.Value,
             color.Value,
@@ -92,7 +99,6 @@ public class VolunteerTests
             isVaccinated.Value,
             dateOfBirth,
             status,
-            transferRequisitesForHelpsListPet.Value,
             dateOfCreation);
 
         return pet;

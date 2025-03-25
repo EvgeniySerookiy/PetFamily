@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Minio;
+using PetFamily.Application.Database;
 using PetFamily.Application.Providers;
 using PetFamily.Application.Volunteers;
 using PetFamily.Infrastructure.BackgroundServices;
@@ -19,6 +20,7 @@ public static class Inject
         services.AddScoped<ApplicationDbContex>();
         services.AddDbContextFactory<ApplicationDbContex>();
         services.AddScoped<IVolunteersRepository, VolunteersRepository>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddHostedService<SoftDeleteCleanupService>();
         services.AddMinio(configuration);
         

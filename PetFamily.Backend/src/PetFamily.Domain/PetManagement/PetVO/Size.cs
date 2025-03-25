@@ -5,16 +5,16 @@ namespace PetFamily.Domain.PetManagement.PetVO;
 
 public record Size
 {
-    public int Weight { get; }
-    public int Height { get; }
+    public double Weight { get; }
+    public double Height { get; }
 
-    private Size(int weight, int height)
+    private Size(double weight, double height)
     {
         Weight = weight;
         Height = height;
     }
 
-    public static Result<Size, Error> Create(int weight, int height)
+    public static Result<Size, Error> Create(double weight, double height)
     {
         if (weight <= 0) 
             return Errors.General.ValueCannotBeNegative("Weight", weight);
