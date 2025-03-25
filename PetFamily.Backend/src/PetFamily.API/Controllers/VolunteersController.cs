@@ -134,15 +134,14 @@ public class VolunteersController : ApplicationController
         return Ok(result.Value);
     }
     
-    [HttpPut("{volunteerId:guid}/move-pets/{petIdMove:guid}/{petIdTarget:guid}")]
+    [HttpPut("{id:guid}/move-pets")]
     public async Task<ActionResult> MovePets(
-        [FromRoute] Guid volunteerId,
-        [FromRoute] Guid petIdMove,
-        [FromRoute] Guid petIdTarget,
+        [FromRoute] Guid id,
+        [FromForm] MovePetsRequest request,
         [FromServices] MovePetsHandler handler,
         CancellationToken cancellationToken = default)
     {
-        var command = new MovePetsCommand(volunteerId, petIdMove, petIdTarget);
+        var command = new MovePetsCommand(id, request.CurrentPosition, request.ToPosition);
         
         var result = await handler.Handle(command, cancellationToken);
         if(result.IsFailure)

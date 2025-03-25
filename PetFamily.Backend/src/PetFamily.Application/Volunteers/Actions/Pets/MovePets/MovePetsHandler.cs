@@ -28,19 +28,26 @@ public class MovePetsHandler
         CancellationToken cancellationToken = default)
     {
         var volunteerResult = await _volunteersRepository.GetById(
-            VolunteerId.Create(command.VolunteerId),
+            VolunteerId.Create(command.id),
             cancellationToken);
 
-        var petMoveResult = volunteerResult.Value.GetPetById(command.PetIdMove);
-        var petTargetResult = volunteerResult.Value.GetPetById(command.PetIdTarget);
+        var petMoveResult = volunteerResult.Value.Pets
+            .FirstOrDefault(p => p.SerialNumber.Value == command.CurrentPosition);
+        if (petMoveResult == null)
+        {
+            _logger.LogWarning("Pet with serial number {SerialNumber} not found", 
+                command.CurrentPosition);
+            
+            return Errors.General.InvalidRequest(command.CurrentPosition);
+        }
         
-        volunteerResult.Value.MovePet(petMoveResult.Value, petTargetResult.Value.SerialNumber.Value);
+        volunteerResult.Value.MovePet(petMoveResult, command.ToPosition);
         
         await _unitOfWork.SaveChanges(cancellationToken);
         
         _logger.LogInformation("Moving pet with ID {PetId} for volunteer with ID {VolunteerId}", 
-            petMoveResult.Value.Id, volunteerResult.Value.Id);
+            petMoveResult.Id, volunteerResult.Value.Id);
         
-        return petMoveResult.Value.Id.Value;
+        return petMoveResult.Id.Value;
     }
 }

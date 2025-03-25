@@ -13,7 +13,7 @@ using PetFamily.Infrastructure;
 namespace PetFamily.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContex))]
-    [Migration("20250324163747_UpdateTables")]
+    [Migration("20250325105310_UpdateTables")]
     partial class UpdateTables
     {
         /// <inheritdoc />

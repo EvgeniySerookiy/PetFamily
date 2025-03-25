@@ -22,6 +22,12 @@ public static class Errors
             return Error.Validation(
                 "out.of.range", $"out of range {value}");
         }
+        
+        public static Error InvalidRequest(int value)
+        {
+            return Error.Validation(
+                "invalid.request", $"invalid request {value}");
+        }
 
         public static Error ValueCannotBeNegative(string? name = null, double? value = null)
         {
