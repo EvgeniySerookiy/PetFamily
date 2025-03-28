@@ -1,8 +1,9 @@
+using PetFamily.Application.Volunteers.PetDTOs;
 using PetFamily.Domain;
 
-namespace PetFamily.Application.Volunteers.PetDTOs;
+namespace PetFamily.Application.Volunteers.Actions.Pets.AddPet;
 
-public record MainPetInfoDto(
+public record MainPetInfoCommand(
     string Name,
     string Title,
     string Description,
@@ -10,7 +11,7 @@ public record MainPetInfoDto(
     string PetHealthInformation,
     PetAddressDto Address,
     string PhoneNumber,
-    PetSize PetSize,
+    PetSizeDto PetSizeDto,
     bool IsNeutered,
     bool IsVaccinated,
     DateTime? DateOfBirth,

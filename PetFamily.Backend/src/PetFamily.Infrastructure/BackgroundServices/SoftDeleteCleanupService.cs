@@ -29,21 +29,21 @@ public class SoftDeleteCleanupService : Microsoft.Extensions.Hosting.BackgroundS
 
         while (stoppingToken.IsCancellationRequested == false &&
                await timer.WaitForNextTickAsync(stoppingToken))
-        try
-        {
-            var deletedVolunteers = _context.Volunteers
-                .Where(v => v.IsDeleted &&
-                            DateTime.UtcNow - v.DeletionDate >= _softDeleteOptions.TimeToRestore);
+            try
+            {
+                var deletedVolunteers = _context.Volunteers
+                    .Where(v => v.IsDeleted &&
+                                DateTime.UtcNow - v.DeletionDate >= _softDeleteOptions.TimeToRestore);
             
-            _context.Volunteers.RemoveRange(deletedVolunteers);
+                _context.Volunteers.RemoveRange(deletedVolunteers);
             
-            await _context.SaveChangesAsync(stoppingToken);
+                await _context.SaveChangesAsync(stoppingToken);
             
-            _logger.LogInformation("Soft delete cleanup completed successfully");
-        }
-        catch (Exception exception)
-        {
-            _logger.LogError(exception, exception.Message);
-        }
+                _logger.LogInformation("Soft delete cleanup completed successfully");
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, exception.Message);
+            }
     }
 }

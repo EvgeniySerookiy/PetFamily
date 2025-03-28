@@ -44,7 +44,7 @@ public class Pet : SoftDeletableEntity<PetId>
         Size size,
         NeuteredStatus isNeutered,
         RabiesVaccinationStatus isVaccinated,
-        DateTime dateOfBirth,
+        DateTime? dateOfBirth,
         AssistanceStatus status,
         DateTime dateOfCreation) : base(id)
     {

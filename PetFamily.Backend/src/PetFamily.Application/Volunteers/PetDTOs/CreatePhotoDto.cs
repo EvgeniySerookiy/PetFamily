@@ -1,6 +1,6 @@
 namespace PetFamily.Application.Volunteers.PetDTOs;
 
-public record CreateFileDto(
+public record CreatePhotoDto(
     Stream Content,
-    string FileName,
+    string PhotoName,
     string ContentType);

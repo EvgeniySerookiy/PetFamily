@@ -1,36 +1,46 @@
 using CSharpFunctionalExtensions;
+using FluentValidation;
 using Microsoft.Extensions.Logging;
 using PetFamily.Application.Database;
+using PetFamily.Application.Extensions;
 using PetFamily.Domain.PetManagement.VolunteerVO;
 using PetFamily.Domain.Shared.ErrorContext;
 
 namespace PetFamily.Application.Volunteers.Actions.Volunteers.Update.UpdateSocialNetwork;
 
-public class UpdateCollectionSocialNetworkHandler
+public class UpdateSocialNetworkHandler
 {
     private readonly IVolunteersRepository _volunteersRepository;
+    private readonly ILogger<UpdateSocialNetworkHandler> _logger;
+    private readonly IValidator<UpdateSocialNetworksCommand> _validator;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly ILogger<UpdateCollectionSocialNetworkHandler> _logger;
 
-    public UpdateCollectionSocialNetworkHandler(
+    public UpdateSocialNetworkHandler(
         IVolunteersRepository volunteersRepository,
-        IUnitOfWork unitOfWork,
-        ILogger<UpdateCollectionSocialNetworkHandler> logger)
+        ILogger<UpdateSocialNetworkHandler> logger,
+        IValidator<UpdateSocialNetworksCommand> validator,
+        IUnitOfWork unitOfWork)
     {
         _volunteersRepository = volunteersRepository;
-        _unitOfWork = unitOfWork;
         _logger = logger;
+        _validator = validator;
+        _unitOfWork = unitOfWork;
     }
 
-    public async Task<Result<Guid, Error>> Handle(
-        UpdateCollectionSocialNetworkRequest request,
+    public async Task<Result<Guid, ErrorList>> Handle(
+        Guid id,
+        UpdateSocialNetworksCommand command,
         CancellationToken cancellationToken = default)
     {
-        var volunteerResult = await _volunteersRepository.GetById(request.VolunteerId, cancellationToken);
+        var validationResult = await _validator.ValidateAsync(command, cancellationToken);
+        if (validationResult.IsValid == false)
+            return validationResult.ToErrorList();
+        
+        var volunteerResult = await _volunteersRepository.GetById(id, cancellationToken);
         if (volunteerResult.IsFailure)
-            return volunteerResult.Error;
+            return volunteerResult.Error.ToErrorList();
 
-        var socialNetworks = request.CollectionSocialNetwork.SocialNetworks;
+        var socialNetworks = command.SocialNetworks;
         var socialNetworkList = new List<SocialNetwork>();
         foreach (var socialNetwork in socialNetworks)
         {
@@ -49,7 +59,7 @@ public class UpdateCollectionSocialNetworkHandler
         _logger.LogInformation(
             "Update volunteer {socialNetworkList} with id {volunteerId}", 
             socialNetworkList,
-            request.VolunteerId);
+            id);
 
         return volunteerResult.Value.Id.Value;
     }

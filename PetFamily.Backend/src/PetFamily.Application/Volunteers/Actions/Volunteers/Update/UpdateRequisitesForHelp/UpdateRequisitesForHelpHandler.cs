@@ -1,36 +1,46 @@
 using CSharpFunctionalExtensions;
+using FluentValidation;
 using Microsoft.Extensions.Logging;
 using PetFamily.Application.Database;
+using PetFamily.Application.Extensions;
 using PetFamily.Domain.PetManagement.VolunteerVO;
 using PetFamily.Domain.Shared.ErrorContext;
 
 namespace PetFamily.Application.Volunteers.Actions.Volunteers.Update.UpdateRequisitesForHelp;
 
-public class UpdateCollectionRequisitesForHelpHandler
+public class UpdateRequisitesForHelpHandler
 {
     private readonly IVolunteersRepository _volunteersRepository;
+    private readonly ILogger<UpdateRequisitesForHelpHandler> _logger;
+    private readonly IValidator<UpdateRequisitesForHelpCommand> _validator;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly ILogger<UpdateCollectionRequisitesForHelpHandler> _logger;
 
-    public UpdateCollectionRequisitesForHelpHandler(
+    public UpdateRequisitesForHelpHandler(
         IVolunteersRepository volunteersRepository,
-        IUnitOfWork unitOfWork,
-        ILogger<UpdateCollectionRequisitesForHelpHandler> logger)
+        ILogger<UpdateRequisitesForHelpHandler> logger,
+        IValidator<UpdateRequisitesForHelpCommand> validator,
+        IUnitOfWork unitOfWork)
     {
         _volunteersRepository = volunteersRepository;
-        _unitOfWork = unitOfWork;
         _logger = logger;
+        _validator = validator;
+        _unitOfWork = unitOfWork;
     }
 
-    public async Task<Result<Guid, Error>> Handle(
-        UpdateCollectionRequisitesForHelpRequest request,
+    public async Task<Result<Guid, ErrorList>> Handle(
+        Guid id,
+        UpdateRequisitesForHelpCommand command,
         CancellationToken cancellationToken = default)
     {
-        var volunteerResult = await _volunteersRepository.GetById(request.VolunteerId, cancellationToken);
+        var validationResult = await _validator.ValidateAsync(command, cancellationToken);
+        if (validationResult.IsValid == false)
+            return validationResult.ToErrorList();
+        
+        var volunteerResult = await _volunteersRepository.GetById(id, cancellationToken);
         if (volunteerResult.IsFailure)
-            return volunteerResult.Error;
+            return volunteerResult.Error.ToErrorList();
 
-        var requisitesForHelps = request.CollectionRequisitesForHelp.RequisitesForHelps;
+        var requisitesForHelps = command.RequisitesForHelps;
         var requisitesForHelpList = new List<RequisitesForHelp>();
         foreach (var requisitesForHelp in requisitesForHelps)
         {
@@ -49,7 +59,7 @@ public class UpdateCollectionRequisitesForHelpHandler
         _logger.LogInformation(
             "Update volunteer {requisitesForHelpList} with id {volunteerId}", 
             requisitesForHelpList,
-            request.VolunteerId);
+            id);
 
         return volunteerResult.Value.Id.Value;
     }

@@ -1,6 +1,8 @@
 using CSharpFunctionalExtensions;
+using FluentValidation;
 using Microsoft.Extensions.Logging;
 using PetFamily.Application.Database;
+using PetFamily.Application.Extensions;
 using PetFamily.Domain.PetManagement.SharedVO;
 using PetFamily.Domain.PetManagement.VolunteerVO;
 using PetFamily.Domain.Shared.ErrorContext;
@@ -10,36 +12,44 @@ namespace PetFamily.Application.Volunteers.Actions.Volunteers.Update.UpdateMainI
 public class UpdateMainInfoHandler
 {
     private readonly IVolunteersRepository _volunteersRepository;
-    private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<UpdateMainInfoHandler> _logger;
+    private readonly IValidator<UpdateMainInfoCommand> _validator;
+    private readonly IUnitOfWork _unitOfWork;
 
     public UpdateMainInfoHandler(
         IVolunteersRepository volunteersRepository,
-        IUnitOfWork unitOfWork,
-        ILogger<UpdateMainInfoHandler> logger)
+        ILogger<UpdateMainInfoHandler> logger,
+        IValidator<UpdateMainInfoCommand> validator,
+        IUnitOfWork unitOfWork)
     {
         _volunteersRepository = volunteersRepository;
-        _unitOfWork = unitOfWork;
         _logger = logger;
+        _validator = validator;
+        _unitOfWork = unitOfWork;
+        
     }
 
-    public async Task<Result<Guid, Error>> Handle(
-        UpdateMainInfoRequest request,
+    public async Task<Result<Guid, ErrorList>> Handle(
+        UpdateMainInfoCommand command,
         CancellationToken cancellationToken = default)
     {
-        var volunteerResult = await _volunteersRepository.GetById(request.VolunteerId, cancellationToken);
+        var validationResult = await _validator.ValidateAsync(command, cancellationToken);
+        if (validationResult.IsValid == false)
+            return validationResult.ToErrorList();
+        
+        var volunteerResult = await _volunteersRepository.GetById(command.VolunteerId, cancellationToken);
         if (volunteerResult.IsFailure)
-            return volunteerResult.Error;
+            return volunteerResult.Error.ToErrorList();
 
         var fullName = FullName.Create(
-            request.MainInfo.FullName.FirstName,
-            request.MainInfo.FullName.LastName,
-            request.MainInfo.FullName.MiddleName).Value;
+            command.MainInfo.FullName.FirstName,
+            command.MainInfo.FullName.LastName,
+            command.MainInfo.FullName.MiddleName).Value;
 
-        var email = Email.Create(request.MainInfo.Email).Value;
-        var description = Description.Create(request.MainInfo.Description).Value;
-        var yearsOfExperience = YearsOfExperience.Create(request.MainInfo.YearsOfExperience).Value;
-        var phoneNumber = PhoneNumber.Create(request.MainInfo.PhoneNumber).Value;
+        var email = Email.Create(command.MainInfo.Email).Value;
+        var description = Description.Create(command.MainInfo.Description).Value;
+        var yearsOfExperience = YearsOfExperience.Create(command.MainInfo.YearsOfExperience).Value;
+        var phoneNumber = PhoneNumber.Create(command.MainInfo.PhoneNumber).Value;
 
         volunteerResult.Value.UpdateMainInfo(
             fullName,
@@ -58,7 +68,7 @@ public class UpdateMainInfoHandler
             description,
             yearsOfExperience,
             phoneNumber,
-            request.VolunteerId);
+            command.VolunteerId);
 
         return volunteerResult.Value.Id.Value;
     }

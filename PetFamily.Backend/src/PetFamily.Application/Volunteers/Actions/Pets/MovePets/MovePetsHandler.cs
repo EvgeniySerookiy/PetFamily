@@ -1,6 +1,8 @@
 using CSharpFunctionalExtensions;
+using FluentValidation;
 using Microsoft.Extensions.Logging;
 using PetFamily.Application.Database;
+using PetFamily.Application.Extensions;
 using PetFamily.Application.Volunteers.Actions.Pets.AddPet;
 using PetFamily.Domain.PetManagement.VolunteerVO;
 using PetFamily.Domain.Shared.ErrorContext;
@@ -9,26 +11,34 @@ namespace PetFamily.Application.Volunteers.Actions.Pets.MovePets;
 
 public class MovePetsHandler
 {
-    private readonly IUnitOfWork _unitOfWork;
     private readonly IVolunteersRepository _volunteersRepository;
     private readonly ILogger<AddPetHandler> _logger;
+    private readonly IValidator<MovePetsCommand> _validator;
+    private readonly IUnitOfWork _unitOfWork;
 
     public MovePetsHandler(
-        IUnitOfWork unitOfWork,
         IVolunteersRepository volunteersRepository,
-        ILogger<AddPetHandler> logger)
+        ILogger<AddPetHandler> logger,
+        IValidator<MovePetsCommand> validator,
+        IUnitOfWork unitOfWork)
     {
-        _unitOfWork = unitOfWork;
         _volunteersRepository = volunteersRepository;
         _logger = logger;
+        _validator = validator;
+        _unitOfWork = unitOfWork;
     }
 
-    public async Task<Result<Guid, Error>> Handle(
+    public async Task<Result<Guid, ErrorList>> Handle(
+        Guid id,
         MovePetsCommand command,
         CancellationToken cancellationToken = default)
     {
+        var validationResult = await _validator.ValidateAsync(command, cancellationToken);
+        if (validationResult.IsValid == false)
+            return validationResult.ToErrorList();
+        
         var volunteerResult = await _volunteersRepository.GetById(
-            VolunteerId.Create(command.id),
+            VolunteerId.Create(id),
             cancellationToken);
 
         var petMoveResult = volunteerResult.Value.Pets
@@ -38,7 +48,7 @@ public class MovePetsHandler
             _logger.LogWarning("Pet with serial number {SerialNumber} not found", 
                 command.CurrentPosition);
             
-            return Errors.General.InvalidRequest(command.CurrentPosition);
+            return Errors.General.InvalidRequest(command.CurrentPosition).ToErrorList();
         }
         
         volunteerResult.Value.MovePet(petMoveResult, command.ToPosition);

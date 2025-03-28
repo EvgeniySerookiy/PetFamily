@@ -16,35 +16,37 @@ public class DeletePetPhotosHandler
     private const string BUCKET_NAME = "photos";
     
     private readonly IFileProvider _fileProvider;
-    private readonly IUnitOfWork _unitOfWork;
     private readonly IVolunteersRepository _volunteersRepository;
     private readonly ILogger<AddPetHandler> _logger;
+    private readonly IUnitOfWork _unitOfWork;
     
     public DeletePetPhotosHandler(
         IFileProvider fileProvider,
-        IUnitOfWork unitOfWork,
         IVolunteersRepository volunteersRepository,
-        ILogger<AddPetHandler> logger)
+        ILogger<AddPetHandler> logger,
+        IUnitOfWork unitOfWork)
     {
         _fileProvider = fileProvider;
-        _unitOfWork = unitOfWork;
         _volunteersRepository = volunteersRepository;
         _logger = logger;
+        _unitOfWork = unitOfWork;
     }
 
-    public async Task<Result<Guid, Error>> Handle(
+    public async Task<Result<Guid, ErrorList>> Handle(
+        Guid volunteerId,
+        Guid petId,
         DeletePetPhotosCommand command,
         CancellationToken cancellationToken = default)
     {
         var volunteerResult = await _volunteersRepository.GetById(
-            VolunteerId.Create(command.VolunteerId),
+            VolunteerId.Create(volunteerId),
             cancellationToken);
         
         var pet = volunteerResult.Value.Pets
-            .FirstOrDefault(p => p.Id == command.PetId);
+            .FirstOrDefault(p => p.Id == petId);
         
         if(pet == null)
-            return Errors.General.NotFound(command.PetId);
+            return Errors.General.NotFound(petId).ToErrorList();
 
         var photosIdToDelete = command.PhotosId.ToList();
 
@@ -66,14 +68,14 @@ public class DeletePetPhotosHandler
         
         var deleteResult = await _fileProvider.DeleteFiles(photosPathWithBucket, cancellationToken);
         if(deleteResult.IsFailure)
-            return deleteResult.Error;
+            return deleteResult.Error.ToErrorList();
 
         pet.PetPhotos.RemoveAll(photos);
         
         await _unitOfWork.SaveChanges(cancellationToken);
         
         _logger.LogInformation("Deleted photos to pet with id {PetId} from a volunteer with id {VolunteerId}",
-            command.PetId, command.VolunteerId);
+            petId, volunteerId);
         
         return pet.Id.Value;
     }

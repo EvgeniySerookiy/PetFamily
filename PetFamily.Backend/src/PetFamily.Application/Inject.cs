@@ -2,7 +2,6 @@ using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using PetFamily.Application.Volunteers.Actions.Pets.AddPet;
 using PetFamily.Application.Volunteers.Actions.Pets.AddPetPhotos;
-using PetFamily.Application.Volunteers.Actions.Pets.DeletePetPhotos;
 using PetFamily.Application.Volunteers.Actions.Pets.MovePets;
 using PetFamily.Application.Volunteers.Actions.Volunteers.Create;
 using PetFamily.Application.Volunteers.Actions.Volunteers.Delete;
@@ -19,8 +18,8 @@ public static class Inject
     {
         services.AddScoped<CreateVolunteerHandler>();
         services.AddScoped<UpdateMainInfoHandler>();
-        services.AddScoped<UpdateCollectionRequisitesForHelpHandler>();
-        services.AddScoped<UpdateCollectionSocialNetworkHandler>();
+        services.AddScoped<UpdateRequisitesForHelpHandler>();
+        services.AddScoped<UpdateSocialNetworkHandler>();
         services.AddScoped<DeleteVolunteerHandler>();
         services.AddScoped<RestoreVolunteerHandler>();
         services.AddValidatorsFromAssembly(typeof(Inject).Assembly);

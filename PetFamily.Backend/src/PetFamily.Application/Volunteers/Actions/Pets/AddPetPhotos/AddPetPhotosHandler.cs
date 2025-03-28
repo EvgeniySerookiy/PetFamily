@@ -13,52 +13,54 @@ namespace PetFamily.Application.Volunteers.Actions.Pets.AddPetPhotos;
 public class AddPetPhotosHandler
 {
     private const string BUCKET_NAME = "photos";
-    
+
     private readonly IFileProvider _fileProvider;
-    private readonly IUnitOfWork _unitOfWork;
     private readonly IVolunteersRepository _volunteersRepository;
     private readonly ILogger<AddPetHandler> _logger;
+    private readonly IUnitOfWork _unitOfWork;
 
     public AddPetPhotosHandler(
         IFileProvider fileProvider,
-        IUnitOfWork unitOfWork,
         IVolunteersRepository volunteersRepository,
-        ILogger<AddPetHandler> logger)
+        ILogger<AddPetHandler> logger,
+        IUnitOfWork unitOfWork)
     {
         _fileProvider = fileProvider;
-        _unitOfWork = unitOfWork;
         _volunteersRepository = volunteersRepository;
         _logger = logger;
+        _unitOfWork = unitOfWork;
     }
-    
-    
-    public async Task<Result<Guid, Error>> Handle(
+
+
+    public async Task<Result<Guid, ErrorList>> Handle(
+        Guid volunteerId,
+        Guid petId,
         AddPetPhotosCommand command,
         CancellationToken cancellationToken = default)
     {
+        // Транзакция не нужна уже
         var transaction = await _unitOfWork.BeginTransaction(cancellationToken);
 
         try
         {
             var volunteerResult = await _volunteersRepository.GetById(
-                VolunteerId.Create(command.VolunteerId),
+                VolunteerId.Create(volunteerId),
                 cancellationToken);
 
-            var petResult = volunteerResult.Value.GetPetById(command.PetId);
+            var petResult = volunteerResult.Value.GetPetById(petId);
 
             if (volunteerResult.IsFailure)
-                return volunteerResult.Error;
-
-
+                return volunteerResult.Error.ToErrorList();
+            
             List<PhotoData> photosData = [];
 
-            foreach (var file in command.CollectionFiles.Files)
+            foreach (var file in command.Photos)
             {
-                var fullFileName = Path.GetFileName(file.FileName);
+                var fullFileName = Path.GetFileName(file.PhotoName);
 
                 var photoPath = PhotoPath.Create(Guid.NewGuid(), fullFileName);
                 if (photoPath.IsFailure)
-                    return photoPath.Error;
+                    return photoPath.Error.ToErrorList();
 
                 var fileData = new PhotoData(file.Content, photoPath.Value, BUCKET_NAME);
 
@@ -77,25 +79,25 @@ public class AddPetPhotosHandler
             var uploadResult = await _fileProvider.UploadFiles(photosData, cancellationToken);
 
             if (uploadResult.IsFailure)
-                return uploadResult.Error;
+                return uploadResult.Error.ToErrorList();
 
             transaction.Commit();
 
             _logger.LogInformation("Adding photos to pet with id {PetId} from a volunteer with id {VolunteerId}",
-                command.PetId, command.VolunteerId);
+                petId, volunteerId);
 
             return petResult.Value.Id.Value;
         }
 
         catch (Exception exception)
         {
-            _logger.LogError(exception, 
-                "Failed to add photos to pet with id {PetId} from volunteer with id {VolunteerId} in transaction", 
-                command.PetId, command.VolunteerId);
+            _logger.LogError(exception,
+                "Failed to add photos to pet with id {PetId} from volunteer with id {VolunteerId} in transaction",
+                petId, volunteerId);
         }
 
         transaction.Rollback();
-    
-        return Error.Failure($"Failed to add photos to pet with id {command.PetId} for volunteer with id {command.VolunteerId}", "volunteer.pet.photos.failure");
+
+        return petId;
     }
 }

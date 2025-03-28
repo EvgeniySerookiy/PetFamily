@@ -17,7 +17,7 @@ public record Address
         string city, 
         string street, 
         string building, 
-        string apartment)
+        string? apartment = null)
     {
         Region = region;
         City = city;

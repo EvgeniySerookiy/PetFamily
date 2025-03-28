@@ -3,7 +3,7 @@ using PetFamily.Domain.PetManagement.AggregateRoot;
 using PetFamily.Domain.PetManagement.VolunteerVO;
 using PetFamily.Domain.Shared.ErrorContext;
 
-namespace PetFamily.Application.Volunteers;
+namespace PetFamily.Application.Database;
 
 public interface IVolunteersRepository
 {
