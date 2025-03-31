@@ -42,7 +42,7 @@ public class MovePetsHandler
             cancellationToken);
 
         var petMoveResult = volunteerResult.Value.Pets
-            .FirstOrDefault(p => p.SerialNumber.Value == command.CurrentPosition);
+            .FirstOrDefault(p => p.Position.Value == command.CurrentPosition);
         if (petMoveResult == null)
         {
             _logger.LogWarning("Pet with serial number {SerialNumber} not found", 

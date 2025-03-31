@@ -2,7 +2,7 @@ using CSharpFunctionalExtensions;
 using Microsoft.Extensions.Logging;
 using Minio;
 using Minio.DataModel.Args;
-using PetFamily.Application.FileProvider;
+using PetFamily.Application.Photos;
 using PetFamily.Application.Providers;
 using PetFamily.Domain.PetManagement.PetVO;
 using PetFamily.Domain.Shared.ErrorContext;
@@ -22,7 +22,7 @@ public class MinioProvider : IFileProvider
         _logger = logger;
     }
 
-    public async Task<Result<IReadOnlyList<PhotoPath>, Error>> UploadFiles(
+    public async Task<Result<IReadOnlyList<PhotoPath>, Error>> UploadPhotos(
         IEnumerable<PhotoData> photosData,
         CancellationToken cancellationToken = default)
     {
@@ -31,7 +31,7 @@ public class MinioProvider : IFileProvider
 
         try
         {
-            await IfBucketsNotExistCreateBucket(photosList, cancellationToken);
+            await IfBucketsNotExistCreateBucket(photosList.Select(photo => photo.PhotoInfo.BucketName), cancellationToken);
 
             var tasks = photosList.Select(async photo =>
                 await PutObject(photo, semaphoreSlim, cancellationToken));
@@ -54,7 +54,7 @@ public class MinioProvider : IFileProvider
         }
     }
 
-    public async Task<UnitResult<Error>> DeleteFiles(
+    public async Task<UnitResult<Error>> DeletePhotos(
         PhotosPathWithBucket photosPathWithBucket,
         CancellationToken cancellationToken = default)
     {
@@ -76,7 +76,41 @@ public class MinioProvider : IFileProvider
             return Error.Failure("file.delete", "Fail to delete file in minio");
         }
     }
-    
+
+    public async Task<UnitResult<Error>> DeletePhoto(
+        PhotoInfo photoInfo,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            await IfBucketsNotExistCreateBucket([photoInfo.BucketName], cancellationToken);
+
+            var statArgs = new StatObjectArgs()
+                .WithBucket(photoInfo.BucketName)
+                .WithObject(photoInfo.PhotoPath.Path);
+
+            var objectStat = await _minioClient.StatObjectAsync(statArgs, cancellationToken);
+            if (objectStat is null)
+                return Result.Success<Error>();
+
+            var removeArgs = new RemoveObjectsArgs()
+                .WithBucket(photoInfo.BucketName)
+                .WithObject(photoInfo.PhotoPath.Path);
+
+            await _minioClient.RemoveObjectsAsync(removeArgs, cancellationToken);
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, "Fail to delete file in minio with {path} in bucket {bucket}",
+                photoInfo.PhotoPath.Path,
+                photoInfo.BucketName);
+
+            return Error.Failure("file.delete", "Fail to delete file in minio");
+        }
+
+        return Result.Success<Error>();
+    }
+
 
     private async Task<Result<PhotoPath, Error>> PutObject(
         PhotoData photoData,
@@ -86,24 +120,24 @@ public class MinioProvider : IFileProvider
         await semaphoreSlim.WaitAsync(cancellationToken);
 
         var putObjectArgs = new PutObjectArgs()
-            .WithBucket(photoData.BucketName)
+            .WithBucket(photoData.PhotoInfo.BucketName)
             .WithStreamData(photoData.Stream)
             .WithObjectSize(photoData.Stream.Length)
-            .WithObject(photoData.PhotoPath.Path);
+            .WithObject(photoData.PhotoInfo.PhotoPath.Path);
 
         try
         {
             await _minioClient
                 .PutObjectAsync(putObjectArgs, cancellationToken);
 
-            return photoData.PhotoPath;
+            return photoData.PhotoInfo.PhotoPath;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex,
                 "Fail to upload file in minio with path {path} in bucket {bucket}",
-                photoData.PhotoPath.Path,
-                photoData.BucketName);
+                photoData.PhotoInfo.PhotoPath.Path,
+                photoData.PhotoInfo.BucketName);
 
             return Error.Failure("file.upload", "Fail to upload file in minio");
         }
@@ -114,10 +148,10 @@ public class MinioProvider : IFileProvider
     }
 
     private async Task IfBucketsNotExistCreateBucket(
-        IEnumerable<PhotoData> photosData,
+        IEnumerable<string> buckets,
         CancellationToken cancellationToken)
     {
-        HashSet<string> bucketNames = [..photosData.Select(file => file.BucketName)];
+        HashSet<string> bucketNames = [..buckets];
 
         foreach (var bucketName in bucketNames)
         {

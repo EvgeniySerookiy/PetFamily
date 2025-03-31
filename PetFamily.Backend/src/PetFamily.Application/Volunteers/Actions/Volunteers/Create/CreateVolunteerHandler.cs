@@ -14,15 +14,18 @@ namespace PetFamily.Application.Volunteers.Actions.Volunteers.Create;
 
 public class CreateVolunteerHandler
 {
+    private readonly IUnitOfWork _unitOfWork;
     private readonly IVolunteersRepository _volunteersRepository;
     private readonly ILogger<CreateVolunteerHandler> _logger;
     private readonly IValidator<CreateVolunteerCommand> _validator;
 
     public CreateVolunteerHandler(
+        IUnitOfWork unitOfWork,
         IVolunteersRepository volunteersRepository,
         ILogger<CreateVolunteerHandler> logger,
         IValidator<CreateVolunteerCommand> validator)
     {
+        _unitOfWork = unitOfWork;
         _volunteersRepository = volunteersRepository;
         _logger = logger;
         _validator = validator;

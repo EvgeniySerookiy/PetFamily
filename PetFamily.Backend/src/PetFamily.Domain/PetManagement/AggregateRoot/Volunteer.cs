@@ -8,7 +8,7 @@ using PetFamily.Domain.Shared.ErrorContext;
 
 namespace PetFamily.Domain.PetManagement.AggregateRoot;
 
-public sealed class Volunteer : SoftDeletableEntity<VolunteerId>
+public sealed class  Volunteer : SoftDeletableEntity<VolunteerId>
 {
     private readonly List<Pet> _pets = new();
     public FullName FullName { get; private set; }
@@ -117,52 +117,52 @@ public sealed class Volunteer : SoftDeletableEntity<VolunteerId>
 
     public UnitResult<Error> AddPet(Pet pet)
     {
-        var serialNumberResult = SerialNumber.Create(_pets.Count + 1);
+        var serialNumberResult = Position.Create(_pets.Count + 1);
         if (serialNumberResult.IsFailure)
             return serialNumberResult.Error;
 
-        pet.SetSerialNumber(serialNumberResult.Value);
+        pet.SetPosition(serialNumberResult.Value);
 
         _pets.Add(pet);
         return Result.Success<Error>();
     }
 
-    private void ShiftSerialNumbers(int currentSerialNumber, int nextSerialNumber)
+    private void ShiftPositions(int currentPosition, int nextPosition)
     {
         var petsToUpdate = Pets.Where(p =>
-            (currentSerialNumber > nextSerialNumber && p.SerialNumber.Value >= nextSerialNumber &&
-             p.SerialNumber.Value < currentSerialNumber) ||
-            (currentSerialNumber < nextSerialNumber && p.SerialNumber.Value <= nextSerialNumber &&
-             p.SerialNumber.Value > currentSerialNumber)
+            (currentPosition > nextPosition && p.Position.Value >= nextPosition &&
+             p.Position.Value < currentPosition) ||
+            (currentPosition < nextPosition && p.Position.Value <= nextPosition &&
+             p.Position.Value > currentPosition)
         ).ToList();
 
         foreach (var p in petsToUpdate)
         {
-            var newSerialNumber =
-                SerialNumber.Create(
-                    p.SerialNumber.Value + (currentSerialNumber > nextSerialNumber ? 1 : -1));
-            p.SetSerialNumber(newSerialNumber.Value);
+            var newPosition =
+                Position.Create(
+                    p.Position.Value + (currentPosition > nextPosition ? 1 : -1));
+            p.SetPosition(newPosition.Value);
         }
     }
     
-    public UnitResult<Error> MovePet(Pet pet, int nextSerialNumber)
+    public UnitResult<Error> MovePet(Pet pet, int nextPosition)
     {
-        if (nextSerialNumber > Pets.Count || nextSerialNumber < 1)
-            return UnitResult.Failure(Errors.General.OutOfRange(nextSerialNumber));
+        if (nextPosition > Pets.Count || nextPosition < 1)
+            return UnitResult.Failure(Errors.General.OutOfRange(nextPosition));
 
         var result = Pets.FirstOrDefault(p => p.Id == pet.Id);
         if (result == null)
             return Errors.General.NotFound(pet.Id);
 
-        var currentSerialNumber = pet.SerialNumber.Value;
+        var currentPosition = pet.Position.Value;
 
-        if (currentSerialNumber == nextSerialNumber)
+        if (currentPosition == nextPosition)
             return Result.Success<Error>();
         
-        ShiftSerialNumbers(currentSerialNumber, nextSerialNumber);
+        ShiftPositions(currentPosition, nextPosition);
 
-        var serialNumber = SerialNumber.Create(nextSerialNumber);
-        pet.SetSerialNumber(serialNumber.Value);
+        var position = Position.Create(nextPosition);
+        pet.SetPosition(position.Value);
         return Result.Success<Error>();
     }
 
