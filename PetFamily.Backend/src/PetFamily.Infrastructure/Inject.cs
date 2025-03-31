@@ -2,9 +2,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Minio;
 using PetFamily.Application.Database;
+using PetFamily.Application.Messaging;
+using PetFamily.Application.Photos;
 using PetFamily.Application.Providers;
-using PetFamily.Application.Volunteers;
 using PetFamily.Infrastructure.BackgroundServices;
+using PetFamily.Infrastructure.MessageQueues;
 using PetFamily.Infrastructure.Options;
 using PetFamily.Infrastructure.Providers;
 using PetFamily.Infrastructure.Repositories;
@@ -17,11 +19,13 @@ public static class Inject
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddScoped<ApplicationDbContex>();
-        services.AddDbContextFactory<ApplicationDbContex>();
+        services.AddScoped<ApplicationDbContext>();
+        services.AddDbContextFactory<ApplicationDbContext>();
         services.AddScoped<IVolunteersRepository, VolunteersRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddHostedService<SoftDeleteCleanupService>();
+        services.AddHostedService<PhotosCleanupBackgroundService>();
+        services.AddSingleton<IMessageQueue<IEnumerable<PhotoInfo>>, InMemoryMessageQueue<IEnumerable<PhotoInfo>>>();
         services.AddMinio(configuration);
         
         return services;

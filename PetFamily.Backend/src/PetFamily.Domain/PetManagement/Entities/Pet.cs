@@ -15,7 +15,7 @@ public class Pet : SoftDeletableEntity<PetId>
     public ValueObjectList<PetPhoto> PetPhotos { get; private set; } = new ([]);
     public Title Title { get; private set; }
     public Description Description { get; private set; }
-    public SerialNumber SerialNumber { get; private set; }
+    public Position Position { get; private set; }
     public Color Color { get; private set; }
     public PetHealthInformation PetHealthInformation { get; private set; }
     public Address PetAddress { get; private set; }
@@ -112,5 +112,5 @@ public class Pet : SoftDeletableEntity<PetId>
         PetPhotos = petPhotos;
     }
     
-    public void SetSerialNumber(SerialNumber serialNumber) => SerialNumber = serialNumber;
+    public void SetPosition(Position position) => Position = position;
 }

@@ -1,18 +1,19 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using PetFamily.Infrastructure.Options;
 
 namespace PetFamily.Infrastructure.BackgroundServices;
 
-public class SoftDeleteCleanupService : Microsoft.Extensions.Hosting.BackgroundService
+public class SoftDeleteCleanupService : BackgroundService
 {
-    private readonly ApplicationDbContex _context;
+    private readonly ApplicationDbContext _context;
     private readonly ILogger<SoftDeleteCleanupService> _logger;
     private readonly SoftDeleteOptions _softDeleteOptions;
 
     public SoftDeleteCleanupService(
-        IDbContextFactory<ApplicationDbContex> dbContextFactory, 
+        IDbContextFactory<ApplicationDbContext> dbContextFactory, 
         IOptions<SoftDeleteOptions> options, 
         ILogger<SoftDeleteCleanupService> logger)
     {

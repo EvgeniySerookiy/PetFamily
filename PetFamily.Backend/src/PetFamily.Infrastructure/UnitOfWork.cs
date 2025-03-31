@@ -6,9 +6,9 @@ namespace PetFamily.Infrastructure;
 
 public class UnitOfWork : IUnitOfWork
 {
-    private readonly ApplicationDbContex _dbContext;
+    private readonly ApplicationDbContext _dbContext;
     
-    public UnitOfWork(ApplicationDbContex dbContext)
+    public UnitOfWork(ApplicationDbContext dbContext)
     {
         _dbContext = dbContext;
     }
@@ -24,4 +24,14 @@ public class UnitOfWork : IUnitOfWork
     {
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
+
+    // public async Task ShowListPets()
+    // {
+    //     var petsId = await _dbContext.Pets.Select(p => p.Id).ToListAsync();
+    //
+    //     foreach (var petId in petsId)
+    //     {
+    //         Console.WriteLine(petId);
+    //     }
+    // }
 }

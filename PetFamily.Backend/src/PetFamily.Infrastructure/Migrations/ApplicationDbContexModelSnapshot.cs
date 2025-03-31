@@ -11,7 +11,7 @@ using PetFamily.Infrastructure;
 
 namespace PetFamily.Infrastructure.Migrations
 {
-    [DbContext(typeof(ApplicationDbContex))]
+    [DbContext(typeof(ApplicationDbContext))]
     partial class ApplicationDbContexModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

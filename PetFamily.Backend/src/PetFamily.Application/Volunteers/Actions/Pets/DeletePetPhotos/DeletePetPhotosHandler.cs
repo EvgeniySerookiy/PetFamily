@@ -1,8 +1,10 @@
 using System.Text.RegularExpressions;
 using CSharpFunctionalExtensions;
+using FluentValidation;
 using Microsoft.Extensions.Logging;
 using PetFamily.Application.Database;
-using PetFamily.Application.FileProvider;
+using PetFamily.Application.Extensions;
+using PetFamily.Application.Photos;
 using PetFamily.Application.Providers;
 using PetFamily.Application.Volunteers.Actions.Pets.AddPet;
 using PetFamily.Domain.PetManagement.PetVO;
@@ -16,17 +18,20 @@ public class DeletePetPhotosHandler
     private const string BUCKET_NAME = "photos";
     
     private readonly IFileProvider _fileProvider;
+    private readonly IValidator<DeletePetPhotosCommand> _validator;
     private readonly IVolunteersRepository _volunteersRepository;
     private readonly ILogger<AddPetHandler> _logger;
     private readonly IUnitOfWork _unitOfWork;
     
     public DeletePetPhotosHandler(
         IFileProvider fileProvider,
+        IValidator<DeletePetPhotosCommand> validator,
         IVolunteersRepository volunteersRepository,
         ILogger<AddPetHandler> logger,
         IUnitOfWork unitOfWork)
     {
         _fileProvider = fileProvider;
+        _validator = validator;
         _volunteersRepository = volunteersRepository;
         _logger = logger;
         _unitOfWork = unitOfWork;
@@ -38,6 +43,10 @@ public class DeletePetPhotosHandler
         DeletePetPhotosCommand command,
         CancellationToken cancellationToken = default)
     {
+        var validationResult = await _validator.ValidateAsync(command, cancellationToken);
+        if (validationResult.IsValid == false)
+            return validationResult.ToErrorList();
+        
         var volunteerResult = await _volunteersRepository.GetById(
             VolunteerId.Create(volunteerId),
             cancellationToken);
@@ -66,7 +75,7 @@ public class DeletePetPhotosHandler
             photos.Select(p => p.PathToStorage).ToList(), 
             BUCKET_NAME);
         
-        var deleteResult = await _fileProvider.DeleteFiles(photosPathWithBucket, cancellationToken);
+        var deleteResult = await _fileProvider.DeletePhotos(photosPathWithBucket, cancellationToken);
         if(deleteResult.IsFailure)
             return deleteResult.Error.ToErrorList();
 

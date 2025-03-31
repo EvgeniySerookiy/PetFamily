@@ -1,6 +1,6 @@
 using PetFamily.Domain.PetManagement.PetVO;
 
-namespace PetFamily.Application.FileProvider;
+namespace PetFamily.Application.Photos;
 
 public record PhotosPathWithBucket(
     IEnumerable<PhotoPath> PhotosPath,

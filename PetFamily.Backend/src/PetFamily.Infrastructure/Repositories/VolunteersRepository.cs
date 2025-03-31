@@ -2,7 +2,6 @@
 using CSharpFunctionalExtensions;
 using Microsoft.EntityFrameworkCore;
 using PetFamily.Application.Database;
-using PetFamily.Application.Volunteers;
 using PetFamily.Domain.PetManagement.AggregateRoot;
 using PetFamily.Domain.PetManagement.VolunteerVO;
 using PetFamily.Domain.Shared.ErrorContext;
@@ -12,14 +11,14 @@ namespace PetFamily.Infrastructure.Repositories;
 
 public class VolunteersRepository : IVolunteersRepository
 {
-    private readonly ApplicationDbContex _applicationDbContex;
+    private readonly ApplicationDbContext _applicationDbContext;
     private readonly IUnitOfWork _unitOfWork;
 
     public VolunteersRepository(
-        ApplicationDbContex applicationDbContex,
+        ApplicationDbContext applicationDbContext,
         IUnitOfWork unitOfWork)
     {
-        _applicationDbContex = applicationDbContex;
+        _applicationDbContext = applicationDbContext;
         _unitOfWork = unitOfWork;
     }
 
@@ -27,7 +26,7 @@ public class VolunteersRepository : IVolunteersRepository
         Volunteer volunteer, 
         CancellationToken cancellationToken = default)
     {
-        await _applicationDbContex.Volunteers.AddAsync(volunteer, cancellationToken);
+        await _applicationDbContext.Volunteers.AddAsync(volunteer, cancellationToken);
         await _unitOfWork.SaveChanges(cancellationToken);
         
         return volunteer.Id.Value;
@@ -37,7 +36,7 @@ public class VolunteersRepository : IVolunteersRepository
         Volunteer volunteer, 
         CancellationToken cancellationToken = default)
     {
-        _applicationDbContex.Volunteers.Attach(volunteer);
+        _applicationDbContext.Volunteers.Attach(volunteer);
         
         return volunteer.Id.Value;
     }
@@ -46,7 +45,7 @@ public class VolunteersRepository : IVolunteersRepository
         Volunteer volunteer, 
         CancellationToken cancellationToken = default)
     {
-        _applicationDbContex.Volunteers.Remove(volunteer);
+        _applicationDbContext.Volunteers.Remove(volunteer);
         
         return volunteer.Id.Value;
     }
@@ -55,7 +54,7 @@ public class VolunteersRepository : IVolunteersRepository
         VolunteerId volunteerId, 
         CancellationToken cancellationToken = default)
     {
-        var volunteer = await _applicationDbContex.Volunteers
+        var volunteer = await _applicationDbContext.Volunteers
             .Include(v => v.Pets)
             .FirstOrDefaultAsync(v => v.Id == volunteerId, cancellationToken);
 
@@ -69,7 +68,7 @@ public class VolunteersRepository : IVolunteersRepository
         Email email, 
         CancellationToken cancellationToken = default)
     {
-        var volunteer = await _applicationDbContex.Volunteers
+        var volunteer = await _applicationDbContext.Volunteers
             .Include(v => v.Pets)
             .FirstOrDefaultAsync(v => v.Email == email, cancellationToken);
 

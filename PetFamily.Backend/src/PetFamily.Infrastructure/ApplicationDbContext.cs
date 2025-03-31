@@ -2,17 +2,19 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using PetFamily.Domain.PetManagement.AggregateRoot;
+using PetFamily.Domain.PetManagement.Entities;
 
 namespace PetFamily.Infrastructure;
 
-public class ApplicationDbContex : DbContext
+public class ApplicationDbContext : DbContext
 {
     private const string DATABASE = "Database";
 
     private readonly IConfiguration _configuration;
     public DbSet<Volunteer> Volunteers => Set<Volunteer>();
+    public DbSet<Pet> Pets => Set<Pet>();
 
-    public ApplicationDbContex(
+    public ApplicationDbContext(
         IConfiguration configuration)
     {
         _configuration = configuration;
@@ -28,7 +30,7 @@ public class ApplicationDbContex : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContex).Assembly);
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
     }
 
     private ILoggerFactory CreateLoggerFactory()
