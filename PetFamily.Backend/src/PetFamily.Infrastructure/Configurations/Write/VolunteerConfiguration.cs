@@ -4,7 +4,7 @@ using PetFamily.Domain.PetManagement.AggregateRoot;
 using PetFamily.Domain.PetManagement.SharedVO;
 using PetFamily.Domain.PetManagement.VolunteerVO;
 
-namespace PetFamily.Infrastructure.Configurations;
+namespace PetFamily.Infrastructure.Configurations.Write;
 
 public class VolunteerConfiguration : IEntityTypeConfiguration<Volunteer>
 {

@@ -1,5 +1,6 @@
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
+using PetFamily.Application.PetManagement.Queries.GetPetsWithPagination;
 using PetFamily.Application.Volunteers.Actions.Pets.AddPet;
 using PetFamily.Application.Volunteers.Actions.Pets.AddPetPhotos;
 using PetFamily.Application.Volunteers.Actions.Pets.MovePets;
@@ -26,6 +27,7 @@ public static class Inject
         services.AddScoped<AddPetHandler>();
         services.AddScoped<AddPetPhotosHandler>();
         services.AddScoped<MovePetsHandler>();
+        services.AddScoped<GetPetsWithPaginationHandler>();
         return services;
     }
 }

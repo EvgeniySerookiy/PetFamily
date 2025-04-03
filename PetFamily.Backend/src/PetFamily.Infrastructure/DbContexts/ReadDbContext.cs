@@ -1,20 +1,18 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using PetFamily.Domain.PetManagement.AggregateRoot;
-using PetFamily.Domain.PetManagement.Entities;
+using PetFamily.Application.Database;
+using PetFamily.Application.Dtos;
 
-namespace PetFamily.Infrastructure;
+namespace PetFamily.Infrastructure.DbContexts;
 
-public class ApplicationDbContext : DbContext
+public class ReadDbContext : DbContext, IReadDbContext
 {
-    private const string DATABASE = "Database";
-
     private readonly IConfiguration _configuration;
-    public DbSet<Volunteer> Volunteers => Set<Volunteer>();
-    public DbSet<Pet> Pets => Set<Pet>();
+    public DbSet<VolunteerDto> Volunteers => Set<VolunteerDto>();
+    public DbSet<PetDto> Pets => Set<PetDto>();
 
-    public ApplicationDbContext(
+    public ReadDbContext(
         IConfiguration configuration)
     {
         _configuration = configuration;
@@ -22,7 +20,7 @@ public class ApplicationDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseNpgsql(_configuration.GetConnectionString(DATABASE));
+        optionsBuilder.UseNpgsql(_configuration.GetConnectionString(Constants.DATABASE));
         optionsBuilder.UseSnakeCaseNamingConvention();
         optionsBuilder.EnableSensitiveDataLogging();
         optionsBuilder.UseLoggerFactory(CreateLoggerFactory());
@@ -30,7 +28,9 @@ public class ApplicationDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
+        modelBuilder.ApplyConfigurationsFromAssembly(
+            typeof(WriteDbContext).Assembly,
+            type => type.FullName?.Contains("Configurations.Read") ?? false);
     }
 
     private ILoggerFactory CreateLoggerFactory()

@@ -1,6 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
 using PetFamily.Domain.PetManagement.PetVO;
 using PetFamily.Domain.PetManagement.SharedVO;
+using PetFamily.Domain.PetManagement.VolunteerVO;
 using PetFamily.Domain.Shared;
 using PetFamily.Domain.Shared.ErrorContext;
 using PetFamily.Domain.SpesiesManagment.SpeciesVO;
@@ -10,6 +11,7 @@ namespace PetFamily.Domain.PetManagement.Entities;
 public class Pet : SoftDeletableEntity<PetId>
 {
     public PetName PetName { get; private set; }
+    public VolunteerId VolunteerId { get; private set; }
     public SpeciesId SpeciesId { get; private set; }
     public BreedId BreedId { get; private set; }
     public ValueObjectList<PetPhoto> PetPhotos { get; private set; } = new ([]);
@@ -30,7 +32,8 @@ public class Pet : SoftDeletableEntity<PetId>
     private Pet(PetId id) : base(id) { }
 
     private Pet(
-        PetId id, 
+        PetId id,
+        VolunteerId volunteerId,
         PetName petName,
         SpeciesId speciesId,
         BreedId breedId,
@@ -48,6 +51,7 @@ public class Pet : SoftDeletableEntity<PetId>
         AssistanceStatus status,
         DateTime dateOfCreation) : base(id)
     {
+        VolunteerId = volunteerId;
         PetName = petName;
         SpeciesId = speciesId;
         BreedId = breedId;
@@ -68,6 +72,7 @@ public class Pet : SoftDeletableEntity<PetId>
 
     public static Result<Pet, Error> Create(
         PetId id,
+        VolunteerId volunteerId,
         PetName petName,
         SpeciesId speciesId,
         BreedId breedId,
@@ -87,6 +92,7 @@ public class Pet : SoftDeletableEntity<PetId>
     {
         var pet = new Pet(
             id,
+            volunteerId,
             petName,
             speciesId,
             breedId,

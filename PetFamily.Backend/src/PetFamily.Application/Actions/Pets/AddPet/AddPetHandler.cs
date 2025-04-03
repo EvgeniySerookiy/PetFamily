@@ -77,6 +77,7 @@ public class AddPetHandler
 
         var pet = Pet.Create(
             petId,
+            volunteerResult.Value.Id,
             name.Value,
             SpeciesId.NewSpeciesId(),
             BreedId.NewBreedId(),

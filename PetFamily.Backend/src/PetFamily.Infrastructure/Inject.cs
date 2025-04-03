@@ -6,8 +6,10 @@ using PetFamily.Application.Messaging;
 using PetFamily.Application.Photos;
 using PetFamily.Application.Providers;
 using PetFamily.Infrastructure.BackgroundServices;
+using PetFamily.Infrastructure.DbContexts;
 using PetFamily.Infrastructure.MessageQueues;
 using PetFamily.Infrastructure.Options;
+using PetFamily.Infrastructure.Photos;
 using PetFamily.Infrastructure.Providers;
 using PetFamily.Infrastructure.Repositories;
 
@@ -19,14 +21,57 @@ public static class Inject
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddScoped<ApplicationDbContext>();
-        services.AddDbContextFactory<ApplicationDbContext>();
-        services.AddScoped<IVolunteersRepository, VolunteersRepository>();
+        services
+            .AddDbContexts()
+            .AddMinio(configuration)
+            .AddRepositories()
+            .AddDatabase()
+            .AddServices()
+            .AddMessageQueues();
+        
+        return services;
+    }
+    
+    private static IServiceCollection AddMessageQueues(
+        this IServiceCollection services)
+    {
+        services.AddSingleton<IMessageQueue<IEnumerable<PhotoInfo>>, InMemoryMessageQueue<IEnumerable<PhotoInfo>>>();
+        
+        return services;
+    }
+    
+    private static IServiceCollection AddDatabase(
+        this IServiceCollection services)
+    {
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        
+        return services;
+    }
+    
+    private static IServiceCollection AddServices(
+        this IServiceCollection services)
+    {
+        services.AddScoped<IPhotosCleanerService, PhotosCleanerService>();
         services.AddHostedService<SoftDeleteCleanupService>();
         services.AddHostedService<PhotosCleanupBackgroundService>();
-        services.AddSingleton<IMessageQueue<IEnumerable<PhotoInfo>>, InMemoryMessageQueue<IEnumerable<PhotoInfo>>>();
-        services.AddMinio(configuration);
+        
+        return services;
+    }
+    
+    private static IServiceCollection AddRepositories(
+        this IServiceCollection services)
+    {
+        services.AddScoped<IVolunteersRepository, VolunteersRepository>();
+        
+        return services;
+    }
+    
+    private static IServiceCollection AddDbContexts(
+        this IServiceCollection services)
+    {
+        services.AddScoped<WriteDbContext>();
+        services.AddDbContextFactory<WriteDbContext>();
+        services.AddScoped<IReadDbContext, ReadDbContext>();
         
         return services;
     }

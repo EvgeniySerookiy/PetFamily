@@ -6,15 +6,15 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using PetFamily.Infrastructure;
+using PetFamily.Infrastructure.DbContexts;
 
 #nullable disable
 
 namespace PetFamily.Infrastructure.Migrations
 {
-    [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250328143824_UpdateTables")]
-    partial class UpdateTables
+    [DbContext(typeof(WriteDbContext))]
+    [Migration("20250403082326_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -150,6 +150,10 @@ namespace PetFamily.Infrastructure.Migrations
                         .HasColumnType("character varying(30)")
                         .HasColumnName("status");
 
+                    b.Property<Guid>("VolunteerId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("volunteer_id");
+
                     b.Property<Guid?>("pets_id")
                         .HasColumnType("uuid")
                         .HasColumnName("pets_id");
@@ -270,7 +274,7 @@ namespace PetFamily.Infrastructure.Migrations
                                 .HasColumnName("pet_name");
                         });
 
-                    b.ComplexProperty<Dictionary<string, object>>("SerialNumber", "PetFamily.Domain.PetManagement.Entities.Pet.SerialNumber#SerialNumber", b1 =>
+                    b.ComplexProperty<Dictionary<string, object>>("Position", "PetFamily.Domain.PetManagement.Entities.Pet.Position#Position", b1 =>
                         {
                             b1.IsRequired();
 

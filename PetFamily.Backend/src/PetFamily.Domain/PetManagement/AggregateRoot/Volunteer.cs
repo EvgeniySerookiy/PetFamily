@@ -23,9 +23,7 @@ public sealed class  Volunteer : SoftDeletableEntity<VolunteerId>
     public TransferRequisitesForHelpsList TransferRequisitesForHelpsList { get; private set; }
     public IReadOnlyList<Pet> Pets => _pets;
 
-    private Volunteer(VolunteerId id) : base(id)
-    {
-    }
+    private Volunteer(VolunteerId id) : base(id) {}
 
     private Volunteer(
         VolunteerId id,

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace PetFamily.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class UpdateTables : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -71,6 +71,7 @@ namespace PetFamily.Infrastructure.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
+                    volunteer_id = table.Column<Guid>(type: "uuid", nullable: false),
                     date_of_birth = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     status = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: false),
                     date_of_creation = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),

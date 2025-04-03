@@ -4,9 +4,9 @@ using PetFamily.Domain;
 using PetFamily.Domain.PetManagement.Entities;
 using PetFamily.Domain.PetManagement.PetVO;
 using PetFamily.Domain.PetManagement.SharedVO;
-using PetFamily.Domain.Shared;
+using PetFamily.Domain.PetManagement.VolunteerVO;
 
-namespace PetFamily.Infrastructure.Configurations;
+namespace PetFamily.Infrastructure.Configurations.Write;
 
 public class PetConfiguration : IEntityTypeConfiguration<Pet>
 {
@@ -20,6 +20,11 @@ public class PetConfiguration : IEntityTypeConfiguration<Pet>
             .HasConversion(
                 id => id.Value,
                 value => PetId.Create(value));
+        
+        builder.Property(p => p.VolunteerId)
+            .HasConversion(
+                v => v.Value,
+                value => VolunteerId.Create(value));
         
         builder.ComplexProperty(p => p.PetName, nb =>
         {
@@ -164,7 +169,7 @@ public class PetConfiguration : IEntityTypeConfiguration<Pet>
                 s => s.ToString(),
                 s => (AssistanceStatus)Enum.Parse(typeof(AssistanceStatus), s))
             .IsRequired()
-            .HasMaxLength(Constants.MAX_STATUS_TEXT_LENGTH)
+            .HasMaxLength(Domain.Shared.Constants.MAX_STATUS_TEXT_LENGTH)
             .HasColumnName("status");
         
         builder.Property(p => p.DateOfCreation)
