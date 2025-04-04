@@ -116,7 +116,7 @@ namespace PetFamily.Infrastructure.Migrations
                     b.HasKey("Id")
                         .HasName("pk_volunteers");
 
-                    b.ToTable("Volunteers", (string)null);
+                    b.ToTable("volunteers", (string)null);
                 });
 
             modelBuilder.Entity("PetFamily.Domain.PetManagement.Entities.Pet", b =>
@@ -319,7 +319,7 @@ namespace PetFamily.Infrastructure.Migrations
                     b.HasIndex("pets_id")
                         .HasDatabaseName("ix_pets_pets_id");
 
-                    b.ToTable("Pets", (string)null);
+                    b.ToTable("pets", (string)null);
                 });
 
             modelBuilder.Entity("PetFamily.Domain.SpesiesManagment.Entities.Breed", b =>
@@ -349,7 +349,7 @@ namespace PetFamily.Infrastructure.Migrations
                     b.HasIndex("species_id")
                         .HasDatabaseName("ix_breeds_species_id");
 
-                    b.ToTable("Breeds", (string)null);
+                    b.ToTable("breeds", (string)null);
                 });
 
             modelBuilder.Entity("PetFamily.Domain.SpesiesManagment.Entities.Species", b =>
@@ -372,7 +372,7 @@ namespace PetFamily.Infrastructure.Migrations
                     b.HasKey("Id")
                         .HasName("pk_species");
 
-                    b.ToTable("Species", (string)null);
+                    b.ToTable("species", (string)null);
                 });
 
             modelBuilder.Entity("PetFamily.Domain.PetManagement.AggregateRoot.Volunteer", b =>
@@ -385,7 +385,7 @@ namespace PetFamily.Infrastructure.Migrations
 
                             b1.HasKey("VolunteerId");
 
-                            b1.ToTable("Volunteers");
+                            b1.ToTable("volunteers");
 
                             b1.ToJson("transfer_requisites_for_help_list");
 
@@ -417,7 +417,7 @@ namespace PetFamily.Infrastructure.Migrations
                                     b2.HasKey("TransferRequisitesForHelpsListVolunteerId", "__synthesizedOrdinal")
                                         .HasName("pk_volunteers");
 
-                                    b2.ToTable("Volunteers");
+                                    b2.ToTable("volunteers");
 
                                     b2.WithOwner()
                                         .HasForeignKey("TransferRequisitesForHelpsListVolunteerId")
@@ -435,7 +435,7 @@ namespace PetFamily.Infrastructure.Migrations
 
                             b1.HasKey("VolunteerId");
 
-                            b1.ToTable("Volunteers");
+                            b1.ToTable("volunteers");
 
                             b1.ToJson("transfer_social_network_list");
 
@@ -467,7 +467,7 @@ namespace PetFamily.Infrastructure.Migrations
                                     b2.HasKey("TransferSocialNetworkListVolunteerId", "__synthesizedOrdinal")
                                         .HasName("pk_volunteers");
 
-                                    b2.ToTable("Volunteers");
+                                    b2.ToTable("volunteers");
 
                                     b2.WithOwner()
                                         .HasForeignKey("TransferSocialNetworkListVolunteerId")
@@ -500,7 +500,7 @@ namespace PetFamily.Infrastructure.Migrations
 
                             b1.HasKey("PetId");
 
-                            b1.ToTable("Pets");
+                            b1.ToTable("pets");
 
                             b1.ToJson("photos");
 
@@ -523,7 +523,7 @@ namespace PetFamily.Infrastructure.Migrations
 
                                     b2.HasKey("ValueObjectListPetId", "__synthesizedOrdinal");
 
-                                    b2.ToTable("Pets");
+                                    b2.ToTable("pets");
 
                                     b2.WithOwner()
                                         .HasForeignKey("ValueObjectListPetId")

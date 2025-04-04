@@ -8,7 +8,7 @@ public class VolunteerDtoConfiguration : IEntityTypeConfiguration<VolunteerDto>
 {
     public void Configure(EntityTypeBuilder<VolunteerDto> builder)
     {
-        builder.ToTable("Volunteers");
+        builder.ToTable("volunteers");
         
         builder.HasKey(p => p.Id);
 
