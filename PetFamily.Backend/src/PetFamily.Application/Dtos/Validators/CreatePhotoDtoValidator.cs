@@ -1,8 +1,8 @@
 using FluentValidation;
-using PetFamily.Application.Volunteers.PetDTOs;
+using PetFamily.Application.Dtos.PetDTOs;
 using PetFamily.Domain.Shared.ErrorContext;
 
-namespace PetFamily.Application.Volunteers.Validators;
+namespace PetFamily.Application.Dtos.Validators;
 
 public class CreatePhotoDtoValidator : AbstractValidator<CreatePhotoDto>
 {

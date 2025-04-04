@@ -2,17 +2,18 @@ using Microsoft.AspNetCore.Mvc;
 using PetFamily.API.Controllers.Requests;
 using PetFamily.API.Extensions;
 using PetFamily.API.Processors;
-using PetFamily.Application.Volunteers.Actions.Pets.AddPet;
-using PetFamily.Application.Volunteers.Actions.Pets.AddPetPhotos;
-using PetFamily.Application.Volunteers.Actions.Pets.DeletePetPhotos;
-using PetFamily.Application.Volunteers.Actions.Pets.MovePets;
-using PetFamily.Application.Volunteers.Actions.Volunteers.Create;
-using PetFamily.Application.Volunteers.Actions.Volunteers.Delete;
-using PetFamily.Application.Volunteers.Actions.Volunteers.Restore;
-using PetFamily.Application.Volunteers.Actions.Volunteers.Update.UpdateMainInfo;
-using PetFamily.Application.Volunteers.Actions.Volunteers.Update.UpdateRequisitesForHelp;
-using PetFamily.Application.Volunteers.Actions.Volunteers.Update.UpdateSocialNetwork;
-using PetFamily.Application.Volunteers.VolunteerDTOs;
+using PetFamily.Application.Abstractions;
+using PetFamily.Application.Dtos.VolunteerDTOs;
+using PetFamily.Application.PetManagement.Commands.Pets.AddPet;
+using PetFamily.Application.PetManagement.Commands.Pets.AddPetPhotos;
+using PetFamily.Application.PetManagement.Commands.Pets.DeletePetPhotos;
+using PetFamily.Application.PetManagement.Commands.Pets.MovePets;
+using PetFamily.Application.PetManagement.Commands.Volunteers.Create;
+using PetFamily.Application.PetManagement.Commands.Volunteers.Delete;
+using PetFamily.Application.PetManagement.Commands.Volunteers.Restore;
+using PetFamily.Application.PetManagement.Commands.Volunteers.Update.UpdateMainInfo;
+using PetFamily.Application.PetManagement.Commands.Volunteers.Update.UpdateRequisitesForHelp;
+using PetFamily.Application.PetManagement.Commands.Volunteers.Update.UpdateSocialNetwork;
 
 namespace PetFamily.API.Controllers;
 
@@ -56,9 +57,9 @@ public class VolunteersController : ApplicationController
         [FromServices] UpdateRequisitesForHelpHandler handler,
         CancellationToken cancellationToken = default)
     {
-        var updateRequisitesForHelpCommand = new UpdateRequisitesForHelpCommand(request.RequisitesForHelps);
+        var updateRequisitesForHelpCommand = new UpdateRequisitesForHelpCommand(id, request.RequisitesForHelps);
         
-        var result = await handler.Handle(id, updateRequisitesForHelpCommand, cancellationToken);
+        var result = await handler.Handle(updateRequisitesForHelpCommand, cancellationToken);
 
         if (result.IsFailure)
             return result.Error.ToResponse();
@@ -73,9 +74,9 @@ public class VolunteersController : ApplicationController
         [FromServices] UpdateSocialNetworkHandler handler,
         CancellationToken cancellationToken = default)
     {
-        var command = new UpdateSocialNetworksCommand(request.SocialNetworks);
+        var command = new UpdateSocialNetworksCommand(id, request.SocialNetworks);
 
-        var result = await handler.Handle(id, command, cancellationToken);
+        var result = await handler.Handle(command, cancellationToken);
 
         if (result.IsFailure)
             return result.Error.ToResponse();
@@ -89,7 +90,7 @@ public class VolunteersController : ApplicationController
         [FromServices] RestoreVolunteerHandler handler,
         CancellationToken cancellationToken = default)
     {
-        var result = await handler.Handle(id, cancellationToken);
+        var result = await handler.Handle(new RestoreVolunteerCommand(id), cancellationToken);
 
         if (result.IsFailure)
             return result.Error.ToResponse();
@@ -103,7 +104,7 @@ public class VolunteersController : ApplicationController
         [FromServices] DeleteVolunteerHandler handler,
         CancellationToken cancellationToken = default)
     {
-        var result = await handler.Handle(id, cancellationToken);
+        var result = await handler.Handle(new DeleteVolunteerCommand(id), cancellationToken);
         if (result.IsFailure)
             return result.Error.ToResponse();
 
@@ -117,7 +118,7 @@ public class VolunteersController : ApplicationController
         [FromServices] MovePetsHandler handler,
         CancellationToken cancellationToken = default)
     {
-        var result = await handler.Handle(id,request.ToCommand(), cancellationToken);
+        var result = await handler.Handle(request.ToCommand(id), cancellationToken);
         if(result.IsFailure)
             return result.Error.ToResponse();
         
@@ -128,10 +129,10 @@ public class VolunteersController : ApplicationController
     public async Task<ActionResult> AddPet(
         [FromRoute] Guid id,
         [FromForm] MainPetInfoRequest request,
-        [FromServices] AddPetHandler handler,
+        [FromServices] ICommandHandler<Guid, MainPetInfoCommand> handler,
         CancellationToken cancellationToken)
     {
-        var result = await handler.Handle(id, request.ToCommand(), cancellationToken);
+        var result = await handler.Handle(request.ToCommand(id), cancellationToken);
         if(result.IsFailure)
             return result.Error.ToResponse();
         
@@ -149,10 +150,9 @@ public class VolunteersController : ApplicationController
         await using var fileProcessor = new FormFileProcessor();
         var fileDtos = fileProcessor.Process(request.Files);
         
-        var command = new AddPetPhotosCommand(
-            fileDtos);
+        var command = new AddPetPhotosCommand(volunteerId, petId, fileDtos);
         
-        var result = await handler.Handle(volunteerId, petId, command, cancellationToken);
+        var result = await handler.Handle(command, cancellationToken);
         if(result.IsFailure)
             return result.Error.ToResponse();
         
@@ -167,9 +167,9 @@ public class VolunteersController : ApplicationController
         [FromServices] DeletePetPhotosHandler handler,
         CancellationToken cancellationToken)
     {
-        var command = new DeletePetPhotosCommand(request.PhotosId);
+        var command = new DeletePetPhotosCommand(volunteerId, petId, request.PhotosId);
         
-        var result = await handler.Handle(volunteerId, petId, command, cancellationToken);
+        var result = await handler.Handle(command, cancellationToken);
         if(result.IsFailure)
             return result.Error.ToResponse();
         

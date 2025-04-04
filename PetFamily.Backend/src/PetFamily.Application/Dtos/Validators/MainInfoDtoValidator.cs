@@ -1,9 +1,9 @@
 using FluentValidation;
-using PetFamily.Application.Volunteers.VolunteerDTOs;
+using PetFamily.Application.Dtos.VolunteerDTOs;
 using PetFamily.Domain.PetManagement.SharedVO;
 using PetFamily.Domain.PetManagement.VolunteerVO;
 
-namespace PetFamily.Application.Volunteers.Validators;
+namespace PetFamily.Application.Dtos.Validators;
 
 public class MainInfoDtoValidator : AbstractValidator<MainInfoDto>
 {

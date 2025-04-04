@@ -82,7 +82,7 @@ public class PetConfiguration : IEntityTypeConfiguration<Pet>
         {
             db.Property(d => d.Value)
                 .IsRequired()
-                .HasColumnName("serial_number");
+                .HasColumnName("position");
         });
         
         builder.ComplexProperty(p => p.Color, cb =>

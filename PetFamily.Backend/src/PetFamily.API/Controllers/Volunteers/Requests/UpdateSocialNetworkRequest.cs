@@ -1,4 +1,4 @@
-using PetFamily.Application.Volunteers.VolunteerDTOs;
+using PetFamily.Application.Dtos.VolunteerDTOs;
 
 namespace PetFamily.API.Controllers.Requests;
 

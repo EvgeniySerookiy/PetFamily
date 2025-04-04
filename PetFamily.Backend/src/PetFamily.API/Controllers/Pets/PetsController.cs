@@ -8,8 +8,8 @@ public class PetsController : ApplicationController
 {
     [HttpGet]
     public async Task<ActionResult> Get(
-        [FromQuery] GetPetsWithPaginationRequest request,
-        [FromServices] GetPetsWithPaginationHandler handler,
+        [FromQuery] GetFilteredPetsWithPaginationRequest request,
+        [FromServices] GetFilteredPetsWithPaginationHandler handler,
         CancellationToken cancellationToken = default)
     {
         var query = request.ToQuery();

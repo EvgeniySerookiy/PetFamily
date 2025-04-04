@@ -1,0 +1,27 @@
+using FluentValidation;
+using PetFamily.Domain.PetManagement.VolunteerVO;
+using PetFamily.Domain.Shared.ErrorContext;
+
+namespace PetFamily.Application.PetManagement.Commands.Volunteers.Update.UpdateRequisitesForHelp;
+
+public class UpdateRequisitesForHelpCommandValidator : AbstractValidator<UpdateRequisitesForHelpCommand>
+{
+    public UpdateRequisitesForHelpCommandValidator()
+    {
+        RuleFor(u => u.Id)
+            .NotEmpty()
+            .WithError(Errors.General.ValueIsRequired());
+        
+        RuleForEach(u => u.RequisitesForHelps).ChildRules(requisitesForHelps =>
+        {
+            requisitesForHelps.RuleFor(x => new
+                {
+                    x.Recipient,
+                    x.PaymentDetails
+                })
+                .MustBeValueObject(x => RequisitesForHelp.Create(
+                    x.Recipient,
+                    x.PaymentDetails));
+        });
+    }
+}

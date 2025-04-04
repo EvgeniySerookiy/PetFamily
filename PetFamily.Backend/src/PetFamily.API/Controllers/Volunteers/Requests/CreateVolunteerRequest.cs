@@ -1,7 +1,7 @@
-using PetFamily.Application.Volunteers.Actions.Volunteers.Create;
-using PetFamily.Application.Volunteers.Actions.Volunteers.Update.UpdateRequisitesForHelp;
-using PetFamily.Application.Volunteers.Actions.Volunteers.Update.UpdateSocialNetwork;
-using PetFamily.Application.Volunteers.VolunteerDTOs;
+using PetFamily.Application.Dtos.VolunteerDTOs;
+using PetFamily.Application.PetManagement.Commands.Volunteers.Create;
+using PetFamily.Application.PetManagement.Commands.Volunteers.Update.UpdateRequisitesForHelp;
+using PetFamily.Application.PetManagement.Commands.Volunteers.Update.UpdateSocialNetwork;
 
 namespace PetFamily.API.Controllers.Requests;
 

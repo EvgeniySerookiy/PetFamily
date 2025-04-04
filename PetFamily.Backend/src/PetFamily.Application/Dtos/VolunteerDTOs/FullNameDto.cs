@@ -1,4 +1,4 @@
-namespace PetFamily.Application.Volunteers.VolunteerDTOs;
+namespace PetFamily.Application.Dtos.VolunteerDTOs;
 
 public record FullNameDto(
     string FirstName, 

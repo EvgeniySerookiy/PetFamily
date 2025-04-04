@@ -277,7 +277,7 @@ namespace PetFamily.Infrastructure.Migrations
 
                             b1.Property<int>("Value")
                                 .HasColumnType("integer")
-                                .HasColumnName("serial_number");
+                                .HasColumnName("position");
                         });
 
                     b.ComplexProperty<Dictionary<string, object>>("Size", "PetFamily.Domain.PetManagement.Entities.Pet.Size#Size", b1 =>
