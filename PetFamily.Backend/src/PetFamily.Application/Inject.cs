@@ -1,6 +1,8 @@
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using PetFamily.Application.Abstractions;
+using PetFamily.Application.PetManagement.Queries.GetVolunteer;
+using PetFamily.Application.PetManagement.Queries.GetVolunteersWithPagination;
 
 namespace PetFamily.Application;
 
@@ -31,7 +33,10 @@ public static class Inject
         return services.Scan(scan => scan
             .FromAssemblies(typeof(Inject).Assembly)
             .AddClasses(classes => classes
-                .AssignableTo(typeof(IQueryHandler<,>)))
+                .AssignableToAny(
+                    typeof(IQueryHandlerPets<,>), 
+                    typeof(IQueryHandlerVolunteer<,>),
+                    typeof(IQueryHandlerVolunteers<,>)))
             .AsSelfWithInterfaces()
             .WithScopedLifetime());
     }

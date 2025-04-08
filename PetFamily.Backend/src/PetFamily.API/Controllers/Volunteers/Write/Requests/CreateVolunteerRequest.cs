@@ -3,7 +3,7 @@ using PetFamily.Application.PetManagement.Commands.Volunteers.Create;
 using PetFamily.Application.PetManagement.Commands.Volunteers.Update.UpdateRequisitesForHelp;
 using PetFamily.Application.PetManagement.Commands.Volunteers.Update.UpdateSocialNetwork;
 
-namespace PetFamily.API.Controllers.Volunteers.Requests;
+namespace PetFamily.API.Controllers.Volunteers.Write.Requests;
 
 public record CreateVolunteerRequest(
     MainInfoDto MainInfo,

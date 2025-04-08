@@ -8,11 +8,11 @@ using PetFamily.Application.Models;
 
 namespace PetFamily.Application.PetManagement.Queries.GetPetsWithPagination;
 
-public class GetFilteredPetsWithPaginationHandler : IQueryHandler<PagedList<PetDto>, GetFilteredPetsWithPaginationQuery>
+public class GetFilteredPetsWithPaginationHandlerPets : IQueryHandlerPets<PagedList<PetDto>, GetFilteredPetsWithPaginationQuery>
 {
     private readonly IReadDbContext _context;
 
-    public GetFilteredPetsWithPaginationHandler(IReadDbContext context)
+    public GetFilteredPetsWithPaginationHandlerPets(IReadDbContext context)
     {
         _context = context;
     }
@@ -39,11 +39,11 @@ public class GetFilteredPetsWithPaginationHandler : IQueryHandler<PagedList<PetD
 }
 
 public class
-    GetFilteredPetsWithPaginationHandlerDapper : IQueryHandler<PagedList<PetDto>, GetFilteredPetsWithPaginationQuery>
+    GetFilteredPetsWithPaginationHandlerPetsDapper : IQueryHandlerPets<PagedList<PetDto>, GetFilteredPetsWithPaginationQuery>
 {
     private readonly ISqlConnectionFactory _sqlConnectionFactory;
 
-    public GetFilteredPetsWithPaginationHandlerDapper(
+    public GetFilteredPetsWithPaginationHandlerPetsDapper(
         ISqlConnectionFactory sqlConnectionFactory)
     {
         _sqlConnectionFactory = sqlConnectionFactory;

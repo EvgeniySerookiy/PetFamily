@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using PetFamily.API.Controllers.Volunteers.Requests;
+using PetFamily.API.Controllers.Volunteers.Write.Requests;
 using PetFamily.API.Extensions;
 using PetFamily.API.Processors;
 using PetFamily.Application.Abstractions;
@@ -15,7 +15,7 @@ using PetFamily.Application.PetManagement.Commands.Volunteers.Update.UpdateMainI
 using PetFamily.Application.PetManagement.Commands.Volunteers.Update.UpdateRequisitesForHelp;
 using PetFamily.Application.PetManagement.Commands.Volunteers.Update.UpdateSocialNetwork;
 
-namespace PetFamily.API.Controllers.Volunteers;
+namespace PetFamily.API.Controllers.Volunteers.Write;
 
 public class VolunteersController : ApplicationController
 {
@@ -173,6 +173,6 @@ public class VolunteersController : ApplicationController
         if(result.IsFailure)
             return result.Error.ToResponse();
         
-        return Ok();
+        return Ok(result.Value);
     }
 }

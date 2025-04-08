@@ -9,12 +9,12 @@ public class PetsController : ApplicationController
     [HttpGet("dapper")]
     public async Task<ActionResult> GetDapper(
         [FromQuery] GetFilteredPetsWithPaginationRequest request,
-        [FromServices] GetFilteredPetsWithPaginationHandlerDapper handler,
+        [FromServices] GetFilteredPetsWithPaginationHandlerPetsDapper handlerPets,
         CancellationToken cancellationToken = default)
     {
         var query = request.ToQuery();
         
-        var response = await handler.Handle(query, cancellationToken);
+        var response = await handlerPets.Handle(query, cancellationToken);
         
         return Ok(response);
     }
@@ -22,12 +22,12 @@ public class PetsController : ApplicationController
     [HttpGet]
     public async Task<ActionResult> Get(
         [FromQuery] GetFilteredPetsWithPaginationRequest request,
-        [FromServices] GetFilteredPetsWithPaginationHandler handler,
+        [FromServices] GetFilteredPetsWithPaginationHandlerPets handlerPets,
         CancellationToken cancellationToken = default)
     {
         var query = request.ToQuery();
         
-        var response = await handler.Handle(query, cancellationToken);
+        var response = await handlerPets.Handle(query, cancellationToken);
         
         return Ok(response);
     }
