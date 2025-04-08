@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PetFamily.Application.Dtos;
@@ -15,5 +16,10 @@ public class PetDtoConfiguration : IEntityTypeConfiguration<PetDto>
         builder.Property(p => p.PetName);
 
         builder.Property(p => p.Position);
+
+        builder.Property(p => p.PetPhotos)
+            .HasConversion(
+                files => JsonSerializer.Serialize(string.Empty, JsonSerializerOptions.Default),
+                json => JsonSerializer.Deserialize<PetPhotoDto[]>(json, JsonSerializerOptions.Default)!);
     }
 }

@@ -1,4 +1,4 @@
-namespace PetFamily.API.Controllers.Requests;
+namespace PetFamily.API.Controllers.Volunteers.Requests;
 
 public record AddPetPhotosRequest(
     IFormFileCollection Files);

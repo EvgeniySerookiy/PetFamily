@@ -2,7 +2,7 @@ using PetFamily.Application.Dtos.PetDTOs;
 using PetFamily.Application.PetManagement.Commands.Pets.AddPet;
 using PetFamily.Domain;
 
-namespace PetFamily.API.Controllers.Requests;
+namespace PetFamily.API.Controllers.Volunteers.Requests;
 
 public record MainPetInfoRequest(
     string Name,

@@ -1,6 +1,6 @@
 using PetFamily.Application.PetManagement.Commands.Pets.MovePets;
 
-namespace PetFamily.API.Controllers.Requests;
+namespace PetFamily.API.Controllers.Volunteers.Requests;
 
 public record MovePetsRequest(
     int CurrentPosition,

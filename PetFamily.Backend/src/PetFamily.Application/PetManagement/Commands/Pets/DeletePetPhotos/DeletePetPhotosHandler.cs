@@ -78,7 +78,7 @@ public class DeletePetPhotosHandler : ICommandHandler<Guid, DeletePetPhotosComma
         if(deleteResult.IsFailure)
             return deleteResult.Error.ToErrorList();
 
-        pet.PetPhotos.RemoveAll(photos);
+        pet.RemoveAll(photos);
         
         await _unitOfWork.SaveChanges(cancellationToken);
         

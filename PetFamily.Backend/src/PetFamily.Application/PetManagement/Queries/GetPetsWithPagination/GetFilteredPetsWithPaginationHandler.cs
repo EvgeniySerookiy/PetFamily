@@ -1,10 +1,10 @@
+using System.Text.Json;
 using Dapper;
 using PetFamily.Application.Abstractions;
 using PetFamily.Application.Database;
 using PetFamily.Application.Dtos;
 using PetFamily.Application.Extensions;
 using PetFamily.Application.Models;
-using PetFamily.Infrastructure;
 
 namespace PetFamily.Application.PetManagement.Queries.GetPetsWithPagination;
 
@@ -62,12 +62,20 @@ public class
         parameters.Add("@Offset", (query.Page - 1) * query.PageSize);
 
         var sql = """
-                      SELECT id, pet_name, position FROM pets
+                      SELECT id, pet_name, position, pet_photos FROM pets
                       ORDER BY position LIMIT @PageSize OFFSET @Offset
                   """;
-        
-        var pets = await connection.QueryAsync<PetDto>(sql, parameters);
 
+        var pets = await connection.QueryAsync<PetDto, string, PetDto>(
+            sql.ToString(), (pet, jsonPhotos) =>
+            {
+                var photos = JsonSerializer.Deserialize<PetPhotoDto[]>(jsonPhotos) ?? [];
+                pet.PetPhotos = photos;
+                return pet;
+            },
+            splitOn: "pet_photos",
+            param: parameters);
+            
         return new PagedList<PetDto>
         {
             Items = pets.ToList(),

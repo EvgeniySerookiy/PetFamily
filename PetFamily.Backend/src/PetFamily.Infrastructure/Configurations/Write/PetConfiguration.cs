@@ -1,5 +1,8 @@
+using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using PetFamily.Application.Dtos;
 using PetFamily.Domain;
 using PetFamily.Domain.PetManagement.Entities;
 using PetFamily.Domain.PetManagement.PetVO;
@@ -47,20 +50,26 @@ public class PetConfiguration : IEntityTypeConfiguration<Pet>
                 .IsRequired()
                 .HasColumnName("breed_id");
         });
-        
-        builder.OwnsOne(p => p.PetPhotos, pb =>
-        {
-            pb.ToJson("photos");
+
+        builder.Property(p => p.PetPhotos)
+            .HasConversion(
+                files => JsonSerializer.Serialize(
+                    files.Select(f => new PetPhotoDto
+                    {
+                        PhotoPath = f.PathToStorage.Path,
+                    }),
+                    JsonSerializerOptions.Default),
                 
-            pb.OwnsMany(p => p.Values, vb =>
-            {
-                vb.Property(v => v.PathToStorage)
-                    .HasConversion(
-                        v => v.Path,
-                        value => PhotoPath.Create(value).Value)
-                    .IsRequired();
-            });
-        });
+                json => JsonSerializer.Deserialize<List<PetPhotoDto>>(json, JsonSerializerOptions.Default)!
+                    .Select(dto => PetPhoto.Create(PhotoPath.Create(dto.PhotoPath).Value).Value)
+                    .ToList(),
+
+                new ValueComparer<IReadOnlyList<PetPhoto>>(
+                    (c1, c2) => c1!.SequenceEqual(c2!),
+                    c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
+                    c => c.ToList()))
+            .HasColumnType("jsonb")
+            .HasColumnName("pet_photos");
 
         builder.ComplexProperty(p => p.Title, tb =>
         {
