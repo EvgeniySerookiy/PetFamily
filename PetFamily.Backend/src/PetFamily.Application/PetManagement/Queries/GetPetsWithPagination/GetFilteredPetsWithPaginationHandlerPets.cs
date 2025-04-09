@@ -38,8 +38,7 @@ public class GetFilteredPetsWithPaginationHandlerPets : IQueryHandlerPets<PagedL
     }
 }
 
-public class
-    GetFilteredPetsWithPaginationHandlerPetsDapper : IQueryHandlerPets<PagedList<PetDto>, GetFilteredPetsWithPaginationQuery>
+public class GetFilteredPetsWithPaginationHandlerPetsDapper : IQueryHandlerPets<PagedList<PetDto>, GetFilteredPetsWithPaginationQuery>
 {
     private readonly ISqlConnectionFactory _sqlConnectionFactory;
 
