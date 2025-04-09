@@ -1,5 +1,4 @@
 using CSharpFunctionalExtensions;
-using PetFamily.Application.Volunteers.Actions.Pets.AddPetPhotos;
 using PetFamily.Domain;
 using PetFamily.Domain.PetManagement.AggregateRoot;
 using PetFamily.Domain.PetManagement.Entities;
@@ -47,18 +46,19 @@ public class AddPhotosToPetTests
         return volunteer;
     }
 
-    private Result<Pet, Error> CreatePet()
+    private Result<Pet, Error> CreatePet(Volunteer volunteer)
     {
         var petId = PetId.NewPetId();
+        var volunteerId = volunteer.Id;
         var petName = PetName.Create("Test");
         var speciesId = SpeciesId.EmptySpeciesId();
         var breedId = BreedId.EmptyBreedId();
-        var petPhotos = new ValueObjectList<PetPhoto>(
-            new List<PetPhoto>
-            {
-                PetPhoto.Create(PhotoPath.Create(Guid.NewGuid(), ".pdf").Value).Value,
-                PetPhoto.Create(PhotoPath.Create(Guid.NewGuid(), ".pdf").Value).Value
-            });
+        var petPhotos = new List<PetPhoto>
+        {
+            PetPhoto.Create(PhotoPath.Create(Guid.NewGuid(), ".pdf").Value).Value,
+            PetPhoto.Create(PhotoPath.Create(Guid.NewGuid(), ".pdf").Value).Value
+        };
+            
         var title = Title.Create("Test");
         var descriptionPet = Description.Create("Test");
         var color = Color.Create("Test");
@@ -80,6 +80,7 @@ public class AddPhotosToPetTests
         var dateOfCreation = DateTime.Now;
         var pet = Pet.Create(
             petId,
+            volunteerId,
             petName.Value,
             speciesId,
             breedId,

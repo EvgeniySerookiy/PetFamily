@@ -51,9 +51,10 @@ public class VolunteerTests
         return volunteer;
     }
 
-    private Result<Pet, Error> CreatePet()
+    private Result<Pet, Error> CreatePet(Volunteer volunteer)
     {
         var petId = PetId.NewPetId();
+        var volunteerId = volunteer.Id;
         var petName = PetName.Create("Test");
         var speciesId = SpeciesId.EmptySpeciesId();
         var breedId = BreedId.EmptyBreedId();
@@ -84,6 +85,7 @@ public class VolunteerTests
         var dateOfCreation = DateTime.Now;
         var pet = Pet.Create(
             petId,
+            volunteerId,
             petName.Value,
             speciesId,
             breedId,
@@ -104,16 +106,16 @@ public class VolunteerTests
         return pet;
     }
 
-    private IEnumerable<Result<Pet, Error>> CreatePets()
+    private IEnumerable<Result<Pet, Error>> CreatePets(Volunteer volunteer)
     {
-        return Enumerable.Range(1, PETS_COUNTS).Select(_ => CreatePet());
+        return Enumerable.Range(1, PETS_COUNTS).Select(_ => CreatePet(volunteer));
     }
 
     [Fact]
     public void Add_Pet_With_Empty_Pets_First_Return_Success_Result()
     {
         var volunteer = CreateVolunteer();
-        var pet = CreatePet();
+        var pet = CreatePet(volunteer.Value);
 
         var result = volunteer.Value.AddPet(pet.Value);
 
@@ -130,8 +132,8 @@ public class VolunteerTests
     {
         // Arrange   
         var volunteer = CreateVolunteer();
-        var pets = CreatePets();
-        var petToAdd = CreatePet();
+        var pets = CreatePets(volunteer.Value);
+        var petToAdd = CreatePet(volunteer.Value);
 
         foreach (var pet in pets)
             volunteer.Value.AddPet(pet.Value);
@@ -155,8 +157,8 @@ public class VolunteerTests
     {
         // Arrange
         var volunteer = CreateVolunteer();
-        var pets = CreatePets();
-        var petToAdd = CreatePet();
+        var pets = CreatePets(volunteer.Value);
+        var petToAdd = CreatePet(volunteer.Value);
 
         foreach (var pet in pets)
             volunteer.Value.AddPet(pet.Value);
@@ -185,8 +187,8 @@ public class VolunteerTests
     {
         // Arrange
         var volunteer = CreateVolunteer();
-        var pets = CreatePets();
-        var petNotAVolunteer = CreatePet();
+        var pets = CreatePets(volunteer.Value);
+        var petNotAVolunteer = CreatePet(volunteer.Value);
         
         foreach (var pet in pets)
             volunteer.Value.AddPet(pet.Value);
@@ -204,8 +206,8 @@ public class VolunteerTests
     {
         // Arrange
         var volunteer = CreateVolunteer();
-        var petToMove = CreatePet();
-        var petToCheck = CreatePet();
+        var petToMove = CreatePet(volunteer.Value);
+        var petToCheck = CreatePet(volunteer.Value);
         
         volunteer.Value.AddPet(petToMove.Value);
         volunteer.Value.AddPet(petToCheck.Value);
@@ -226,11 +228,11 @@ public class VolunteerTests
     {
         // Arrange
         var volunteer = CreateVolunteer();
-        var pet1 = CreatePet();
-        var pet2 = CreatePet();
-        var pet3 = CreatePet();
-        var pet4 = CreatePet();
-        var pet5 = CreatePet();
+        var pet1 = CreatePet(volunteer.Value);
+        var pet2 = CreatePet(volunteer.Value);
+        var pet3 = CreatePet(volunteer.Value);
+        var pet4 = CreatePet(volunteer.Value);
+        var pet5 = CreatePet(volunteer.Value);
         
         var pets = new List<Result<Pet, Error>> { pet1, pet2, pet3, pet4, pet5 };
         

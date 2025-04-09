@@ -1,6 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
 using PetFamily.Domain.PetManagement.PetVO;
 using PetFamily.Domain.PetManagement.SharedVO;
+using PetFamily.Domain.PetManagement.VolunteerVO;
 using PetFamily.Domain.Shared;
 using PetFamily.Domain.Shared.ErrorContext;
 using PetFamily.Domain.SpesiesManagment.SpeciesVO;
@@ -9,10 +10,12 @@ namespace PetFamily.Domain.PetManagement.Entities;
 
 public class Pet : SoftDeletableEntity<PetId>
 {
+    private List<PetPhoto> _petPhotos = new();
     public PetName PetName { get; private set; }
+    public VolunteerId VolunteerId { get; private set; }
     public SpeciesId SpeciesId { get; private set; }
     public BreedId BreedId { get; private set; }
-    public ValueObjectList<PetPhoto> PetPhotos { get; private set; } = new ([]);
+    public IReadOnlyList<PetPhoto> PetPhotos => _petPhotos;
     public Title Title { get; private set; }
     public Description Description { get; private set; }
     public Position Position { get; private set; }
@@ -30,11 +33,12 @@ public class Pet : SoftDeletableEntity<PetId>
     private Pet(PetId id) : base(id) { }
 
     private Pet(
-        PetId id, 
+        PetId id,
+        VolunteerId volunteerId,
         PetName petName,
         SpeciesId speciesId,
         BreedId breedId,
-        ValueObjectList<PetPhoto> petPhotos,
+        List<PetPhoto> petPhotos,
         Title title,
         Description description,
         Color color,
@@ -48,10 +52,11 @@ public class Pet : SoftDeletableEntity<PetId>
         AssistanceStatus status,
         DateTime dateOfCreation) : base(id)
     {
+        VolunteerId = volunteerId;
         PetName = petName;
         SpeciesId = speciesId;
         BreedId = breedId;
-        PetPhotos = petPhotos;
+        _petPhotos = petPhotos;
         Title = title;
         Description = description;
         Color = color;
@@ -68,10 +73,11 @@ public class Pet : SoftDeletableEntity<PetId>
 
     public static Result<Pet, Error> Create(
         PetId id,
+        VolunteerId volunteerId,
         PetName petName,
         SpeciesId speciesId,
         BreedId breedId,
-        ValueObjectList<PetPhoto> petPhotos,
+        List<PetPhoto> petPhotos,
         Title title,
         Description description,
         Color color,
@@ -87,6 +93,7 @@ public class Pet : SoftDeletableEntity<PetId>
     {
         var pet = new Pet(
             id,
+            volunteerId,
             petName,
             speciesId,
             breedId,
@@ -107,9 +114,14 @@ public class Pet : SoftDeletableEntity<PetId>
         return pet;
     }
 
-    public void UpdatePetPhotos(ValueObjectList<PetPhoto> petPhotos)
+    public void UpdatePetPhotos(IEnumerable<PetPhoto> petPhotos)
     {
-        PetPhotos = petPhotos;
+        _petPhotos = petPhotos.ToList();
+    }
+
+    public void RemoveAll(List<PetPhoto> petPhotosToRemove)
+    {
+        _petPhotos.RemoveAll(petPhotosToRemove.Contains);
     }
     
     public void SetPosition(Position position) => Position = position;
