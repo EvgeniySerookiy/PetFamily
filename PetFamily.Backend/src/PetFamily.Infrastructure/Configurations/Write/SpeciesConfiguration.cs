@@ -1,8 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using PetFamily.Domain.PetManagement.PetVO;
-using PetFamily.Domain.SpesiesManagment.Entities;
-using PetFamily.Domain.SpesiesManagment.SpeciesVO;
+using PetFamily.Domain.SpeciesManagement.Entities;
+using PetFamily.Domain.SpeciesManagement.SpeciesVO;
 
 namespace PetFamily.Infrastructure.Configurations.Write;
 
@@ -19,16 +18,18 @@ public class SpeciesConfiguration : IEntityTypeConfiguration<Species>
                 id => id.Value,
                 value => SpeciesId.Create(value));
 
-        builder.ComplexProperty(s => s.PetName, pb =>
+        builder.ComplexProperty(s => s.SpeciesName, pb =>
         {
             pb.Property(p => p.Value)
                 .IsRequired()
-                .HasMaxLength(PetName.MAX_PET_NAME_TEXT_LENGTH)
-                .HasColumnName("pet_name");
+                .HasMaxLength(SpeciesName.MAX_SPECIES_NAME_TEXT_LENGTH)
+                .HasColumnName("species_name");
         });
 
         builder.HasMany(s => s.Breeds)
-            .WithOne()
-            .HasForeignKey("species_id");
+            .WithOne(s => s.Species)
+            .HasForeignKey("species_id")
+            .OnDelete(DeleteBehavior.Cascade)
+            .IsRequired();
     }
 }

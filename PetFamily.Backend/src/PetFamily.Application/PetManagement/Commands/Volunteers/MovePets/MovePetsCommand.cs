@@ -1,6 +1,6 @@
 using PetFamily.Application.Abstractions;
 
-namespace PetFamily.Application.PetManagement.Commands.Pets.MovePets;
+namespace PetFamily.Application.PetManagement.Commands.Volunteers.MovePets;
 
 public record MovePetsCommand(
     Guid Id,

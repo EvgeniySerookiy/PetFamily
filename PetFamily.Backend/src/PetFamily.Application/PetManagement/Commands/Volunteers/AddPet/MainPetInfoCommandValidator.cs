@@ -3,13 +3,13 @@ using PetFamily.Domain.PetManagement.PetVO;
 using PetFamily.Domain.PetManagement.SharedVO;
 using PetFamily.Domain.Shared.ErrorContext;
 
-namespace PetFamily.Application.PetManagement.Commands.Pets.AddPet;
+namespace PetFamily.Application.PetManagement.Commands.Volunteers.AddPet;
 
 public class MainPetInfoCommandValidator : AbstractValidator<MainPetInfoCommand>
 {
     public MainPetInfoCommandValidator()
     {
-        RuleFor(m => m.Id)
+        RuleFor(m => m.VolunteerId)
             .NotEmpty()
             .WithError(Errors.General.ValueIsRequired());
         

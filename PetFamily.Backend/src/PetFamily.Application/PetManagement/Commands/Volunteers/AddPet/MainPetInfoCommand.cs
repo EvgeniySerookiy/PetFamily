@@ -2,10 +2,12 @@ using PetFamily.Application.Abstractions;
 using PetFamily.Application.Dtos.PetDTOs;
 using PetFamily.Domain;
 
-namespace PetFamily.Application.PetManagement.Commands.Pets.AddPet;
+namespace PetFamily.Application.PetManagement.Commands.Volunteers.AddPet;
 
 public record MainPetInfoCommand(
-    Guid Id,
+    Guid VolunteerId,
+    Guid SpeciesId,
+    Guid BreedId,
     string Name,
     string Title,
     string Description,

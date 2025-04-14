@@ -1,7 +1,7 @@
 using FluentValidation;
 using PetFamily.Domain.Shared.ErrorContext;
 
-namespace PetFamily.Application.PetManagement.Commands.Pets.MovePets;
+namespace PetFamily.Application.PetManagement.Commands.Volunteers.MovePets;
 
 public class MovePetsCommandValidator : AbstractValidator<MovePetsCommand>
 {

@@ -4,7 +4,7 @@ using PetFamily.Application.Abstractions;
 using PetFamily.Application.Database;
 using PetFamily.Domain.Shared.ErrorContext;
 
-namespace PetFamily.Application.PetManagement.Commands.Volunteers.Restore;
+namespace PetFamily.Application.PetManagement.Commands.Volunteers.RestoreVolunteer;
 
 public class RestoreVolunteerHandler : ICommandHandler<Guid, RestoreVolunteerCommand>
 {

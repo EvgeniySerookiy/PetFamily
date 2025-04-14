@@ -4,11 +4,11 @@ using Microsoft.Extensions.Logging;
 using PetFamily.Application.Abstractions;
 using PetFamily.Application.Database;
 using PetFamily.Application.Extensions;
-using PetFamily.Application.PetManagement.Commands.Pets.AddPet;
+using PetFamily.Application.PetManagement.Commands.Volunteers.AddPet;
 using PetFamily.Domain.PetManagement.VolunteerVO;
 using PetFamily.Domain.Shared.ErrorContext;
 
-namespace PetFamily.Application.PetManagement.Commands.Pets.MovePets;
+namespace PetFamily.Application.PetManagement.Commands.Volunteers.MovePets;
 
 public class MovePetsHandler : ICommandHandler<Guid, MovePetsCommand>
 {

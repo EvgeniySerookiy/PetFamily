@@ -1,5 +1,5 @@
 using PetFamily.Application.Dtos.PetDTOs;
-using PetFamily.Application.PetManagement.Commands.Pets.AddPet;
+using PetFamily.Application.PetManagement.Commands.Volunteers.AddPet;
 using PetFamily.Domain;
 
 namespace PetFamily.API.Controllers.Volunteers.Write.Requests;
@@ -19,8 +19,14 @@ public record MainPetInfoRequest(
     AssistanceStatus Status,
     DateTime DateOfCreation)
 {
-    public MainPetInfoCommand ToCommand(Guid id) => new MainPetInfoCommand(
-        id,
+    public MainPetInfoCommand ToCommand(
+        Guid volunteerId,
+        Guid speciesId,
+        Guid breedId
+        ) => new MainPetInfoCommand(
+        volunteerId,
+        speciesId,
+        breedId,
         Name,
         Title,
         Description,

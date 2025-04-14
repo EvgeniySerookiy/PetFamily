@@ -35,7 +35,8 @@ public static class Inject
     private static IServiceCollection AddMessageQueues(
         this IServiceCollection services)
     {
-        services.AddSingleton<IMessageQueue<IEnumerable<PhotoInfo>>, InMemoryMessageQueue<IEnumerable<PhotoInfo>>>();
+        services.AddSingleton<IMessageQueue<IEnumerable<PhotoInfo>>, 
+                InMemoryMessageQueue<IEnumerable<PhotoInfo>>>();
         
         return services;
     }
@@ -64,6 +65,7 @@ public static class Inject
         this IServiceCollection services)
     {
         services.AddScoped<IVolunteersRepository, VolunteersRepository>();
+        services.AddScoped<ISpeciesRepository, SpeciesRepository>();
         
         return services;
     }
@@ -73,6 +75,7 @@ public static class Inject
     {
         services.AddScoped<WriteDbContext>();
         services.AddDbContextFactory<WriteDbContext>();
+        services.AddScoped<ReadDbContext>();
         services.AddScoped<IReadDbContext, ReadDbContext>();
         
         return services;

@@ -1,6 +1,6 @@
 using PetFamily.Application.Abstractions;
 
-namespace PetFamily.Application.PetManagement.Commands.Volunteers.Restore;
+namespace PetFamily.Application.PetManagement.Commands.Volunteers.RestoreVolunteer;
 
 public record RestoreVolunteerCommand(
     Guid Id) : ICommand;

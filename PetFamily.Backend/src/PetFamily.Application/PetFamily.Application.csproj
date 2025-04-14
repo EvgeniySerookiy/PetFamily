@@ -4,6 +4,7 @@
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <UserSecretsId>35ba8908-20b8-42f7-b3b0-6273640905ef</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>
@@ -16,6 +17,10 @@
       <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.1" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.1" />
       <PackageReference Include="Scrutor" Version="6.0.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="PetManagement\Queries\Volunteers\" />
     </ItemGroup>
 
 </Project>
