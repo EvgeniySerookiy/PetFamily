@@ -7,7 +7,7 @@ public record TransferSocialNetworkList
     private readonly List<SocialNetwork> _socialNetworks = new();
     public IReadOnlyList<SocialNetwork> SocialNetworks => _socialNetworks;
     
-    private TransferSocialNetworkList() { }
+    private TransferSocialNetworkList() {}
 
     private TransferSocialNetworkList(IEnumerable<SocialNetwork> socialNetworks)
     {

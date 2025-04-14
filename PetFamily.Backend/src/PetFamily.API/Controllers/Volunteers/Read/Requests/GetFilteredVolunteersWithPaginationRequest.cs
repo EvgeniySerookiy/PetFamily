@@ -1,4 +1,4 @@
-using PetFamily.Application.PetManagement.Queries.GetVolunteersWithPagination;
+using PetFamily.Application.PetManagement.Queries.Volunteers.GetVolunteersWithPagination;
 
 namespace PetFamily.API.Controllers.Volunteers.Read.Requests;
 
