@@ -5,14 +5,14 @@ using PetFamily.Application.Abstractions;
 using PetFamily.Application.Database;
 using PetFamily.Application.Extensions;
 using PetFamily.Application.Messaging;
-using PetFamily.Application.PetManagement.Commands.Pets.AddPet;
+using PetFamily.Application.PetManagement.Commands.Volunteers.AddPet;
 using PetFamily.Application.Photos;
 using PetFamily.Application.Providers;
 using PetFamily.Domain.PetManagement.PetVO;
 using PetFamily.Domain.PetManagement.VolunteerVO;
 using PetFamily.Domain.Shared.ErrorContext;
 
-namespace PetFamily.Application.PetManagement.Commands.Pets.AddPetPhotos;
+namespace PetFamily.Application.PetManagement.Commands.Volunteers.AddPetPhotos;
 
 public class AddPetPhotosHandler : ICommandHandler<Guid, AddPetPhotosCommand>
 {
@@ -49,7 +49,7 @@ public class AddPetPhotosHandler : ICommandHandler<Guid, AddPetPhotosCommand>
         var validationResult = await _addPetPhotosValidator.ValidateAsync(command, cancellationToken);
         if (validationResult.IsValid == false)
             return validationResult.ToErrorList();
-        // Транзакция не нужна уже  
+        // Транзакция не нужна уже
         var transaction = await _unitOfWork.BeginTransaction(cancellationToken);
         try
         {

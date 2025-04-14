@@ -1,5 +1,6 @@
 using CSharpFunctionalExtensions;
 using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using PetFamily.Application.Abstractions;
 using PetFamily.Application.Database;
@@ -9,23 +10,26 @@ using PetFamily.Domain.PetManagement.PetVO;
 using PetFamily.Domain.PetManagement.SharedVO;
 using PetFamily.Domain.PetManagement.VolunteerVO;
 using PetFamily.Domain.Shared.ErrorContext;
-using PetFamily.Domain.SpesiesManagment.SpeciesVO;
+using PetFamily.Domain.SpeciesManagement.SpeciesVO;
 
-namespace PetFamily.Application.PetManagement.Commands.Pets.AddPet;
+namespace PetFamily.Application.PetManagement.Commands.Volunteers.AddPet;
 
 public class AddPetHandler : ICommandHandler<Guid, MainPetInfoCommand>
 {
+    private readonly IReadDbContext _readDbContext;
     private readonly IVolunteersRepository _volunteersRepository;
     private readonly ILogger<AddPetHandler> _logger;
     private readonly IValidator<MainPetInfoCommand> _validator;
     private readonly IUnitOfWork _unitOfWork;
 
     public AddPetHandler(
+        IReadDbContext readDbContext,
         IVolunteersRepository volunteersRepository,
         ILogger<AddPetHandler> logger,
         IValidator<MainPetInfoCommand> validator,
         IUnitOfWork unitOfWork)
     {
+        _readDbContext = readDbContext;
         _volunteersRepository = volunteersRepository;
         _logger = logger;
         _validator = validator;
@@ -36,12 +40,23 @@ public class AddPetHandler : ICommandHandler<Guid, MainPetInfoCommand>
         MainPetInfoCommand command,
         CancellationToken cancellationToken = default)
     {
+        var speciesId = SpeciesId.Create(command.SpeciesId);
+        var breedId = BreedId.Create(command.BreedId);
+        
+        var breedResult = await _readDbContext.Breeds
+            .FirstOrDefaultAsync(b => b.Id == breedId.Value, cancellationToken);
+        if (breedResult == null)
+            return Errors.General.NotFound(breedId.Value).ToErrorList();
+        
+        if(breedResult.SpeciesId != speciesId.Value)
+            return Errors.General.NotFound(speciesId.Value).ToErrorList();
+        
         var validationResult = await _validator.ValidateAsync(command, cancellationToken);
         if (validationResult.IsValid == false)
             return validationResult.ToErrorList();
         
         var volunteerResult = await _volunteersRepository.GetById(
-            VolunteerId.Create(command.Id),
+            VolunteerId.Create(command.VolunteerId),
             cancellationToken);
 
         if (volunteerResult.IsFailure)
@@ -79,9 +94,9 @@ public class AddPetHandler : ICommandHandler<Guid, MainPetInfoCommand>
             petId,
             volunteerResult.Value.Id,
             name.Value,
-            SpeciesId.NewSpeciesId(),
-            BreedId.NewBreedId(),
-            new ValueObjectList<PetPhoto>([]),
+            speciesId,
+            BreedId.Create(command.BreedId),
+            [],
             title.Value,
             description.Value,
             color.Value,

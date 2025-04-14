@@ -2,7 +2,7 @@ using FluentValidation;
 using PetFamily.Application.Dtos.Validators;
 using PetFamily.Domain.Shared.ErrorContext;
 
-namespace PetFamily.Application.PetManagement.Commands.Pets.AddPetPhotos;
+namespace PetFamily.Application.PetManagement.Commands.Volunteers.AddPetPhotos;
 
 public class AddPetPhotosCommandValidator : AbstractValidator<AddPetPhotosCommand>
 {
