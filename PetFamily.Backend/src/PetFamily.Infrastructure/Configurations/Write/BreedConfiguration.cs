@@ -1,8 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using PetFamily.Domain.PetManagement.PetVO;
-using PetFamily.Domain.SpesiesManagment.Entities;
-using PetFamily.Domain.SpesiesManagment.SpeciesVO;
+using PetFamily.Domain.SpeciesManagement.Entities;
+using PetFamily.Domain.SpeciesManagement.SpeciesVO;
 
 namespace PetFamily.Infrastructure.Configurations.Write;
 
@@ -18,13 +17,19 @@ public class BreedConfiguration : IEntityTypeConfiguration<Breed>
             .HasConversion(
                 id => id.Value,
                 value => BreedId.Create(value));
-
-        builder.ComplexProperty(b => b.PetName, pb =>
+        
+        builder.ComplexProperty(b => b.BreedName, pb =>
         {
             pb.Property(p => p.Value)
                 .IsRequired()
-                .HasMaxLength(PetName.MAX_PET_NAME_TEXT_LENGTH)
-                .HasColumnName("pet_name");
+                .HasMaxLength(BreedName.MAX_BREED_NAME_TEXT_LENGTH)
+                .HasColumnName("breed_name");
         });
+        
+        builder.HasOne(p => p.Species)
+            .WithMany(p => p.Breeds)  
+            .HasForeignKey("species_id")
+            .OnDelete(DeleteBehavior.NoAction)
+            .IsRequired();
     }
 }

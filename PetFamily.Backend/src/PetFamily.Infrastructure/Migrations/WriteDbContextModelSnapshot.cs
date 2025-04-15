@@ -327,17 +327,17 @@ namespace PetFamily.Infrastructure.Migrations
                     b.ToTable("pets", (string)null);
                 });
 
-            modelBuilder.Entity("PetFamily.Domain.SpesiesManagment.Entities.Breed", b =>
+            modelBuilder.Entity("PetFamily.Domain.SpeciesManagement.Entities.Breed", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<Guid?>("species_id")
+                    b.Property<Guid>("species_id")
                         .HasColumnType("uuid")
                         .HasColumnName("species_id");
 
-                    b.ComplexProperty<Dictionary<string, object>>("PetName", "PetFamily.Domain.SpesiesManagment.Entities.Breed.PetName#PetName", b1 =>
+                    b.ComplexProperty<Dictionary<string, object>>("BreedName", "PetFamily.Domain.SpeciesManagement.Entities.Breed.BreedName#BreedName", b1 =>
                         {
                             b1.IsRequired();
 
@@ -345,7 +345,7 @@ namespace PetFamily.Infrastructure.Migrations
                                 .IsRequired()
                                 .HasMaxLength(100)
                                 .HasColumnType("character varying(100)")
-                                .HasColumnName("pet_name");
+                                .HasColumnName("breed_name");
                         });
 
                     b.HasKey("Id")
@@ -357,13 +357,13 @@ namespace PetFamily.Infrastructure.Migrations
                     b.ToTable("breeds", (string)null);
                 });
 
-            modelBuilder.Entity("PetFamily.Domain.SpesiesManagment.Entities.Species", b =>
+            modelBuilder.Entity("PetFamily.Domain.SpeciesManagement.Entities.Species", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.ComplexProperty<Dictionary<string, object>>("PetName", "PetFamily.Domain.SpesiesManagment.Entities.Species.PetName#PetName", b1 =>
+                    b.ComplexProperty<Dictionary<string, object>>("SpeciesName", "PetFamily.Domain.SpeciesManagement.Entities.Species.SpeciesName#SpeciesName", b1 =>
                         {
                             b1.IsRequired();
 
@@ -371,7 +371,7 @@ namespace PetFamily.Infrastructure.Migrations
                                 .IsRequired()
                                 .HasMaxLength(100)
                                 .HasColumnType("character varying(100)")
-                                .HasColumnName("pet_name");
+                                .HasColumnName("species_name");
                         });
 
                     b.HasKey("Id")
@@ -498,12 +498,16 @@ namespace PetFamily.Infrastructure.Migrations
                         .HasConstraintName("fk_pets_volunteers_pets_id");
                 });
 
-            modelBuilder.Entity("PetFamily.Domain.SpesiesManagment.Entities.Breed", b =>
+            modelBuilder.Entity("PetFamily.Domain.SpeciesManagement.Entities.Breed", b =>
                 {
-                    b.HasOne("PetFamily.Domain.SpesiesManagment.Entities.Species", null)
+                    b.HasOne("PetFamily.Domain.SpeciesManagement.Entities.Species", "Species")
                         .WithMany("Breeds")
                         .HasForeignKey("species_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
                         .HasConstraintName("fk_breeds_species_species_id");
+
+                    b.Navigation("Species");
                 });
 
             modelBuilder.Entity("PetFamily.Domain.PetManagement.AggregateRoot.Volunteer", b =>
@@ -511,7 +515,7 @@ namespace PetFamily.Infrastructure.Migrations
                     b.Navigation("Pets");
                 });
 
-            modelBuilder.Entity("PetFamily.Domain.SpesiesManagment.Entities.Species", b =>
+            modelBuilder.Entity("PetFamily.Domain.SpeciesManagement.Entities.Species", b =>
                 {
                     b.Navigation("Breeds");
                 });

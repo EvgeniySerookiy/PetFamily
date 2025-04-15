@@ -4,7 +4,7 @@ using PetFamily.Domain.PetManagement.SharedVO;
 using PetFamily.Domain.PetManagement.VolunteerVO;
 using PetFamily.Domain.Shared;
 using PetFamily.Domain.Shared.ErrorContext;
-using PetFamily.Domain.SpesiesManagment.SpeciesVO;
+using PetFamily.Domain.SpeciesManagement.SpeciesVO;
 
 namespace PetFamily.Domain.PetManagement.Entities;
 

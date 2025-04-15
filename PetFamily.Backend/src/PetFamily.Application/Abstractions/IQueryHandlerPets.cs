@@ -12,6 +12,20 @@ public interface IQueryHandlerPets<TResponse, in TQuery> where TQuery : IQuery
         CancellationToken cancellationToken = default);
 }
 
+public interface IQueryHandlerSpecies<TResponse, in TQuery> where TQuery : IQuery
+{
+    Task<PagedList<SpeciesDto>> Handle(
+        TQuery query, 
+        CancellationToken cancellationToken = default);
+}
+
+public interface IQueryHandlerBreedsOfSpecies<TResponse, in TQuery> where TQuery : IQuery
+{
+    Task<PagedList<BreedDto>> Handle(
+        TQuery query, 
+        CancellationToken cancellationToken = default);
+}
+
 public interface IQueryHandlerVolunteer<TResponse, in TQuery> where TQuery : IQuery
 {
     Task<Result<VolunteerDto, ErrorList>> Handle(

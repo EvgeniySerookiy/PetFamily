@@ -10,13 +10,11 @@ public class PetDtoConfiguration : IEntityTypeConfiguration<PetDto>
     public void Configure(EntityTypeBuilder<PetDto> builder)
     {
         builder.ToTable("pets");
-        
         builder.HasKey(p => p.Id);
-        
+        builder.Property(p => p.SpeciesId);
+        builder.Property(p => p.BreedId);
         builder.Property(p => p.PetName);
-
         builder.Property(p => p.Position);
-
         builder.Property(p => p.PetPhotos)
             .HasConversion(
                 files => JsonSerializer.Serialize(string.Empty, JsonSerializerOptions.Default),

@@ -52,4 +52,30 @@ public static class Errors
             return Error.Validation("record.already.exist", "Volunteer already exist");
         }
     }
+    
+    public static class Species
+    {
+        public static Error AlreadyExist()
+        {
+            return Error.Validation("record.already.exist", "Species already exist");
+        }
+        
+        public static Error IsCurrentlyUsed()
+        {
+            return Error.Validation("species.is.used", "Species is used");
+        }
+    }
+    
+    public static class Breed
+    {
+        public static Error AlreadyExist()
+        {
+            return Error.Validation("record.already.exist", "Breed already exist");
+        }
+        
+        public static Error IsCurrentlyUsed()
+        {
+            return Error.Validation("breed.is.used", "Breed is used");
+        }
+    }
 }

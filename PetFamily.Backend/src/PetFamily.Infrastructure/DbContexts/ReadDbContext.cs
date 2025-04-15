@@ -11,6 +11,8 @@ public class ReadDbContext : DbContext, IReadDbContext
     private readonly IConfiguration _configuration;
     public IQueryable<VolunteerDto> Volunteers => Set<VolunteerDto>();
     public IQueryable<PetDto> Pets => Set<PetDto>();
+    public IQueryable<SpeciesDto> Species => Set<SpeciesDto>();
+    public IQueryable<BreedDto> Breeds => Set<BreedDto>();
 
     public ReadDbContext(
         IConfiguration configuration)
