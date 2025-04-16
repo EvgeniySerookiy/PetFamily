@@ -114,6 +114,40 @@ public class Pet : SoftDeletableEntity<PetId>
         return pet;
     }
 
+    public void UpdatePet(
+        PetName name,
+        SpeciesId speciesId,
+        BreedId breedId,
+        Title title,
+        Description description,
+        Color color,
+        PetHealthInformation petHealthInformation,
+        Address petAddress,
+        PhoneNumber ownerPhoneNumber,
+        Size size,
+        NeuteredStatus isNeutered,
+        RabiesVaccinationStatus isVaccinated,
+        DateTime dateOfBirth,
+        AssistanceStatus status,
+        DateTime dateOfCreation)
+    {
+        PetName = name;
+        SpeciesId = speciesId;
+        BreedId = breedId;
+        Title = title;
+        Description = description;
+        Color = color;
+        PetHealthInformation = petHealthInformation;
+        PetAddress = petAddress;
+        OwnerPhoneNumber = ownerPhoneNumber;
+        Size = size;
+        IsNeutered = isNeutered;
+        IsVaccinated = isVaccinated;
+        DateOfBirth = dateOfBirth;
+        Status = status;
+        DateOfCreation = dateOfCreation;
+    }
+
     public void UpdatePetPhotos(IEnumerable<PetPhoto> petPhotos)
     {
         _petPhotos = petPhotos.ToList();

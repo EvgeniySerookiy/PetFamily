@@ -60,6 +60,13 @@ public static class Errors
             return Error.Validation("record.already.exist", "Species already exist");
         }
         
+        public static Error NotFound(Guid? id = null)
+        {
+            var forId = id == null ? "" : $"for Id {id}";
+            return Error.NotFound(
+                "record.not.found", $"record not found {forId}");
+        }
+        
         public static Error IsCurrentlyUsed()
         {
             return Error.Validation("species.is.used", "Species is used");
@@ -71,6 +78,13 @@ public static class Errors
         public static Error AlreadyExist()
         {
             return Error.Validation("record.already.exist", "Breed already exist");
+        }
+        
+        public static Error NotFound(Guid? id = null)
+        {
+            var forId = id == null ? "" : $"for Id {id}";
+            return Error.NotFound(
+                "record.not.found", $"record not found {forId}");
         }
         
         public static Error IsCurrentlyUsed()

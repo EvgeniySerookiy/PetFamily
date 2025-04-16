@@ -1,5 +1,4 @@
 using CSharpFunctionalExtensions;
-using PetFamily.Application.Dtos;
 using PetFamily.Domain.Shared.ErrorContext;
 using PetFamily.Domain.SpeciesManagement.Entities;
 using PetFamily.Domain.SpeciesManagement.SpeciesVO;
