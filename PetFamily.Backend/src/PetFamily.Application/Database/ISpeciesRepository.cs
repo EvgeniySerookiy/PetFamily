@@ -14,11 +14,11 @@ public interface ISpeciesRepository
         SpeciesId speciesId,
         CancellationToken cancellationToken = default);
 
-    Task<Guid> DeleteSpecies(
+    Task<Result<Guid, Error>> DeleteSpecies(
         SpeciesId speciesId,
         CancellationToken cancellationToken = default);
 
-    Task<Guid> DeleteBreed(
+    Task<Result<Guid, Error>> DeleteBreed(
         BreedId breedId,
         CancellationToken cancellationToken = default);
 

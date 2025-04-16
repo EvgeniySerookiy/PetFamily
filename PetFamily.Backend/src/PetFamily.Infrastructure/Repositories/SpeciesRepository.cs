@@ -32,24 +32,30 @@ public class SpeciesRepository : ISpeciesRepository
         return species.Id.Value;
     }
     
-    public async Task<Guid> DeleteSpecies(
+    public async Task<Result<Guid, Error>> DeleteSpecies(
         SpeciesId speciesId, 
         CancellationToken cancellationToken = default)
     {
         var speciesToDelete = await _writeDbContext.Species
             .FirstOrDefaultAsync(s => s.Id == speciesId, cancellationToken);
         
+        if (speciesToDelete == null)
+            return Errors.General.NotFound(speciesId.Value);
+        
         _writeDbContext.Species.Remove(speciesToDelete);
         
         return speciesToDelete.Id.Value;
     }
     
-    public async Task<Guid> DeleteBreed(
+    public async Task<Result<Guid, Error>> DeleteBreed(
         BreedId breedId, 
         CancellationToken cancellationToken = default)
     {
         var breedToDelete = await _writeDbContext.Breeds
             .FirstOrDefaultAsync(s => s.Id == breedId, cancellationToken);
+        
+        if (breedToDelete == null)
+            return Errors.General.NotFound(breedId.Value);
         
         _writeDbContext.Breeds.Remove(breedToDelete);
         
