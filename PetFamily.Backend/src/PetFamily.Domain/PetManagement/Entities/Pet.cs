@@ -148,6 +148,11 @@ public class Pet : SoftDeletableEntity<PetId>
         DateOfCreation = dateOfCreation;
     }
 
+    public void UpdatePetStatus(AssistanceStatus status)
+    {
+        Status = status;
+    }
+
     public void UpdatePetPhotos(IEnumerable<PetPhoto> petPhotos)
     {
         _petPhotos = petPhotos.ToList();
