@@ -1,5 +1,4 @@
 using CSharpFunctionalExtensions;
-using PetFamily.Application.Dtos;
 using PetFamily.Domain.Shared.ErrorContext;
 using PetFamily.Domain.SpeciesManagement.Entities;
 using PetFamily.Domain.SpeciesManagement.SpeciesVO;
@@ -26,8 +25,8 @@ public interface ISpeciesRepository
         SpeciesName speciesName,
         CancellationToken cancellationToken = default);
 
-    Task<Result<Species, Error>> GetByBreedName(
-        SpeciesId speciesId,
-        BreedName breedName,
-        CancellationToken cancellationToken = default);
+    // Task<Result<Species, Error>> GetByBreedName(
+    //     SpeciesId speciesId,
+    //     BreedName breedName,
+    //     CancellationToken cancellationToken = default);
 }

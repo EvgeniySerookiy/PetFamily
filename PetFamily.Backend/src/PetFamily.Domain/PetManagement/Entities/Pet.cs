@@ -114,6 +114,60 @@ public class Pet : SoftDeletableEntity<PetId>
         return pet;
     }
 
+    public void UpdatePet(
+        PetName name,
+        SpeciesId speciesId,
+        BreedId breedId,
+        Title title,
+        Description description,
+        Color color,
+        PetHealthInformation petHealthInformation,
+        Address petAddress,
+        PhoneNumber ownerPhoneNumber,
+        Size size,
+        NeuteredStatus isNeutered,
+        RabiesVaccinationStatus isVaccinated,
+        DateTime dateOfBirth,
+        AssistanceStatus status,
+        DateTime dateOfCreation)
+    {
+        PetName = name;
+        SpeciesId = speciesId;
+        BreedId = breedId;
+        Title = title;
+        Description = description;
+        Color = color;
+        PetHealthInformation = petHealthInformation;
+        PetAddress = petAddress;
+        OwnerPhoneNumber = ownerPhoneNumber;
+        Size = size;
+        IsNeutered = isNeutered;
+        IsVaccinated = isVaccinated;
+        DateOfBirth = dateOfBirth;
+        Status = status;
+        DateOfCreation = dateOfCreation;
+    }
+
+    public void UpdatePetStatus(AssistanceStatus status)
+    {
+        Status = status;
+    }
+
+    public UnitResult<Error> SetMainPhoto(string photoPath)
+    {
+        var petPhoto = PetPhoto.Create(PhotoPath.Create(photoPath).Value);
+        if(_petPhotos.Contains(petPhoto.Value) == false)
+            return UnitResult.Failure(Errors.General.NotFound());
+
+        if (_petPhotos[0] == petPhoto.Value)
+            return UnitResult.Success<Error>();
+        
+        _petPhotos.Remove(petPhoto.Value);
+        _petPhotos.Insert(0, petPhoto.Value);
+        
+        return UnitResult.Success<Error>();
+    }
+
     public void UpdatePetPhotos(IEnumerable<PetPhoto> petPhotos)
     {
         _petPhotos = petPhotos.ToList();

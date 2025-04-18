@@ -1,5 +1,6 @@
 using CSharpFunctionalExtensions;
 using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using PetFamily.Application.Abstractions;
 using PetFamily.Application.Database;
 using PetFamily.Application.Extensions;
@@ -11,15 +12,18 @@ namespace PetFamily.Application.PetManagement.Commands.SpeciesСmd.AddBreed;
 public class AddBreedHandler : ICommandHandler<Guid, AddBreedCommand>
 {
     private readonly ISpeciesRepository _speciesRepository;
+    private readonly IReadDbContext _readDbContext;
     private readonly IValidator<AddBreedCommand> _validator;
     private readonly IUnitOfWork _unitOfWork;
 
     public AddBreedHandler(
         ISpeciesRepository speciesRepository,
+        IReadDbContext readDbContext,
         IValidator<AddBreedCommand> validator,
         IUnitOfWork unitOfWork)
     {
         _speciesRepository = speciesRepository;
+        _readDbContext = readDbContext;
         _validator = validator;
         _unitOfWork = unitOfWork;
     }
@@ -40,13 +44,14 @@ public class AddBreedHandler : ICommandHandler<Guid, AddBreedCommand>
         var breedId = BreedId.NewBreedId();
         
         var name = BreedName.Create(command.Name);
-        
-        var breedNameResult = await _speciesRepository.GetByBreedName(
-            speciesResult.Value.Id, 
-            name.Value, 
-            cancellationToken);
-        if(breedNameResult.IsFailure)
-            return breedNameResult.Error.ToErrorList();
+
+        var breedExists = await _readDbContext.Species
+            .Where(s => s.Id == speciesResult.Value.Id.Value)
+            .SelectMany(s => s.Breeds)
+            .AnyAsync(s => s.BreedName == name.Value.Value, cancellationToken);
+
+        if (breedExists)
+            return Errors.Breed.AlreadyExist().ToErrorList();
         
         var breed = Domain.SpeciesManagement.Entities.Breed.Create(breedId, name.Value);
         

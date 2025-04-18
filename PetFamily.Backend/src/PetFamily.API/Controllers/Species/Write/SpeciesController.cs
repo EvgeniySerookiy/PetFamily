@@ -12,7 +12,7 @@ public class SpeciesController : ApplicationController
 {
     [HttpPost]
     public async Task<ActionResult> Create(
-        [FromBody] AddSpeciesRequest request,
+        [FromForm] AddSpeciesRequest request,
         [FromServices] AddSpeciesHandler handler,
         CancellationToken cancellationToken = default)
     {

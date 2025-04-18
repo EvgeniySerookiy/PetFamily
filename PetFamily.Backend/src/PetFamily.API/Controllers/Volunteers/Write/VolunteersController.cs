@@ -7,10 +7,14 @@ using PetFamily.Application.Dtos.VolunteerDTOs;
 using PetFamily.Application.PetManagement.Commands.Volunteers.AddPet;
 using PetFamily.Application.PetManagement.Commands.Volunteers.AddPetPhotos;
 using PetFamily.Application.PetManagement.Commands.Volunteers.CreateVolunteer;
+using PetFamily.Application.PetManagement.Commands.Volunteers.DeletePet;
 using PetFamily.Application.PetManagement.Commands.Volunteers.DeletePetPhotos;
 using PetFamily.Application.PetManagement.Commands.Volunteers.DeleteVolunteer;
 using PetFamily.Application.PetManagement.Commands.Volunteers.MovePets;
 using PetFamily.Application.PetManagement.Commands.Volunteers.RestoreVolunteer;
+using PetFamily.Application.PetManagement.Commands.Volunteers.SetPetMainPhoto;
+using PetFamily.Application.PetManagement.Commands.Volunteers.UpdatePet;
+using PetFamily.Application.PetManagement.Commands.Volunteers.UpdatePetStatus;
 using PetFamily.Application.PetManagement.Commands.Volunteers.UpdateVolunteer.UpdateMainInfo;
 using PetFamily.Application.PetManagement.Commands.Volunteers.UpdateVolunteer.UpdateRequisitesForHelp;
 using PetFamily.Application.PetManagement.Commands.Volunteers.UpdateVolunteer.UpdateSocialNetwork;
@@ -180,6 +184,57 @@ public class VolunteersController : ApplicationController
     {
         var result = await handler.Handle(request.ToCommand(id), cancellationToken);
         if (result.IsFailure)
+            return result.Error.ToResponse();
+
+        return Ok(result.Value);
+    }
+    
+    [HttpPut("{volunteerId:guid}/pet/{petId:guid}/update-pet")]
+    public async Task<ActionResult> UpdatePet(
+        [FromRoute] Guid volunteerId,
+        [FromRoute] Guid petId,
+        [FromForm] UpdatePetRequest request,
+        [FromServices] UpdatePetHandler handler,
+        CancellationToken cancellationToken = default)
+    {
+        var command = request.ToCommand(volunteerId, petId);
+        
+        var result = await handler.Handle(command, cancellationToken);
+        if(result.IsFailure)
+            return result.Error.ToResponse();
+
+        return Ok(result.Value);
+    }
+    
+    [HttpPut("{volunteerId:guid}/pet/{petId:guid}/update-pet-status")]
+    public async Task<ActionResult> UpdatePetStatus(
+        [FromRoute] Guid volunteerId,
+        [FromRoute] Guid petId,
+        [FromForm] UpdatePetStatusRequest request,
+        [FromServices] UpdatePetStatusHandler handler,
+        CancellationToken cancellationToken = default)
+    {
+        var command = request.TCommand(volunteerId, petId);
+        
+        var result = await handler.Handle(command, cancellationToken);
+        if(result.IsFailure)
+            return result.Error.ToResponse();
+
+        return Ok(result.Value);
+    }
+    
+    [HttpPut("{volunteerId:guid}/pet/{petId:guid}/main-photo")]
+    public async Task<ActionResult> SetPetMainPhoto(
+        [FromRoute] Guid volunteerId,
+        [FromRoute] Guid petId,
+        [FromForm] SetPetMainPhotoRequest request,
+        [FromServices] SetPetMainPhotoHandler handler,
+        CancellationToken cancellationToken = default)
+    {
+        var command = new SetPetMainPhotoCommand(volunteerId, petId, request.PhotoPath);
+        
+        var result = await handler.Handle(command, cancellationToken);
+        if(result.IsFailure)
             return result.Error.ToResponse();
 
         return Ok(result.Value);

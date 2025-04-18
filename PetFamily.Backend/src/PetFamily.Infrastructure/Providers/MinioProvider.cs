@@ -93,11 +93,11 @@ public class MinioProvider : IFileProvider
             if (objectStat is null)
                 return Result.Success<Error>();
 
-            var removeArgs = new RemoveObjectsArgs()
+            var removeArgs = new RemoveObjectArgs()
                 .WithBucket(photoInfo.BucketName)
                 .WithObject(photoInfo.PhotoPath.Path);
 
-            await _minioClient.RemoveObjectsAsync(removeArgs, cancellationToken);
+            await _minioClient.RemoveObjectAsync(removeArgs, cancellationToken);
         }
         catch (Exception exception)
         {
