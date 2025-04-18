@@ -1,7 +1,6 @@
 using CSharpFunctionalExtensions;
 using Microsoft.EntityFrameworkCore;
 using PetFamily.Application.Database;
-using PetFamily.Application.Dtos;
 using PetFamily.Domain.Shared.ErrorContext;
 using PetFamily.Domain.SpeciesManagement.Entities;
 using PetFamily.Domain.SpeciesManagement.SpeciesVO;
@@ -67,7 +66,6 @@ public class SpeciesRepository : ISpeciesRepository
         CancellationToken cancellationToken = default)
     {
         var species = await _writeDbContext.Species
-            .Include(v => v.Breeds)
             .FirstOrDefaultAsync(v => v.Id == speciesId, cancellationToken);
 
         if (species is null)
@@ -87,24 +85,5 @@ public class SpeciesRepository : ISpeciesRepository
             return Errors.General.NotFound();
 
         return species;
-    }
-
-    public async Task<Result<Species, Error>> GetByBreedName(
-        SpeciesId speciesId,
-        BreedName breedName,
-        CancellationToken cancellationToken = default)
-    {
-        var species = await _writeDbContext.Species
-            .Include(v => v.Breeds)
-            .FirstOrDefaultAsync(v => v.Id == speciesId, cancellationToken);
-        if (species is null)
-            return Errors.General.NotFound();
-
-        var result = species.Breeds
-            .Any(b => b.BreedName.Value == breedName.Value);
-        if (result is false)
-            return species;
-
-        return Errors.Breed.AlreadyExist();
     }
 }

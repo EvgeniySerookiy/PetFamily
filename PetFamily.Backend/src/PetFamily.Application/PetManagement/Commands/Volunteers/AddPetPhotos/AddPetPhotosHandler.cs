@@ -93,7 +93,6 @@ public class AddPetPhotosHandler : ICommandHandler<Guid, AddPetPhotosCommand>
                     .Select(p => p.PhotoInfo), cancellationToken);
                 return uploadResult.Error.ToErrorList();
             }
-                
 
             transaction.Commit();
 

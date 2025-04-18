@@ -25,8 +25,8 @@ public interface ISpeciesRepository
         SpeciesName speciesName,
         CancellationToken cancellationToken = default);
 
-    Task<Result<Species, Error>> GetByBreedName(
-        SpeciesId speciesId,
-        BreedName breedName,
-        CancellationToken cancellationToken = default);
+    // Task<Result<Species, Error>> GetByBreedName(
+    //     SpeciesId speciesId,
+    //     BreedName breedName,
+    //     CancellationToken cancellationToken = default);
 }

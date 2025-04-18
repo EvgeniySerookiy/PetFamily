@@ -37,7 +37,7 @@ public class VolunteersController : ApplicationController
     }
     
     // Операции с петом
-    [HttpGet("/pets/dapper")]
+    [HttpGet("pets/dapper")]
     public async Task<ActionResult> GetPetsDapper(
         [FromQuery] GetFilteredPetsWithPaginationRequest request,
         [FromServices] GetFilteredPetsWithPaginationHandlerPetsDapper handlerPets,
@@ -50,7 +50,7 @@ public class VolunteersController : ApplicationController
         return Ok(response);
     }
     
-    [HttpGet("/pets")]
+    [HttpGet("pets")]
     public async Task<ActionResult> GetPets(
         [FromQuery] GetFilteredPetsWithPaginationRequest request,
         [FromServices] GetFilteredPetsWithPaginationHandlerPets handlerPets,

@@ -25,7 +25,7 @@ public class SpeciesController : ApplicationController
         return Ok(response);
     }
 
-    [HttpGet("/species")]
+    [HttpGet("species")]
     public async Task<ActionResult> GetSpecies(
         [FromQuery] GetSpeciesWithPaginationRequest request,
         [FromServices] GetSpeciesWithPaginationHandler handler,

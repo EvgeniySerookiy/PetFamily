@@ -7,6 +7,7 @@ using PetFamily.Application.Dtos.VolunteerDTOs;
 using PetFamily.Application.PetManagement.Commands.Volunteers.AddPet;
 using PetFamily.Application.PetManagement.Commands.Volunteers.AddPetPhotos;
 using PetFamily.Application.PetManagement.Commands.Volunteers.CreateVolunteer;
+using PetFamily.Application.PetManagement.Commands.Volunteers.DeletePet;
 using PetFamily.Application.PetManagement.Commands.Volunteers.DeletePetPhotos;
 using PetFamily.Application.PetManagement.Commands.Volunteers.DeleteVolunteer;
 using PetFamily.Application.PetManagement.Commands.Volunteers.MovePets;
@@ -213,6 +214,22 @@ public class VolunteersController : ApplicationController
         CancellationToken cancellationToken = default)
     {
         var command = request.TCommand(volunteerId, petId);
+        
+        var result = await handler.Handle(command, cancellationToken);
+        if(result.IsFailure)
+            return result.Error.ToResponse();
+
+        return Ok(result.Value);
+    }
+    
+    [HttpDelete("{volunteerId:guid}/pet/{petId:guid}")]
+    public async Task<ActionResult> DeletePet(
+        [FromRoute] Guid volunteerId,
+        [FromRoute] Guid petId,
+        [FromServices] DeletePetHandler handler,
+        CancellationToken cancellationToken = default)
+    {
+        var command = new DeletePetCommand(volunteerId, petId);
         
         var result = await handler.Handle(command, cancellationToken);
         if(result.IsFailure)
