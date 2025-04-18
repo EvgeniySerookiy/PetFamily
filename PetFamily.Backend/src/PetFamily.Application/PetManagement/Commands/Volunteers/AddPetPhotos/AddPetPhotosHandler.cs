@@ -56,11 +56,10 @@ public class AddPetPhotosHandler : ICommandHandler<Guid, AddPetPhotosCommand>
             var volunteerResult = await _volunteersRepository.GetById(
                 VolunteerId.Create(command.VolunteerId),
                 cancellationToken);
-
-            var petResult = volunteerResult.Value.GetPetById(command.PetId);
-
             if (volunteerResult.IsFailure)
                 return volunteerResult.Error.ToErrorList();
+
+            var petResult = volunteerResult.Value.GetPetById(command.PetId);
             
             List<PhotoData> photosData = [];
 

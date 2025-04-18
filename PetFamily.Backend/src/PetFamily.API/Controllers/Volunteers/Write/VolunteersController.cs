@@ -12,6 +12,7 @@ using PetFamily.Application.PetManagement.Commands.Volunteers.DeletePetPhotos;
 using PetFamily.Application.PetManagement.Commands.Volunteers.DeleteVolunteer;
 using PetFamily.Application.PetManagement.Commands.Volunteers.MovePets;
 using PetFamily.Application.PetManagement.Commands.Volunteers.RestoreVolunteer;
+using PetFamily.Application.PetManagement.Commands.Volunteers.SetPetMainPhoto;
 using PetFamily.Application.PetManagement.Commands.Volunteers.UpdatePet;
 using PetFamily.Application.PetManagement.Commands.Volunteers.UpdatePetStatus;
 using PetFamily.Application.PetManagement.Commands.Volunteers.UpdateVolunteer.UpdateMainInfo;
@@ -222,14 +223,15 @@ public class VolunteersController : ApplicationController
         return Ok(result.Value);
     }
     
-    [HttpDelete("{volunteerId:guid}/pet/{petId:guid}")]
-    public async Task<ActionResult> DeletePet(
+    [HttpPut("{volunteerId:guid}/pet/{petId:guid}/main-photo")]
+    public async Task<ActionResult> SetPetMainPhoto(
         [FromRoute] Guid volunteerId,
         [FromRoute] Guid petId,
-        [FromServices] DeletePetHandler handler,
+        [FromForm] SetPetMainPhotoRequest request,
+        [FromServices] SetPetMainPhotoHandler handler,
         CancellationToken cancellationToken = default)
     {
-        var command = new DeletePetCommand(volunteerId, petId);
+        var command = new SetPetMainPhotoCommand(volunteerId, petId, request.PhotoPath);
         
         var result = await handler.Handle(command, cancellationToken);
         if(result.IsFailure)

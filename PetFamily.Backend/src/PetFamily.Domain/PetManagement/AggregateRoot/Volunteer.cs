@@ -150,18 +150,18 @@ public sealed class  Volunteer : SoftDeletableEntity<VolunteerId>
 
         var result = Pets.FirstOrDefault(p => p.Id == pet.Id);
         if (result == null)
-            return Errors.General.NotFound(pet.Id);
+            return UnitResult.Failure(Errors.General.NotFound(pet.Id));
 
         var currentPosition = pet.Position.Value;
 
         if (currentPosition == nextPosition)
-            return Result.Success<Error>();
+            return UnitResult.Success<Error>();
         
         ShiftPositions(currentPosition, nextPosition);
 
         var position = Position.Create(nextPosition);
         pet.SetPosition(position.Value);
-        return Result.Success<Error>();
+        return UnitResult.Success<Error>();
     }
 
     public Result<Pet, Error> GetPetById(Guid petId)
