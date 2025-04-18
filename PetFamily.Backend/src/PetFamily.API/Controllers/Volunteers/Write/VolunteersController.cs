@@ -207,7 +207,7 @@ public class VolunteersController : ApplicationController
     }
     
     [HttpPut("{volunteerId:guid}/pet/{petId:guid}/update-pet-status")]
-    public async Task<ActionResult> UpdatePet(
+    public async Task<ActionResult> UpdatePetStatus(
         [FromRoute] Guid volunteerId,
         [FromRoute] Guid petId,
         [FromForm] UpdatePetStatusRequest request,
