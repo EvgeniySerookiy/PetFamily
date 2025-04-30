@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using PetFamily.Application.Abstractions;
 using PetFamily.Application.Database;
 using PetFamily.Application.Extensions;
-using PetFamily.Application.PetManagement.Commands.Volunteers.AddPet;
 using PetFamily.Application.Photos;
 using PetFamily.Application.Providers;
 using PetFamily.Domain.PetManagement.PetVO;
@@ -21,14 +20,14 @@ public class DeletePetPhotosHandler : ICommandHandler<Guid, DeletePetPhotosComma
     private readonly IFileProvider _fileProvider;
     private readonly IValidator<DeletePetPhotosCommand> _validator;
     private readonly IVolunteersRepository _volunteersRepository;
-    private readonly ILogger<AddPetHandler> _logger;
+    private readonly ILogger<AddPet.AddPet> _logger;
     private readonly IUnitOfWork _unitOfWork;
     
     public DeletePetPhotosHandler(
         IFileProvider fileProvider,
         IValidator<DeletePetPhotosCommand> validator,
         IVolunteersRepository volunteersRepository,
-        ILogger<AddPetHandler> logger,
+        ILogger<AddPet.AddPet> logger,
         IUnitOfWork unitOfWork)
     {
         _fileProvider = fileProvider;
@@ -52,7 +51,6 @@ public class DeletePetPhotosHandler : ICommandHandler<Guid, DeletePetPhotosComma
         
         var pet = volunteerResult.Value.Pets
             .FirstOrDefault(p => p.Id == command.PetId);
-        
         if(pet == null)
             return Errors.General.NotFound(command.PetId).ToErrorList();
 

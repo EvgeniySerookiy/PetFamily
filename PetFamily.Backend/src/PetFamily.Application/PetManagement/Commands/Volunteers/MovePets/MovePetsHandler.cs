@@ -4,7 +4,6 @@ using Microsoft.Extensions.Logging;
 using PetFamily.Application.Abstractions;
 using PetFamily.Application.Database;
 using PetFamily.Application.Extensions;
-using PetFamily.Application.PetManagement.Commands.Volunteers.AddPet;
 using PetFamily.Domain.PetManagement.VolunteerVO;
 using PetFamily.Domain.Shared.ErrorContext;
 
@@ -13,13 +12,13 @@ namespace PetFamily.Application.PetManagement.Commands.Volunteers.MovePets;
 public class MovePetsHandler : ICommandHandler<Guid, MovePetsCommand>
 {
     private readonly IVolunteersRepository _volunteersRepository;
-    private readonly ILogger<AddPetHandler> _logger;
+    private readonly ILogger<AddPet.AddPet> _logger;
     private readonly IValidator<MovePetsCommand> _validator;
     private readonly IUnitOfWork _unitOfWork;
 
     public MovePetsHandler(
         IVolunteersRepository volunteersRepository,
-        ILogger<AddPetHandler> logger,
+        ILogger<AddPet.AddPet> logger,
         IValidator<MovePetsCommand> validator,
         IUnitOfWork unitOfWork)
     {
@@ -40,6 +39,8 @@ public class MovePetsHandler : ICommandHandler<Guid, MovePetsCommand>
         var volunteerResult = await _volunteersRepository.GetById(
             VolunteerId.Create(command.Id),
             cancellationToken);
+        if (volunteerResult.IsFailure)
+            return volunteerResult.Error.ToErrorList();
 
         var petMoveResult = volunteerResult.Value.Pets
             .FirstOrDefault(p => p.Position.Value == command.CurrentPosition);

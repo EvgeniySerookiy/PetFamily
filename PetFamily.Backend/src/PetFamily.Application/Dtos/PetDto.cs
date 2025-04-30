@@ -8,6 +8,7 @@ public class PetDto
     public Guid BreedId { get; init; }
     public string PetName { get; init; }
     public int Position { get; init; }
+    public bool IsDeleted { get; init; }
     public PetPhotoDto[] PetPhotos { get; set; }
 }
 

@@ -13,9 +13,9 @@ public class CreateVolunteerCommandValidator : AbstractValidator<CreateVolunteer
             .SetValidator(new MainInfoDtoValidator());
 
         RuleFor(c => c.UpdateSocialNetwork)
-            .SetValidator(new UpdateSocialNetworksCommandValidator());
+            .SetValidator(new UpdateSocialNetworksValidator());
         
         RuleFor(c => c.UpdateRequisitesForHelp)
-            .SetValidator(new UpdateRequisitesForHelpCommandValidator());
+            .SetValidator(new UpdateRequisitesForHelpValidator());
     }
 }

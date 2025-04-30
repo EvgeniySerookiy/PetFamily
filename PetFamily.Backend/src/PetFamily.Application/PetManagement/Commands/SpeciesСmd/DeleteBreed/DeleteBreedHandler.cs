@@ -26,17 +26,18 @@ public class DeleteBreedHandler : ICommandHandler<Guid, DeleteBreedCommand>
         DeleteBreedCommand command, 
         CancellationToken cancellationToken = default)
     {
-        var petResult = await _readDbContext.Pets
-            .FirstOrDefaultAsync(p => p.BreedId == command.BreedId, cancellationToken);
-        
-        if (petResult != null)
-            return Errors.Breed.IsCurrentlyUsed().ToErrorList();
+        var breedExists = await _readDbContext.Species
+            .Where(s => s.Id == command.SpeciesId)
+            .SelectMany(s => s.Breeds)
+            .AnyAsync(s => s.Id == command.BreedId, cancellationToken);
+        if (breedExists == false)
+            return Errors.Breed.NotFound(command.BreedId).ToErrorList();
         
         await _speciesRepository.DeleteBreed(
             BreedId.Create(command.BreedId), 
             cancellationToken);
         await _unitOfWork.SaveChanges(cancellationToken);
 
-        return Guid.NewGuid();
+        return command.BreedId;
     }
 }

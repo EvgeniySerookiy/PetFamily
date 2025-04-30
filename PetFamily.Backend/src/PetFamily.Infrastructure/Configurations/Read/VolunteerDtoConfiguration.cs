@@ -20,5 +20,6 @@ public class VolunteerDtoConfiguration : IEntityTypeConfiguration<VolunteerDto>
 
         builder.Property(p => p.Email);
         builder.Property(p => p.PhoneNumber);
+        builder.Property(p => p.IsDeleted);
     }
 }

@@ -1,4 +1,3 @@
-using PetFamily.Application.PetManagement.Commands.Volunteers.UpdatePet;
 using PetFamily.Application.PetManagement.Commands.Volunteers.UpdatePetStatus;
 using PetFamily.Domain;
 

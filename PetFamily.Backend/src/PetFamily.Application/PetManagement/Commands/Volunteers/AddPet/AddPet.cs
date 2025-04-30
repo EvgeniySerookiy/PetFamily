@@ -14,18 +14,18 @@ using PetFamily.Domain.SpeciesManagement.SpeciesVO;
 
 namespace PetFamily.Application.PetManagement.Commands.Volunteers.AddPet;
 
-public class AddPetHandler : ICommandHandler<Guid, MainPetInfoCommand>
+public class AddPet : ICommandHandler<Guid, MainPetInfoCommand>
 {
     private readonly IReadDbContext _readDbContext;
     private readonly IVolunteersRepository _volunteersRepository;
-    private readonly ILogger<AddPetHandler> _logger;
+    private readonly ILogger<AddPet> _logger;
     private readonly IValidator<MainPetInfoCommand> _validator;
     private readonly IUnitOfWork _unitOfWork;
 
-    public AddPetHandler(
+    public AddPet(
         IReadDbContext readDbContext,
         IVolunteersRepository volunteersRepository,
-        ILogger<AddPetHandler> logger,
+        ILogger<AddPet> logger,
         IValidator<MainPetInfoCommand> validator,
         IUnitOfWork unitOfWork)
     {
@@ -58,7 +58,6 @@ public class AddPetHandler : ICommandHandler<Guid, MainPetInfoCommand>
         var volunteerResult = await _volunteersRepository.GetById(
             VolunteerId.Create(command.VolunteerId),
             cancellationToken);
-
         if (volunteerResult.IsFailure)
             return volunteerResult.Error.ToErrorList();
             
@@ -95,7 +94,7 @@ public class AddPetHandler : ICommandHandler<Guid, MainPetInfoCommand>
             volunteerResult.Value.Id,
             name.Value,
             speciesId,
-            BreedId.Create(command.BreedId),
+            breedId,
             [],
             title.Value,
             description.Value,
