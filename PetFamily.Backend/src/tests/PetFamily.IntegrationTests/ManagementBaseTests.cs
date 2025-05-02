@@ -20,7 +20,6 @@ public class ManagementBaseTests : IClassFixture<IntegrationTestsWebFactory>, IA
     protected readonly WriteDbContext WriteDbContext;
     protected readonly ISpeciesRepository SpeciesRepository;
     protected readonly IFileProvider FileProvider;
-    protected readonly Fixture Fixture;
 
     protected ManagementBaseTests(
         IntegrationTestsWebFactory factory)
@@ -31,7 +30,6 @@ public class ManagementBaseTests : IClassFixture<IntegrationTestsWebFactory>, IA
         WriteDbContext = Scope.ServiceProvider.GetRequiredService<WriteDbContext>();
         SpeciesRepository = Scope.ServiceProvider.GetRequiredService<ISpeciesRepository>();
         FileProvider = Scope.ServiceProvider.GetRequiredService<IFileProvider>();
-        Fixture = new Fixture();
     }
     
     protected Result<Domain.SpeciesManagement.Entities.Species> CreateSpecies(string name)

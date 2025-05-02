@@ -48,7 +48,7 @@ public class AddPetPhotosHandler : ICommandHandler<Guid, AddPetPhotosCommand>
         var validationResult = await _addPetPhotosValidator.ValidateAsync(command, cancellationToken);
         if (validationResult.IsValid == false)
             return validationResult.ToErrorList();
-        // Транзакция не нужна уже
+        
         var transaction = await _unitOfWork.BeginTransaction(cancellationToken);
         try
         {

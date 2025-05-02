@@ -170,7 +170,7 @@ public class Pet : SoftDeletableEntity<PetId>
 
     public void UpdatePetPhotos(IEnumerable<PetPhoto> petPhotos)
     {
-        _petPhotos = petPhotos.ToList();
+        _petPhotos.AddRange(petPhotos);
     }
 
     public void RemoveAll(List<PetPhoto> petPhotosToRemove)
