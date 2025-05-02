@@ -1,5 +1,6 @@
 using CSharpFunctionalExtensions;
 using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using PetFamily.Application.Abstractions;
 using PetFamily.Application.Database;
 using PetFamily.Application.Extensions;
@@ -38,8 +39,9 @@ public class AddSpeciesHandler : ICommandHandler<Guid, AddSpeciesCommand>
         var speciesName = SpeciesName.Create(
             command.SpeciesName).Value;
         
-        var species = await _speciesRepository.GetBySpeciesName(speciesName, cancellationToken);
-        if (species.IsSuccess)
+        var species = await _readDbContext.Species
+            .FirstOrDefaultAsync(s => s.SpeciesName == command.SpeciesName, cancellationToken);
+        if (species != null)
             return Errors.Species.AlreadyExist().ToErrorList();
         
         var speciesToCreate = Species.Create(

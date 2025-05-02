@@ -4,9 +4,9 @@ using PetFamily.Domain.Shared.ErrorContext;
 
 namespace PetFamily.Application.PetManagement.Commands.Volunteers.UpdateVolunteer.UpdateMainInfo;
 
-public class UpdateMainInfoHandlerValidator : AbstractValidator<UpdateMainInfoCommand>
+public class UpdateMainInfoValidator : AbstractValidator<UpdateMainInfoCommand>
 {
-    public UpdateMainInfoHandlerValidator()
+    public UpdateMainInfoValidator()
     {
         RuleFor(u => u.VolunteerId)
             .NotEmpty()

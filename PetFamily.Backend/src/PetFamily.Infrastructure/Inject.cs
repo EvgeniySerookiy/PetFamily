@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Minio;
 using PetFamily.Application.Database;
 using PetFamily.Application.Messaging;
@@ -22,7 +23,7 @@ public static class Inject
         IConfiguration configuration)
     {
         services
-            .AddDbContexts()
+            .AddDbContexts(configuration)
             .AddMinio(configuration)
             .AddRepositories()
             .AddDatabase()
@@ -71,14 +72,24 @@ public static class Inject
     }
     
     private static IServiceCollection AddDbContexts(
-        this IServiceCollection services)
+        this IServiceCollection services,
+        IConfiguration configuration)
     {
-        services.AddScoped<WriteDbContext>();
-        services.AddDbContextFactory<WriteDbContext>();
-        services.AddScoped<ReadDbContext>();
-        services.AddScoped<IReadDbContext, ReadDbContext>();
+        services.AddScoped<WriteDbContext>(_ => 
+            new WriteDbContext(configuration.GetConnectionString(Constants.DATABASE)!));
+        
+        services.AddScoped<ReadDbContext>(_ => 
+            new ReadDbContext(configuration.GetConnectionString(Constants.DATABASE)!));
+        
+        services.AddScoped<IReadDbContext, ReadDbContext>(_ => 
+            new ReadDbContext(configuration.GetConnectionString(Constants.DATABASE)!));
         
         return services;
+    }
+    
+    private static ILoggerFactory CreateLoggerFactory()
+    {
+        return LoggerFactory.Create(builder => { builder.AddConsole(); });
     }
 
     private static IServiceCollection AddMinio(

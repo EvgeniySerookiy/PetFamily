@@ -1,8 +1,6 @@
 using PetFamily.Application.Dtos.PetDTOs;
 using PetFamily.Application.PetManagement.Commands.Volunteers.UpdatePet;
 using PetFamily.Domain;
-using PetFamily.Domain.PetManagement.PetVO;
-using PetFamily.Domain.PetManagement.VolunteerVO;
 
 namespace PetFamily.API.Controllers.Volunteers.Write.Requests;
 

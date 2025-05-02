@@ -5,12 +5,12 @@ using PetFamily.Application.PetManagement.Commands.Volunteers.UpdateVolunteer.Up
 
 namespace PetFamily.API.Controllers.Volunteers.Write.Requests;
 
-public record CreateVolunteerRequest(
+public record AddVolunteerRequest(
     MainInfoDto MainInfo,
     UpdateSocialNetworksCommand UpdateSocialNetwork,
     UpdateRequisitesForHelpCommand UpdateRequisitesForHelp)
 {
-    public CreateVolunteerCommand ToCommand() => 
+    public AddVolunteerCommand ToCommand() => 
         new (
         MainInfo, 
         UpdateSocialNetwork, 

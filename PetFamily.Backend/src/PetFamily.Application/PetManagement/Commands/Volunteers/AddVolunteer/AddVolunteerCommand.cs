@@ -5,7 +5,7 @@ using PetFamily.Application.PetManagement.Commands.Volunteers.UpdateVolunteer.Up
 
 namespace PetFamily.Application.PetManagement.Commands.Volunteers.CreateVolunteer;
 
-public record CreateVolunteerCommand(
+public record AddVolunteerCommand(
     MainInfoDto MainInfo,
     UpdateSocialNetworksCommand UpdateSocialNetwork,
     UpdateRequisitesForHelpCommand UpdateRequisitesForHelp) : ICommand;

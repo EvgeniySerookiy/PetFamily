@@ -4,9 +4,9 @@ using PetFamily.Domain.Shared.ErrorContext;
 
 namespace PetFamily.Application.PetManagement.Commands.Volunteers.UpdateVolunteer.UpdateSocialNetwork;
 
-public class UpdateSocialNetworksCommandValidator : AbstractValidator<UpdateSocialNetworksCommand>
+public class UpdateSocialNetworksValidator : AbstractValidator<UpdateSocialNetworksCommand>
 {
-    public UpdateSocialNetworksCommandValidator()
+    public UpdateSocialNetworksValidator()
     {
         RuleFor(u => u.Id)
             .NotEmpty()

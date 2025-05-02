@@ -15,6 +15,7 @@ public class PetDtoConfiguration : IEntityTypeConfiguration<PetDto>
         builder.Property(p => p.BreedId);
         builder.Property(p => p.PetName);
         builder.Property(p => p.Position);
+        builder.Property(p => p.IsDeleted);
         builder.Property(p => p.PetPhotos)
             .HasConversion(
                 files => JsonSerializer.Serialize(string.Empty, JsonSerializerOptions.Default),

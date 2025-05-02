@@ -27,15 +27,15 @@ public class DeleteSpeciesHandler : ICommandHandler<Guid, DeleteSpeciesCommand>
         DeleteSpeciesCommand command, 
         CancellationToken cancellationToken = default)
     {
-        var petResult = await _readDbContext.Pets
-            .FirstOrDefaultAsync(p => p.SpeciesId == command.SpeciesId, cancellationToken);
-
-        if (petResult != null)
-            return Errors.Species.IsCurrentlyUsed().ToErrorList();
+        var petResult = await _readDbContext.Species
+            .FirstOrDefaultAsync(p => p.Id == command.SpeciesId, cancellationToken);
+        if (petResult == null)
+            return Errors.Species.NotFound(command.SpeciesId).ToErrorList();
         
         await _speciesRepository.DeleteSpecies(
             SpeciesId.Create(command.SpeciesId), 
             cancellationToken);
+        
         await _unitOfWork.SaveChanges(cancellationToken);
         
         return command.SpeciesId;

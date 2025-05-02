@@ -5,17 +5,17 @@ using PetFamily.Application.PetManagement.Commands.Volunteers.UpdateVolunteer.Up
 
 namespace PetFamily.Application.PetManagement.Commands.Volunteers.CreateVolunteer;
 
-public class CreateVolunteerCommandValidator : AbstractValidator<CreateVolunteerCommand>
+public class AddVolunteerCommandValidator : AbstractValidator<AddVolunteerCommand>
 {
-    public CreateVolunteerCommandValidator()
+    public AddVolunteerCommandValidator()
     {
         RuleFor(c => c.MainInfo)
             .SetValidator(new MainInfoDtoValidator());
 
         RuleFor(c => c.UpdateSocialNetwork)
-            .SetValidator(new UpdateSocialNetworksCommandValidator());
+            .SetValidator(new UpdateSocialNetworksValidator());
         
         RuleFor(c => c.UpdateRequisitesForHelp)
-            .SetValidator(new UpdateRequisitesForHelpCommandValidator());
+            .SetValidator(new UpdateRequisitesForHelpValidator());
     }
 }

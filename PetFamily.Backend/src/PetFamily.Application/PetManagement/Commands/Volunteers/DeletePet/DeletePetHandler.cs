@@ -38,6 +38,6 @@ public class DeletePetHandler : ICommandHandler<Guid, DeletePetCommand>
         
         await _unitOfWork.SaveChanges(cancellationToken);
 
-        return command.VolunteerId;
+        return command.PetId;
     }
 }

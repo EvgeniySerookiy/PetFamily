@@ -25,14 +25,4 @@ public class UnitOfWork : IUnitOfWork
     {
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
-
-    // public async Task ShowListPets()
-    // {
-    //     var petsId = await _dbContext.Pets.Select(p => p.Id).ToListAsync();
-    //
-    //     foreach (var petId in petsId)
-    //     {
-    //         Console.WriteLine(petId);
-    //     }
-    // }
 }

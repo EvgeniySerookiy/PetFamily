@@ -7,5 +7,6 @@ public class VolunteerDto
     public string LastName { get; init; }
     public string Email { get; init; }
     public string PhoneNumber { get; init; }
+    public bool IsDeleted { get; init; }
     
 }

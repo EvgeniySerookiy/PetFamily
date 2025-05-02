@@ -4,9 +4,9 @@ using PetFamily.Domain.Shared.ErrorContext;
 
 namespace PetFamily.Application.PetManagement.Commands.Volunteers.UpdateVolunteer.UpdateRequisitesForHelp;
 
-public class UpdateRequisitesForHelpCommandValidator : AbstractValidator<UpdateRequisitesForHelpCommand>
+public class UpdateRequisitesForHelpValidator : AbstractValidator<UpdateRequisitesForHelpCommand>
 {
-    public UpdateRequisitesForHelpCommandValidator()
+    public UpdateRequisitesForHelpValidator()
     {
         RuleFor(u => u.Id)
             .NotEmpty()

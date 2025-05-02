@@ -13,16 +13,16 @@ using SocialNetwork = PetFamily.Domain.PetManagement.VolunteerVO.SocialNetwork;
 
 namespace PetFamily.Application.PetManagement.Commands.Volunteers.CreateVolunteer;
 
-public class CreateVolunteerHandler : ICommandHandler<Guid, CreateVolunteerCommand>
+public class AddVolunteerHandler : ICommandHandler<Guid, AddVolunteerCommand>
 {
     private readonly IVolunteersRepository _volunteersRepository;
-    private readonly ILogger<CreateVolunteerHandler> _logger;
-    private readonly IValidator<CreateVolunteerCommand> _validator;
+    private readonly ILogger<AddVolunteerHandler> _logger;
+    private readonly IValidator<AddVolunteerCommand> _validator;
 
-    public CreateVolunteerHandler(
+    public AddVolunteerHandler(
         IVolunteersRepository volunteersRepository,
-        ILogger<CreateVolunteerHandler> logger,
-        IValidator<CreateVolunteerCommand> validator)
+        ILogger<AddVolunteerHandler> logger,
+        IValidator<AddVolunteerCommand> validator)
     {
         _volunteersRepository = volunteersRepository;
         _logger = logger;
@@ -30,7 +30,7 @@ public class CreateVolunteerHandler : ICommandHandler<Guid, CreateVolunteerComma
     }
 
     public async Task<Result<Guid, ErrorList>> Handle(
-        CreateVolunteerCommand command,
+        AddVolunteerCommand command,
         CancellationToken cancellationToken = default)
     {
         var validationResult = await _validator.ValidateAsync(command, cancellationToken);

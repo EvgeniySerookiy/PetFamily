@@ -5,7 +5,6 @@ using PetFamily.Application.Abstractions;
 using PetFamily.Application.Database;
 using PetFamily.Application.Extensions;
 using PetFamily.Application.Messaging;
-using PetFamily.Application.PetManagement.Commands.Volunteers.AddPet;
 using PetFamily.Application.Photos;
 using PetFamily.Application.Providers;
 using PetFamily.Domain.PetManagement.PetVO;
@@ -22,7 +21,7 @@ public class AddPetPhotosHandler : ICommandHandler<Guid, AddPetPhotosCommand>
     private readonly IValidator<AddPetPhotosCommand> _addPetPhotosValidator;
     private readonly IMessageQueue<IEnumerable<PhotoInfo>> _messageQueue;
     private readonly IVolunteersRepository _volunteersRepository;
-    private readonly ILogger<AddPetHandler> _logger;
+    private readonly ILogger<AddPet.AddPet> _logger;
     private readonly IUnitOfWork _unitOfWork;
 
     public AddPetPhotosHandler(
@@ -30,7 +29,7 @@ public class AddPetPhotosHandler : ICommandHandler<Guid, AddPetPhotosCommand>
         IValidator<AddPetPhotosCommand> addPetPhotosValidator,
         IMessageQueue<IEnumerable<PhotoInfo>> messageQueue,
         IVolunteersRepository volunteersRepository,
-        ILogger<AddPetHandler> logger,
+        ILogger<AddPet.AddPet> logger,
         IUnitOfWork unitOfWork)
     {
         _fileProvider = fileProvider;
@@ -49,7 +48,7 @@ public class AddPetPhotosHandler : ICommandHandler<Guid, AddPetPhotosCommand>
         var validationResult = await _addPetPhotosValidator.ValidateAsync(command, cancellationToken);
         if (validationResult.IsValid == false)
             return validationResult.ToErrorList();
-        // Транзакция не нужна уже
+        
         var transaction = await _unitOfWork.BeginTransaction(cancellationToken);
         try
         {
