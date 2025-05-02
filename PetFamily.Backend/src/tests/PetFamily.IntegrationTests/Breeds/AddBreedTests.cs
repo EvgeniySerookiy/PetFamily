@@ -22,11 +22,10 @@ public class AddBreedTests : ManagementBaseTests
     public async Task Add_Breed_To_Database_Succeeds()
     {
         // Arrange
-        var speciesToCreate = CreateSpecies("Species name");
-            
-        await SpeciesRepository.Add(speciesToCreate.Value);
+        var speciesToCreate = SharedTestsSeeder.CreateSpecies("Собака");
+        await SpeciesRepository.Add(speciesToCreate);
         
-        var command = new AddBreedCommand(speciesToCreate.Value.Id.Value, "Breed name");
+        var command = new AddBreedCommand(speciesToCreate.Id.Value, "Сеттер");
 
         // Act
         var result = await _sut.Handle(command, CancellationToken.None);
@@ -46,13 +45,12 @@ public class AddBreedTests : ManagementBaseTests
     public async Task Add_Breed_To_Database_When_Species_Not_Found_Fails()
     {
         // Arrange
-        var speciesToCreate = CreateSpecies("Species name");
-            
-        await SpeciesRepository.Add(speciesToCreate.Value);
+        var speciesToCreate = SharedTestsSeeder.CreateSpecies("Собака");
+        await SpeciesRepository.Add(speciesToCreate);
 
         var speciesId = SpeciesId.NewSpeciesId().Value;
         
-        var command = new AddBreedCommand(speciesId, "Breed name");
+        var command = new AddBreedCommand(speciesId, "Сеттер");
 
         // Act
         var result = await _sut.Handle(command, CancellationToken.None);
@@ -69,13 +67,13 @@ public class AddBreedTests : ManagementBaseTests
     public async Task Add_Breed_To_Database_When_Breed_Name_Already_Exists_Fails()
     {
         // Arrange
-        var speciesToCreate = CreateSpecies("String");
-        var breedToCreate = CreateBreed("String");
+        var speciesToCreate = SharedTestsSeeder.CreateSpecies("Собака");
+        var breedToCreate = SharedTestsSeeder.CreateBreed("Сеттер");
 
-        speciesToCreate.Value.AddBreed(breedToCreate.Value);
-        await SpeciesRepository.Add(speciesToCreate.Value);
+        speciesToCreate.AddBreed(breedToCreate);
+        await SpeciesRepository.Add(speciesToCreate);
         
-        var command = new AddBreedCommand(speciesToCreate.Value.Id.Value, "String");
+        var command = new AddBreedCommand(speciesToCreate.Id.Value, "Сеттер");
 
         // Act
         var result = await _sut.Handle(command, CancellationToken.None);

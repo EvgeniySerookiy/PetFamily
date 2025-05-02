@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using PetFamily.Application.Abstractions;
 using PetFamily.Application.Dtos.VolunteerDTOs;
-using PetFamily.Application.PetManagement.Commands.Volunteers.CreateVolunteer;
 using PetFamily.Application.PetManagement.Commands.Volunteers.UpdateVolunteer.UpdateMainInfo;
 using PetFamily.Domain.PetManagement.VolunteerVO;
 using PetFamily.Domain.Shared.ErrorContext;
@@ -13,26 +12,22 @@ namespace PetFamily.IntegrationTests.Volunteers.UpdateVolunteer;
 public class UpdateMainInfoTests : ManagementBaseTests
 {
     private readonly ICommandHandler<Guid, UpdateMainInfoCommand> _sut;
-    private readonly ICommandHandler<Guid, CreateVolunteerCommand> _createVolunteerCommandHandler;
 
     public UpdateMainInfoTests(
         IntegrationTestsWebFactory factory) : base(factory)
     {
         _sut = Scope.ServiceProvider
             .GetRequiredService<ICommandHandler<Guid, UpdateMainInfoCommand>>();
-        
-        _createVolunteerCommandHandler = Scope.ServiceProvider
-            .GetRequiredService<ICommandHandler<Guid, CreateVolunteerCommand>>();
     }
 
     [Fact]
     public async Task Update_Main_Info_To_Database_Succeeds()
     {
         // Arrange
-        var createVolunteerCommand = Fixture.CreateVolunteerCommand();
-        var createVolunteer = await _createVolunteerCommandHandler.Handle(createVolunteerCommand);
+        var createVolunteer = SharedTestsSeeder.CreateVolunteer();
+        await VolunteersRepository.Add(createVolunteer);
 
-        var command = new UpdateMainInfoCommand(createVolunteer.Value, CreateMainInfoDto());
+        var command = new UpdateMainInfoCommand(createVolunteer.Id, CreateMainInfoDto());
         
         // Act
         var result = await _sut.Handle(command, CancellationToken.None);
@@ -69,17 +64,17 @@ public class UpdateMainInfoTests : ManagementBaseTests
     {
         return new MainInfoDto(
             CreateFullNameDto(),
-            "newsert@gmail.com",
-            "NewDescription",
-            15,
-            "+67890567890");
+            "newegor@gmail.com",
+            "Новое описание",
+            2,
+            "+375446785689");
     }
-    
+
     private FullNameDto CreateFullNameDto()
     {
         return new FullNameDto(
-            "NewJohn",
-            "NewDoe",
-            "NewSin");
+            "Егор",
+            "Казанович",
+            "Алексеевич");
     }
 }

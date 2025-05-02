@@ -2,8 +2,6 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using PetFamily.Application.Abstractions;
-using PetFamily.Application.PetManagement.Commands.Volunteers.AddPet;
-using PetFamily.Application.PetManagement.Commands.Volunteers.CreateVolunteer;
 using PetFamily.Application.PetManagement.Commands.Volunteers.DeletePet;
 using PetFamily.Domain.PetManagement.PetVO;
 using PetFamily.Domain.Shared.ErrorContext;
@@ -13,42 +11,34 @@ namespace PetFamily.IntegrationTests.Pets;
 public class DeletePetTests : ManagementBaseTests
 {
     private readonly ICommandHandler<Guid, DeletePetCommand> _sut;
-    private readonly ICommandHandler<Guid, MainPetInfoCommand> _createAddPetCommandHandler;
-    private readonly ICommandHandler<Guid, CreateVolunteerCommand> _createVolunteerCommandHandler;
 
     public DeletePetTests(
         IntegrationTestsWebFactory factory) : base(factory)
     {
         _sut = Scope.ServiceProvider.GetRequiredService<ICommandHandler<Guid, DeletePetCommand>>();
-
-        _createAddPetCommandHandler = Scope.ServiceProvider
-            .GetRequiredService<ICommandHandler<Guid, MainPetInfoCommand>>();
-
-        _createVolunteerCommandHandler =
-            Scope.ServiceProvider.GetRequiredService<ICommandHandler<Guid, CreateVolunteerCommand>>();
     }
 
     [Fact]
     public async Task Delete_Pet_To_Database_Succeeds()
     {
         // Arrange
-        var speciesToCreate = CreateSpecies("String");
-        var breedToCreate = CreateBreed("String");
+        var createSpecies = SharedTestsSeeder.CreateSpecies("Собака");
+        var createBreed = SharedTestsSeeder.CreateBreed("Сеттер");
 
-        speciesToCreate.Value.AddBreed(breedToCreate.Value);
-        await SpeciesRepository.Add(speciesToCreate.Value);
+        createSpecies.AddBreed(createBreed);
+        await SpeciesRepository.Add(createSpecies);
 
-        var createVolunteerCommand = Fixture.CreateVolunteerCommand();
-        var resultVolunteer = await _createVolunteerCommandHandler.Handle(createVolunteerCommand);
+        var createVolunteer = SharedTestsSeeder.CreateVolunteer();
 
-        var mainPetInfoCommand = Fixture.CreateMainPetInfoCommand(
-            resultVolunteer.Value,
-            speciesToCreate.Value.Id.Value,
-            breedToCreate.Value.Id.Value);
+        var createPet = SharedTestsSeeder.CreatePet(
+            createVolunteer.Id.Value, 
+            createSpecies.Id, 
+            createBreed.Id);
+        
+        createVolunteer.AddPet(createPet);
+        await VolunteersRepository.Add(createVolunteer);
 
-        var addedPet = await _createAddPetCommandHandler.Handle(mainPetInfoCommand);
-
-        var command = new DeletePetCommand(resultVolunteer.Value, addedPet.Value);
+        var command = new DeletePetCommand(createVolunteer.Id, createPet.Id);
 
         // Act
         var result = await _sut.Handle(command, CancellationToken.None);
@@ -67,12 +57,12 @@ public class DeletePetTests : ManagementBaseTests
     public async Task Delete_Pet_To_Database_When_Pet_Not_Found_Fails()
     {
         // Arrange
-        var createVolunteerCommand = Fixture.CreateVolunteerCommand();
-        var resultVolunteer = await _createVolunteerCommandHandler.Handle(createVolunteerCommand);
+        var createVolunteer = SharedTestsSeeder.CreateVolunteer();
+        await VolunteersRepository.Add(createVolunteer);
 
         var petId = PetId.NewPetId().Value;
 
-        var command = new DeletePetCommand(resultVolunteer.Value, petId);
+        var command = new DeletePetCommand(createVolunteer.Id, petId);
 
         // Act
         var result = await _sut.Handle(command, CancellationToken.None);

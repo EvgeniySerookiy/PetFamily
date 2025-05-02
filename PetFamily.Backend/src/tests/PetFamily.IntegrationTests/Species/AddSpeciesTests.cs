@@ -1,4 +1,3 @@
-using AutoFixture;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,7 +22,7 @@ public class AddSpeciesTests : ManagementBaseTests
     public async Task Add_Species_To_Database_Succeeds()
     {
         // Arrange
-        var command = Fixture.CreateAddSpeciesCommand();
+        var command = CreateAddSpeciesCommand("Собака");
 
         // Act
         var result = await _sut.Handle(command, CancellationToken.None);
@@ -42,9 +41,7 @@ public class AddSpeciesTests : ManagementBaseTests
     public async Task Add_Species_To_Database_With_EmptyName_Returns_Validation_Error()
     {
         // Arrange
-        var commnd = Fixture.Build<AddSpeciesCommand>()
-            .With(c => c.SpeciesName, "")
-            .Create();
+        var commnd = CreateAddSpeciesCommand(string.Empty);
 
         // Act
         var result = await _sut.Handle(commnd, CancellationToken.None);
@@ -64,11 +61,11 @@ public class AddSpeciesTests : ManagementBaseTests
     public async Task Add_Species_To_Database_When_Species_Already_Exist_Fails()
     {
         // Arrange
-        var speciesToCreate = CreateSpecies("Species name");
+        var speciesToCreate = SharedTestsSeeder.CreateSpecies("Собака");
 
-        await SpeciesRepository.Add(speciesToCreate.Value);
+        await SpeciesRepository.Add(speciesToCreate);
 
-        var command = Fixture.CreateAddSpeciesCommand();
+        var command = CreateAddSpeciesCommand("Собака");
 
         // Act
         var result = await _sut.Handle(command, CancellationToken.None);
@@ -77,4 +74,10 @@ public class AddSpeciesTests : ManagementBaseTests
         result.IsFailure.Should().BeTrue();
         result.Error.Should().Contain(Errors.Species.AlreadyExist());
     }
+
+    private AddSpeciesCommand CreateAddSpeciesCommand(string speciesName)
+    {
+        return new AddSpeciesCommand(speciesName);
+    }
+    
 }

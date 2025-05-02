@@ -25,8 +25,8 @@ public class VolunteersController : ApplicationController
     // Операции с волонтером
     [HttpPost]
     public async Task<ActionResult> Create(
-        [FromBody] CreateVolunteerRequest request,
-        [FromServices] CreateVolunteerHandler handler,
+        [FromBody] AddVolunteerRequest request,
+        [FromServices] AddVolunteerHandler handler,
         CancellationToken cancellationToken = default)
     {
         var result = await handler.Handle(request.ToCommand(), cancellationToken);

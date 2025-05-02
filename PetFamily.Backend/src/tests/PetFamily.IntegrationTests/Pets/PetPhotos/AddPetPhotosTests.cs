@@ -2,9 +2,8 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using PetFamily.Application.Abstractions;
-using PetFamily.Application.PetManagement.Commands.Volunteers.AddPet;
+using PetFamily.Application.Dtos.PetDTOs;
 using PetFamily.Application.PetManagement.Commands.Volunteers.AddPetPhotos;
-using PetFamily.Application.PetManagement.Commands.Volunteers.CreateVolunteer;
 using PetFamily.Domain.Shared.ErrorContext;
 
 namespace PetFamily.IntegrationTests.Pets.PetPhotos;
@@ -12,44 +11,37 @@ namespace PetFamily.IntegrationTests.Pets.PetPhotos;
 public class AddPetPhotosTests : ManagementBaseTests
 {
     private readonly ICommandHandler<Guid, AddPetPhotosCommand> _sut;
-    private readonly ICommandHandler<Guid, CreateVolunteerCommand> _createVolunteerCommandHandler;
-    private readonly ICommandHandler<Guid, MainPetInfoCommand> _createPetCommandHandler;
         
     public AddPetPhotosTests(IntegrationTestsWebFactory factory) : base(factory)
     {
         _sut = Scope.ServiceProvider
             .GetRequiredService<ICommandHandler<Guid, AddPetPhotosCommand>>();
-        
-        _createVolunteerCommandHandler = Scope.ServiceProvider
-            .GetRequiredService<ICommandHandler<Guid, CreateVolunteerCommand>>();
-        
-        _createPetCommandHandler = Scope.ServiceProvider
-            .GetRequiredService<ICommandHandler<Guid, MainPetInfoCommand>>();
     }
 
     [Fact]
     public async Task Add_Pet_Photos_To_Database_Succeeds()
     {
         // Arrange
-        var speciesToCreate = CreateSpecies("String");
-        var breedToCreate = CreateBreed("String");
+        var createSpecies = SharedTestsSeeder.CreateSpecies("Собака");
+        var createBreed = SharedTestsSeeder.CreateBreed("Сеттер");
 
-        speciesToCreate.Value.AddBreed(breedToCreate.Value);
-        await SpeciesRepository.Add(speciesToCreate.Value);
+        createSpecies.AddBreed(createBreed);
+        await SpeciesRepository.Add(createSpecies);
 
-        var createVolunteerCommand = Fixture.CreateVolunteerCommand();
-        var resultVolunteer = await _createVolunteerCommandHandler.Handle(createVolunteerCommand);
+        var createVolunteer = SharedTestsSeeder.CreateVolunteer();
 
-        var createMainPetInfoCommand = Fixture.CreateMainPetInfoCommand(
-            resultVolunteer.Value,
-            speciesToCreate.Value.Id.Value,
-            breedToCreate.Value.Id.Value);
+        var createPet = SharedTestsSeeder.CreatePet(
+            createVolunteer.Id.Value, 
+            createSpecies.Id, 
+            createBreed.Id);
         
-        var resultPet = await _createPetCommandHandler.Handle(createMainPetInfoCommand, CancellationToken.None);
+        createVolunteer.AddPet(createPet);
+        await VolunteersRepository.Add(createVolunteer);
         
-        var command = CreateAddPetPhotosCommand(resultVolunteer.Value, resultPet.Value);
+        var command = CreateAddPetPhotosCommand(createVolunteer.Id, createPet.Id);
 
         // Act
+        Factory.SetupSuccessPhotoProviderSubstitute();
         var result = await _sut.Handle(command, CancellationToken.None);
 
         // Assert
@@ -60,32 +52,30 @@ public class AddPetPhotosTests : ManagementBaseTests
             .FirstOrDefaultAsync();
         
         updatedPet.Should().NotBeNull();
-        updatedPet.PetPhotos.Should().HaveCount(2);
+        updatedPet.PetPhotos.Should().HaveCount(4);
     }
 
     [Fact]
     public async Task Add_Pet_Photos_To_Database_When_Upload_Files_Not_Found_Fails()
     {
         // Arrange
-        var speciesToCreate = CreateSpecies("String");
-        var breedToCreate = CreateBreed("String");
+        var createSpecies = SharedTestsSeeder.CreateSpecies("Собака");
+        var createBreed = SharedTestsSeeder.CreateBreed("Сеттер");
 
-        speciesToCreate.Value.AddBreed(breedToCreate.Value);
-        await SpeciesRepository.Add(speciesToCreate.Value);
+        createSpecies.AddBreed(createBreed);
+        await SpeciesRepository.Add(createSpecies);
 
-        var createVolunteerCommand = Fixture.CreateVolunteerCommand();
-        var resultVolunteer = await _createVolunteerCommandHandler
-            .Handle(createVolunteerCommand);
+        var createVolunteer = SharedTestsSeeder.CreateVolunteer();
 
-        var createMainPetInfoCommand = Fixture.CreateMainPetInfoCommand(
-            resultVolunteer.Value,
-            speciesToCreate.Value.Id.Value,
-            breedToCreate.Value.Id.Value);
+        var createPet = SharedTestsSeeder.CreatePet(
+            createVolunteer.Id.Value, 
+            createSpecies.Id, 
+            createBreed.Id);
         
-        var resultPet = await _createPetCommandHandler
-            .Handle(createMainPetInfoCommand, CancellationToken.None);
+        createVolunteer.AddPet(createPet);
+        await VolunteersRepository.Add(createVolunteer);
         
-        var command = CreateAddPetPhotosCommand(resultVolunteer.Value, resultPet.Value);
+        var command = CreateAddPetPhotosCommand(createVolunteer.Id, createPet.Id);
 
         // Act
         Factory.SetupFailurePhotoProviderSubstitute();
@@ -94,5 +84,26 @@ public class AddPetPhotosTests : ManagementBaseTests
         // Assert
         result.IsFailure.Should().BeTrue();
         result.Error.Should().Contain(Errors.General.NotFound());
+    }
+    
+    private AddPetPhotosCommand CreateAddPetPhotosCommand(
+        Guid volunteerId,
+        Guid petId)
+    {
+        return new AddPetPhotosCommand(
+            volunteerId,
+            petId,
+            [
+                CreatePhotoDto(),
+                CreatePhotoDto()
+            ]);
+    }
+
+    private CreatePhotoDto CreatePhotoDto()
+    {
+        return new CreatePhotoDto(
+            Stream.Null, 
+            "4-1.webp",
+            "4-1.webp");
     }
 }

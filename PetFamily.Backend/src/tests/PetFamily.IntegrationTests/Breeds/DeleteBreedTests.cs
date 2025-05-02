@@ -21,15 +21,15 @@ public class DeleteBreedTests : ManagementBaseTests
     public async Task Delete_Breed_To_Database_Succeeds()
     {
         // Arrange
-        var speciesToCreate = CreateSpecies("String");
-        var breedToCreate = CreateBreed("String");
+        var speciesToCreate = SharedTestsSeeder.CreateSpecies("Собака");
+        var breedToCreate = SharedTestsSeeder.CreateBreed("Сеттер");
 
-        speciesToCreate.Value.AddBreed(breedToCreate.Value);
-        await SpeciesRepository.Add(speciesToCreate.Value);
+        speciesToCreate.AddBreed(breedToCreate);
+        await SpeciesRepository.Add(speciesToCreate);
         
         var command = new DeleteBreedCommand(
-            speciesToCreate.Value.Id.Value, 
-            breedToCreate.Value.Id.Value);
+            speciesToCreate.Id.Value, 
+            breedToCreate.Id.Value);
         
         // Act
         var result = await _sut.Handle(command, CancellationToken.None);
@@ -43,16 +43,16 @@ public class DeleteBreedTests : ManagementBaseTests
     public async Task Delete_Breed_To_Database_When_Breed_Not_Found_Fails()
     {
         // Arrange
-        var speciesToCreate = CreateSpecies("String");
-        var breedToCreate = CreateBreed("String");
+        var speciesToCreate = SharedTestsSeeder.CreateSpecies("Собака");
+        var breedToCreate = SharedTestsSeeder.CreateBreed("Сеттер");
 
-        speciesToCreate.Value.AddBreed(breedToCreate.Value);
-        await SpeciesRepository.Add(speciesToCreate.Value);
+        speciesToCreate.AddBreed(breedToCreate);
+        await SpeciesRepository.Add(speciesToCreate);
         
         var breedId = BreedId.NewBreedId().Value;
         
         var command = new DeleteBreedCommand(
-            speciesToCreate.Value.Id.Value, 
+            speciesToCreate.Id.Value, 
             breedId);
         
         // Act

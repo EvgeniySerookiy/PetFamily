@@ -22,11 +22,11 @@ public class DeleteSpeciesTests : ManagementBaseTests
     public async Task Delete_Species_To_Database_Succeeds()
     {
         // Arrange
-        var speciesToCreate = CreateSpecies("String");
+        var speciesToCreate = SharedTestsSeeder.CreateSpecies("Собака");
         
-        await SpeciesRepository.Add(speciesToCreate.Value);
+        await SpeciesRepository.Add(speciesToCreate);
         
-        var command = new DeleteSpeciesCommand(speciesToCreate.Value.Id.Value);
+        var command = new DeleteSpeciesCommand(speciesToCreate.Id.Value);
             
         // Act
         var result = await _sut.Handle(command, CancellationToken.None);
@@ -40,9 +40,9 @@ public class DeleteSpeciesTests : ManagementBaseTests
     public async Task Delete_Species_To_Database_When_Species_Not_Found_Fails()
     {
         // Arrange
-        var speciesToCreate = CreateSpecies("String");
+        var speciesToCreate = SharedTestsSeeder.CreateSpecies("Собака");
         
-        await SpeciesRepository.Add(speciesToCreate.Value);
+        await SpeciesRepository.Add(speciesToCreate);
 
         var speciesId = SpeciesId.NewSpeciesId().Value;
         var command = new DeleteSpeciesCommand(speciesId);

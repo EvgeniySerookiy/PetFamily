@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using PetFamily.Application.Abstractions;
 using PetFamily.Application.Dtos.VolunteerDTOs;
-using PetFamily.Application.PetManagement.Commands.Volunteers.CreateVolunteer;
 using PetFamily.Application.PetManagement.Commands.Volunteers.UpdateVolunteer.UpdateRequisitesForHelp;
 using PetFamily.Domain.PetManagement.VolunteerVO;
 using PetFamily.Domain.Shared.ErrorContext;
@@ -13,28 +12,24 @@ namespace PetFamily.IntegrationTests.Volunteers.UpdateVolunteer;
 public class UpdateRequisitesForHelpTests : ManagementBaseTests
 {
     private readonly ICommandHandler<Guid, UpdateRequisitesForHelpCommand> _sut;
-    private readonly ICommandHandler<Guid, CreateVolunteerCommand> _createVolunteerCommandHandler;
 
     public UpdateRequisitesForHelpTests(
         IntegrationTestsWebFactory factory) : base(factory)
     {
         _sut = Scope.ServiceProvider
             .GetRequiredService<ICommandHandler<Guid, UpdateRequisitesForHelpCommand>>();
-        
-        _createVolunteerCommandHandler = Scope.ServiceProvider
-            .GetRequiredService<ICommandHandler<Guid, CreateVolunteerCommand>>();
     }
     
     [Fact]
     public async Task Update_Requisites_For_Help_To_Database_Succeeds()
     {
         // Arrange
-        var createVolunteerCommand = Fixture.CreateVolunteerCommand();
-        var createVolunteer = await _createVolunteerCommandHandler.Handle(createVolunteerCommand);
+        var createVolunteer = SharedTestsSeeder.CreateVolunteer();
+        await VolunteersRepository.Add(createVolunteer);
 
         var listOfRequisitesForHelpDtos = CreateListOfRequisitesForHelpDtos();
         
-        var command = new UpdateRequisitesForHelpCommand(createVolunteer.Value, listOfRequisitesForHelpDtos);
+        var command = new UpdateRequisitesForHelpCommand(createVolunteer.Id, listOfRequisitesForHelpDtos);
         
         // Act
         var result = await _sut.Handle(command, CancellationToken.None);
@@ -78,7 +73,7 @@ public class UpdateRequisitesForHelpTests : ManagementBaseTests
     private RequisitesForHelpDto CreateRequisitesForHelpDto()
     {
         return new RequisitesForHelpDto(
-            "NewRecipiend",
-            "NewPayment details");
+            "Labrador",
+            "67890678956789");
     }
 }

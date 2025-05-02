@@ -2,8 +2,6 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using PetFamily.Application.Abstractions;
-using PetFamily.Application.PetManagement.Commands.Volunteers.AddPet;
-using PetFamily.Application.PetManagement.Commands.Volunteers.CreateVolunteer;
 using PetFamily.Application.PetManagement.Commands.Volunteers.UpdatePetStatus;
 using PetFamily.Domain;
 
@@ -12,45 +10,38 @@ namespace PetFamily.IntegrationTests.Pets.UpdatePets;
 public class UpdatePetStatusTests : ManagementBaseTests
 {
     private readonly ICommandHandler<Guid, UpdatePetStatusCommand> _sut;
-    private readonly ICommandHandler<Guid, MainPetInfoCommand> _createAddPetCommandHandler;
-    private readonly ICommandHandler<Guid, CreateVolunteerCommand> _createVolunteerCommandHandler;
 
     public UpdatePetStatusTests(
         IntegrationTestsWebFactory factory) : base(factory)
     {
         _sut = Scope.ServiceProvider
             .GetRequiredService<ICommandHandler<Guid, UpdatePetStatusCommand>>();
-
-        _createAddPetCommandHandler = Scope.ServiceProvider
-            .GetRequiredService<ICommandHandler<Guid, MainPetInfoCommand>>();
-
-        _createVolunteerCommandHandler = Scope.ServiceProvider
-            .GetRequiredService<ICommandHandler<Guid, CreateVolunteerCommand>>();
     }
 
     [Fact]
     public async Task Update_Pet_Status_To_Database_Succeeds()
     {
         // Arrange
-        var speciesToCreate = CreateSpecies("String");
-        var breedToCreate = CreateBreed("String");
+        var createSpecies = SharedTestsSeeder.CreateSpecies("Собака");
+        var createBreed = SharedTestsSeeder.CreateBreed("Сеттер");
 
-        speciesToCreate.Value.AddBreed(breedToCreate.Value);
-        await SpeciesRepository.Add(speciesToCreate.Value);
+        createSpecies.AddBreed(createBreed);
+        await SpeciesRepository.Add(createSpecies);
 
-        var createVolunteerCommand = Fixture.CreateVolunteerCommand();
-        var resultVolunteer = await _createVolunteerCommandHandler.Handle(createVolunteerCommand);
+        var createVolunteer = SharedTestsSeeder.CreateVolunteer();
 
-        var createPetCommand = Fixture.CreateMainPetInfoCommand(
-            resultVolunteer.Value,
-            speciesToCreate.Value.Id.Value,
-            breedToCreate.Value.Id.Value);
-        var resultPet = await _createAddPetCommandHandler.Handle(createPetCommand);
+        var createPet = SharedTestsSeeder.CreatePet(
+            createVolunteer.Id.Value, 
+            createSpecies.Id, 
+            createBreed.Id);
+        
+        createVolunteer.AddPet(createPet);
+        await VolunteersRepository.Add(createVolunteer);
 
         var command = new UpdatePetStatusCommand(
-            resultVolunteer.Value,
-            resultPet.Value,
-            AssistanceStatus.LookingForHome);
+            createVolunteer.Id,
+            createPet.Id,
+            AssistanceStatus.NeedsHelp);
 
         // Act
         var result = await _sut.Handle(command, CancellationToken.None);
@@ -62,7 +53,7 @@ public class UpdatePetStatusTests : ManagementBaseTests
         var updateStatusPet = await WriteDbContext.Pets.FirstOrDefaultAsync();
         
         updateStatusPet.Should().NotBeNull();
-        (updateStatusPet.Status == AssistanceStatus.LookingForHome).Should().BeTrue();
+        (updateStatusPet.Status == AssistanceStatus.NeedsHelp).Should().BeTrue();
         updateStatusPet.Id.Value.Should().Be(result.Value);
     }
 }
