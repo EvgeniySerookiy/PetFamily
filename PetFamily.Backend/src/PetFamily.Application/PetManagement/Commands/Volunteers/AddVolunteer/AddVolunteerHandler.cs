@@ -11,20 +11,20 @@ using PetFamily.Domain.Shared.ErrorContext;
 using RequisitesForHelp = PetFamily.Domain.PetManagement.VolunteerVO.RequisitesForHelp;
 using SocialNetwork = PetFamily.Domain.PetManagement.VolunteerVO.SocialNetwork;
 
-namespace PetFamily.Application.PetManagement.Commands.Volunteers.CreateVolunteer;
+namespace PetFamily.Application.PetManagement.Commands.Volunteers.AddVolunteer;
 
 public class AddVolunteerHandler : ICommandHandler<Guid, AddVolunteerCommand>
 {
-    private readonly IVolunteersRepository _volunteersRepository;
+    private readonly IVolunteersWriteRepository _volunteersWriteRepository;
     private readonly ILogger<AddVolunteerHandler> _logger;
     private readonly IValidator<AddVolunteerCommand> _validator;
 
     public AddVolunteerHandler(
-        IVolunteersRepository volunteersRepository,
+        IVolunteersWriteRepository volunteersWriteRepository,
         ILogger<AddVolunteerHandler> logger,
         IValidator<AddVolunteerCommand> validator)
     {
-        _volunteersRepository = volunteersRepository;
+        _volunteersWriteRepository = volunteersWriteRepository;
         _logger = logger;
         _validator = validator;
     }
@@ -71,9 +71,9 @@ public class AddVolunteerHandler : ICommandHandler<Guid, AddVolunteerCommand>
             requisitesForHelpList.Add(value);
         }
         
-        var volunteer = await _volunteersRepository.GetByEmail(email, cancellationToken);
-        if (volunteer.IsSuccess)
-            return Errors.Volunteer.AlreadyExist().ToErrorList();
+        var volunteer = await _volunteersWriteRepository.GetByEmail(email, cancellationToken);
+        if (volunteer.IsFailure)
+            return volunteer.Error.ToErrorList();
         
         var volunteerToCreate = Volunteer.Create(
             volunteerId, 
@@ -85,9 +85,9 @@ public class AddVolunteerHandler : ICommandHandler<Guid, AddVolunteerCommand>
             TransferRequisitesForHelpsList.Create(requisitesForHelpList).Value,
             TransferSocialNetworkList.Create(socialNetworkList).Value);
 
-        await _volunteersRepository.Add(volunteerToCreate.Value, cancellationToken);
+        await _volunteersWriteRepository.Add(volunteerToCreate.Value, cancellationToken);
         
-        _logger.LogInformation("Created volunteer {volunteer} with id {volunteerId}", volunteer, volunteerId);
+        _logger.LogInformation("Created volunteer with id: {volunteerId}", volunteerId);
         
         return volunteerToCreate.Value.Id.Value;
     }

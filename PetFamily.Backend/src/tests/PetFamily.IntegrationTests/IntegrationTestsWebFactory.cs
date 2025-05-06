@@ -41,8 +41,8 @@ public class IntegrationTestsWebFactory : WebApplicationFactory<Program>, IAsync
         var writeContext = services.SingleOrDefault(s =>
             s.ServiceType == typeof(WriteDbContext));
 
-        var readContext = services.SingleOrDefault(s =>
-            s.ServiceType == typeof(ReadDbContext));
+        // var readContext = services.SingleOrDefault(s =>
+        //     s.ServiceType == typeof(ReadDbContext));
         
         var fileProvider = services.SingleOrDefault(s =>
             s.ServiceType == typeof(IFileProvider));
@@ -50,8 +50,8 @@ public class IntegrationTestsWebFactory : WebApplicationFactory<Program>, IAsync
         if (writeContext is not null)
             services.Remove(writeContext);
 
-        if (readContext is not null)
-            services.Remove(readContext);
+        // if (readContext is not null)
+        //     services.Remove(readContext);
 
         if (fileProvider is not null)
             services.Remove(fileProvider);
@@ -59,11 +59,11 @@ public class IntegrationTestsWebFactory : WebApplicationFactory<Program>, IAsync
         services.AddScoped<WriteDbContext>(_ =>
             new WriteDbContext(_dbContainer.GetConnectionString()));
 
-        services.AddScoped<ReadDbContext>(_ =>
-            new ReadDbContext(_dbContainer.GetConnectionString()));
-
-        services.AddScoped<IReadDbContext, ReadDbContext>(_ =>
-            new ReadDbContext(_dbContainer.GetConnectionString()));
+        // services.AddScoped<ReadDbContext>(_ =>
+        //     new ReadDbContext(_dbContainer.GetConnectionString()));
+        //
+        // services.AddScoped<IReadDbContext, ReadDbContext>(_ =>
+        //     new ReadDbContext(_dbContainer.GetConnectionString()));
 
         services.AddTransient<IFileProvider>(_ => _fileProviderSubstitute);
     }

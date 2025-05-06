@@ -51,8 +51,30 @@ public static class Errors
         {
             return Error.Validation("record.already.exist", "Volunteer already exist");
         }
+
+        public static Error NotFound(Guid? id = null)
+        {
+            var forId = id == null ? "" : $"for Id {id}";
+            return Error.NotFound(
+                "record.not.found", $"record not found {forId}");
+        }
     }
     
+    public static class Pet
+    {
+        public static Error AlreadyExist()
+        {
+            return Error.Validation("record.already.exist", "Pet already exist");
+        }
+        
+        public static Error NotFound(Guid? id = null)
+        {
+            var forId = id == null ? "" : $"for Id {id}";
+            return Error.NotFound(
+                "record.not.found", $"record not found {forId}");
+        }
+    }
+
     public static class Species
     {
         public static Error AlreadyExist()
@@ -65,11 +87,6 @@ public static class Errors
             var forId = id == null ? "" : $"for Id {id}";
             return Error.NotFound(
                 "record.not.found", $"record not found {forId}");
-        }
-        
-        public static Error IsCurrentlyUsed()
-        {
-            return Error.Validation("species.is.used", "Species is used");
         }
     }
     
@@ -85,11 +102,6 @@ public static class Errors
             var forId = id == null ? "" : $"for Id {id}";
             return Error.NotFound(
                 "record.not.found", $"record not found {forId}");
-        }
-        
-        public static Error IsCurrentlyUsed()
-        {
-            return Error.Validation("breed.is.used", "Breed is used");
         }
     }
 }

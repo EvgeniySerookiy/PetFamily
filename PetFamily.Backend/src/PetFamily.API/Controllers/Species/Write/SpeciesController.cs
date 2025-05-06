@@ -40,20 +40,20 @@ public class SpeciesController : ApplicationController
         return Ok(result.Value);
     }
     
-    [HttpDelete("{id:guid}/species")]
-    public async Task<ActionResult> Delete(
-        [FromRoute] Guid id,
-        [FromServices] DeleteSpeciesHandler handler,
-        CancellationToken cancellationToken = default)
-    {
-        var command = new DeleteSpeciesCommand(id);
-        
-        var result = await handler.Handle(command, cancellationToken);
-        if (result.IsFailure)
-            return result.Error.ToResponse();
-
-        return Ok(result.Value);
-    }
+    // [HttpDelete("{id:guid}/species")]
+    // public async Task<ActionResult> Delete(
+    //     [FromRoute] Guid id,
+    //     [FromServices] DeleteSpeciesHandler handler,
+    //     CancellationToken cancellationToken = default)
+    // {
+    //     var command = new DeleteSpeciesCommand(id);
+    //     
+    //     var result = await handler.Handle(command, cancellationToken);
+    //     if (result.IsFailure)
+    //         return result.Error.ToResponse();
+    //
+    //     return Ok(result.Value);
+    // }
     
     [HttpPost("{id:guid}/breed")]
     public async Task<ActionResult> Create(
@@ -67,7 +67,7 @@ public class SpeciesController : ApplicationController
         var result = await handler.Handle(command, cancellationToken);
         if (result.IsFailure)
             return result.Error.ToResponse();
-
+    
         return Ok(result.Value);
     }
     
@@ -83,7 +83,7 @@ public class SpeciesController : ApplicationController
         var result = await handler.Handle(command, cancellationToken);
         if (result.IsFailure)
             return result.Error.ToResponse();
-
+    
         return Ok(result.Value);
     }
 }

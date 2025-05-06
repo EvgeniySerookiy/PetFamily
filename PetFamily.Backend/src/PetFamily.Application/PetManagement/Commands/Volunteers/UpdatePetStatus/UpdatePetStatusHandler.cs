@@ -8,16 +8,16 @@ namespace PetFamily.Application.PetManagement.Commands.Volunteers.UpdatePetStatu
 
 public class UpdatePetStatusHandler : ICommandHandler<Guid, UpdatePetStatusCommand>
 {
-    private readonly IVolunteersRepository _volunteersRepository;
+    private readonly IVolunteersWriteRepository _volunteersWriteRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<UpdatePetStatusHandler> _logger;
 
     public UpdatePetStatusHandler(
-        IVolunteersRepository volunteersRepository, 
+        IVolunteersWriteRepository volunteersWriteRepository, 
         IUnitOfWork unitOfWork, 
         ILogger<UpdatePetStatusHandler> logger)
     {
-        _volunteersRepository = volunteersRepository;
+        _volunteersWriteRepository = volunteersWriteRepository;
         _unitOfWork = unitOfWork;
         _logger = logger;
     }
@@ -25,11 +25,11 @@ public class UpdatePetStatusHandler : ICommandHandler<Guid, UpdatePetStatusComma
         UpdatePetStatusCommand command, 
         CancellationToken cancellationToken = default)
     {
-        var volunteerResult = await _volunteersRepository.GetById(command.VolunteerId);
+        var volunteerResult = await _volunteersWriteRepository.GetById(command.VolunteerId);
         if (volunteerResult.IsFailure)
             return volunteerResult.Error.ToErrorList();
         
-        var petResult = volunteerResult.Value.GetPetById(command.PetId);
+        var petResult = volunteerResult.Value.GetByPetId(command.PetId);
         if (petResult.IsFailure)
             return petResult.Error.ToErrorList();
 
@@ -37,8 +37,10 @@ public class UpdatePetStatusHandler : ICommandHandler<Guid, UpdatePetStatusComma
         
         await _unitOfWork.SaveChanges(cancellationToken);
         
-        _logger.LogInformation("Updated status pet with id {PetId} from a volunteer with id {VolunteerId}", 
-            command.PetId, command.VolunteerId);
+        _logger.LogInformation(
+            "Updated status pet with id {PetId} from a volunteer with id {VolunteerId}", 
+            command.PetId, 
+            command.VolunteerId);
         
         return petResult.Value.Id.Value;
     }

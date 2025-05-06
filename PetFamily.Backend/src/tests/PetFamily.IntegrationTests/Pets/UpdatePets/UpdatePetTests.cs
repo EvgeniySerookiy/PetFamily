@@ -27,7 +27,7 @@ public class UpdatePetTests : ManagementBaseTests
         var createBreed = SharedTestsSeeder.CreateBreed("Сеттер");
 
         createSpecies.AddBreed(createBreed);
-        await SpeciesRepository.Add(createSpecies);
+        await SpeciesWriteRepository.Add(createSpecies);
 
         var createVolunteer = SharedTestsSeeder.CreateVolunteer();
 
@@ -37,7 +37,7 @@ public class UpdatePetTests : ManagementBaseTests
             createBreed.Id);
         
         createVolunteer.AddPet(createPet);
-        await VolunteersRepository.Add(createVolunteer);
+        await VolunteersWriteRepository.Add(createVolunteer);
         
         var command = CreateUpdatePetCommand(
             createVolunteer.Id, 

@@ -14,23 +14,23 @@ using PetFamily.Domain.SpeciesManagement.SpeciesVO;
 
 namespace PetFamily.Application.PetManagement.Commands.Volunteers.AddPet;
 
-public class AddPet : ICommandHandler<Guid, MainPetInfoCommand>
+public class AddPetHandler : ICommandHandler<Guid, MainPetInfoCommand>
 {
     private readonly IReadDbContext _readDbContext;
-    private readonly IVolunteersRepository _volunteersRepository;
-    private readonly ILogger<AddPet> _logger;
+    private readonly IVolunteersWriteRepository _volunteersWriteRepository;
+    private readonly ILogger<AddPetHandler> _logger;
     private readonly IValidator<MainPetInfoCommand> _validator;
     private readonly IUnitOfWork _unitOfWork;
 
-    public AddPet(
+    public AddPetHandler(
         IReadDbContext readDbContext,
-        IVolunteersRepository volunteersRepository,
-        ILogger<AddPet> logger,
+        IVolunteersWriteRepository volunteersWriteRepository,
+        ILogger<AddPetHandler> logger,
         IValidator<MainPetInfoCommand> validator,
         IUnitOfWork unitOfWork)
     {
         _readDbContext = readDbContext;
-        _volunteersRepository = volunteersRepository;
+        _volunteersWriteRepository = volunteersWriteRepository;
         _logger = logger;
         _validator = validator;
         _unitOfWork = unitOfWork;
@@ -55,7 +55,7 @@ public class AddPet : ICommandHandler<Guid, MainPetInfoCommand>
         if (validationResult.IsValid == false)
             return validationResult.ToErrorList();
         
-        var volunteerResult = await _volunteersRepository.GetById(
+        var volunteerResult = await _volunteersWriteRepository.GetById(
             VolunteerId.Create(command.VolunteerId),
             cancellationToken);
         if (volunteerResult.IsFailure)

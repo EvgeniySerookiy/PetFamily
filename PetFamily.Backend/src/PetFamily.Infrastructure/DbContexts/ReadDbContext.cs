@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using PetFamily.Application.Database;
 using PetFamily.Application.Dtos;
 
 namespace PetFamily.Infrastructure.DbContexts;

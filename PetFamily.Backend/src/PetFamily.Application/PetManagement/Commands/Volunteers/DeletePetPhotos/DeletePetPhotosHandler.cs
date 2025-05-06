@@ -19,20 +19,20 @@ public class DeletePetPhotosHandler : ICommandHandler<Guid, DeletePetPhotosComma
     
     private readonly IFileProvider _fileProvider;
     private readonly IValidator<DeletePetPhotosCommand> _validator;
-    private readonly IVolunteersRepository _volunteersRepository;
-    private readonly ILogger<AddPet.AddPet> _logger;
+    private readonly IVolunteersWriteRepository _volunteersWriteRepository;
+    private readonly ILogger<AddPet.AddPetHandler> _logger;
     private readonly IUnitOfWork _unitOfWork;
     
     public DeletePetPhotosHandler(
         IFileProvider fileProvider,
         IValidator<DeletePetPhotosCommand> validator,
-        IVolunteersRepository volunteersRepository,
-        ILogger<AddPet.AddPet> logger,
+        IVolunteersWriteRepository volunteersWriteRepository,
+        ILogger<AddPet.AddPetHandler> logger,
         IUnitOfWork unitOfWork)
     {
         _fileProvider = fileProvider;
         _validator = validator;
-        _volunteersRepository = volunteersRepository;
+        _volunteersWriteRepository = volunteersWriteRepository;
         _logger = logger;
         _unitOfWork = unitOfWork;
     }
@@ -45,7 +45,7 @@ public class DeletePetPhotosHandler : ICommandHandler<Guid, DeletePetPhotosComma
         if (validationResult.IsValid == false)
             return validationResult.ToErrorList();
         
-        var volunteerResult = await _volunteersRepository.GetById(
+        var volunteerResult = await _volunteersWriteRepository.GetById(
             VolunteerId.Create(command.VolunteerId),
             cancellationToken);
         
@@ -80,7 +80,7 @@ public class DeletePetPhotosHandler : ICommandHandler<Guid, DeletePetPhotosComma
         
         await _unitOfWork.SaveChanges(cancellationToken);
         
-        _logger.LogInformation("Deleted photos to pet with id {PetId} from a volunteer with id {VolunteerId}",
+        _logger.LogInformation("Deleted photos to pet with id: {PetId} from a volunteer with id: {VolunteerId}",
             command.PetId, command.VolunteerId);
         
         return pet.Id.Value;

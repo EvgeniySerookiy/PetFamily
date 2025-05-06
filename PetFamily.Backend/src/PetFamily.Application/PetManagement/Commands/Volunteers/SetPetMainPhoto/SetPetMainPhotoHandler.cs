@@ -11,18 +11,18 @@ namespace PetFamily.Application.PetManagement.Commands.Volunteers.SetPetMainPhot
 
 public class SetPetMainPhotoHandler : ICommandHandler<Guid, SetPetMainPhotoCommand>
 {
-    private readonly IVolunteersRepository _volunteersRepository;
+    private readonly IVolunteersWriteRepository _volunteersWriteRepository;
     private readonly ILogger<SetPetMainPhotoHandler> _logger;
     private readonly IValidator<SetPetMainPhotoCommand> _validator;
     private readonly IUnitOfWork _unitOfWork;
 
     public SetPetMainPhotoHandler(
-        IVolunteersRepository volunteersRepository,
+        IVolunteersWriteRepository volunteersWriteRepository,
         ILogger<SetPetMainPhotoHandler> logger,
         IValidator<SetPetMainPhotoCommand> validator,
         IUnitOfWork unitOfWork)
     {
-        _volunteersRepository = volunteersRepository;
+        _volunteersWriteRepository = volunteersWriteRepository;
         _logger = logger;
         _validator = validator;
         _unitOfWork = unitOfWork;
@@ -35,13 +35,13 @@ public class SetPetMainPhotoHandler : ICommandHandler<Guid, SetPetMainPhotoComma
         if (validationResult.IsValid == false)
             return validationResult.ToErrorList();
         
-        var volunteerResult = await _volunteersRepository.GetById(
+        var volunteerResult = await _volunteersWriteRepository.GetById(
             VolunteerId.Create(command.VolunteerId),
             cancellationToken);
         if (volunteerResult.IsFailure)
             return volunteerResult.Error.ToErrorList();
         
-        var petResult = volunteerResult.Value.GetPetById(command.PetId);
+        var petResult = volunteerResult.Value.GetByPetId(command.PetId);
         if (petResult.IsFailure)
             return petResult.Error.ToErrorList();
 
@@ -51,8 +51,11 @@ public class SetPetMainPhotoHandler : ICommandHandler<Guid, SetPetMainPhotoComma
         
         await _unitOfWork.SaveChanges(cancellationToken);
         
-        _logger.LogInformation("Successfully set main photo for pet with ID {PetId} to {PhotoPath} for volunteer with ID {VolunteerId}", 
-            command.PetId, command.PhotoPath, command.VolunteerId);
+        _logger.LogInformation(
+            "Successfully set main photo for pet with id: {PetId} to {PhotoPath} for volunteer with id: {VolunteerId}", 
+            command.PetId, 
+            command.PhotoPath, 
+            command.VolunteerId);
 
         return petResult.Value.Id.Value;
     }

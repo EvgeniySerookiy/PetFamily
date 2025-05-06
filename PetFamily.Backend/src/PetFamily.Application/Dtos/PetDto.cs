@@ -7,6 +7,10 @@ public class PetDto
     public Guid SpeciesId { get; init; }
     public Guid BreedId { get; init; }
     public string PetName { get; init; }
+    public DateTime DateOfBird { get; init; }
+    public string Color { get; init; }
+    public string Region { get; init; }
+    public string City { get; init; }
     public int Position { get; init; }
     public bool IsDeleted { get; init; }
     public PetPhotoDto[] PetPhotos { get; set; }

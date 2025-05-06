@@ -25,7 +25,7 @@ public class UpdateSocialNetworkTests : ManagementBaseTests
     {
         // Arrange
         var createVolunteer = SharedTestsSeeder.CreateVolunteer();
-        await VolunteersRepository.Add(createVolunteer);
+        await VolunteersWriteRepository.Add(createVolunteer);
 
         var listOfSocialNetworkDtos = CreateSocialNetworkDtos();
         

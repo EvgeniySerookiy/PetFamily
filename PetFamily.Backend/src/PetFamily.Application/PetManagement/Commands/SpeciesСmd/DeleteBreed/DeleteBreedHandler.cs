@@ -1,5 +1,5 @@
 using CSharpFunctionalExtensions;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using PetFamily.Application.Abstractions;
 using PetFamily.Application.Database;
 using PetFamily.Domain.Shared.ErrorContext;
@@ -9,34 +9,37 @@ namespace PetFamily.Application.PetManagement.Commands.SpeciesСmd.DeleteBreed;
 
 public class DeleteBreedHandler : ICommandHandler<Guid, DeleteBreedCommand>
 {
-    private readonly IReadDbContext _readDbContext;
-    private readonly ISpeciesRepository _speciesRepository;
+    private readonly ISpeciesWriteRepository _speciesWriteRepository;
+    private readonly ILogger<DeleteBreedHandler> _logger;
     private readonly IUnitOfWork _unitOfWork;
 
     public DeleteBreedHandler(
-        IReadDbContext readDbContext, 
-        ISpeciesRepository speciesRepository,
+        ISpeciesWriteRepository speciesWriteRepository,
+        ILogger<DeleteBreedHandler> logger,
         IUnitOfWork unitOfWork)
     {
-        _readDbContext = readDbContext;
-        _speciesRepository = speciesRepository;
+        _speciesWriteRepository = speciesWriteRepository;
+        _logger = logger;
         _unitOfWork = unitOfWork;
     }
     public async Task<Result<Guid, ErrorList>> Handle(
         DeleteBreedCommand command, 
         CancellationToken cancellationToken = default)
     {
-        var breedExists = await _readDbContext.Species
-            .Where(s => s.Id == command.SpeciesId)
-            .SelectMany(s => s.Breeds)
-            .AnyAsync(s => s.Id == command.BreedId, cancellationToken);
-        if (breedExists == false)
-            return Errors.Breed.NotFound(command.BreedId).ToErrorList();
-        
-        await _speciesRepository.DeleteBreed(
-            BreedId.Create(command.BreedId), 
+        var speciesResult = await _speciesWriteRepository.GetById(
+            SpeciesId.Create(command.SpeciesId),
             cancellationToken);
+        if (speciesResult.IsFailure)
+            return speciesResult.Error.ToErrorList();
+        
+        var breedResult = speciesResult.Value.DeleteByBreedId(BreedId.Create(command.BreedId));
+        if (breedResult.IsFailure)
+            return breedResult.Error.ToErrorList();
+        
         await _unitOfWork.SaveChanges(cancellationToken);
+        
+        _logger.LogInformation("Deleted breed with id: {BreedId} from a species with id: {SpeciesId}",
+            command.BreedId, command.SpeciesId);
 
         return command.BreedId;
     }

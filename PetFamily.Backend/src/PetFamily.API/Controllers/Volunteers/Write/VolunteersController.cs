@@ -6,7 +6,7 @@ using PetFamily.Application.Abstractions;
 using PetFamily.Application.Dtos.VolunteerDTOs;
 using PetFamily.Application.PetManagement.Commands.Volunteers.AddPet;
 using PetFamily.Application.PetManagement.Commands.Volunteers.AddPetPhotos;
-using PetFamily.Application.PetManagement.Commands.Volunteers.CreateVolunteer;
+using PetFamily.Application.PetManagement.Commands.Volunteers.AddVolunteer;
 using PetFamily.Application.PetManagement.Commands.Volunteers.DeletePetPhotos;
 using PetFamily.Application.PetManagement.Commands.Volunteers.DeleteVolunteer;
 using PetFamily.Application.PetManagement.Commands.Volunteers.MovePets;

@@ -1,6 +1,5 @@
 using CSharpFunctionalExtensions;
 using FluentValidation;
-using Microsoft.EntityFrameworkCore;
 using PetFamily.Application.Abstractions;
 using PetFamily.Application.Database;
 using PetFamily.Application.Extensions;
@@ -12,17 +11,14 @@ namespace PetFamily.Application.PetManagement.Commands.SpeciesСmd.AddSpecies;
 
 public class AddSpeciesHandler : ICommandHandler<Guid, AddSpeciesCommand>
 {
-    private readonly IReadDbContext _readDbContext;
-    private readonly ISpeciesRepository _speciesRepository;
+    private readonly ISpeciesWriteRepository _speciesWriteRepository;
     private readonly IValidator<AddSpeciesCommand> _validator;
     
     public AddSpeciesHandler(
-        IReadDbContext readDbContext,
-        ISpeciesRepository speciesRepository,
+        ISpeciesWriteRepository speciesWriteRepository,
         IValidator<AddSpeciesCommand> validator)
     {
-        _readDbContext = readDbContext;
-        _speciesRepository = speciesRepository;
+        _speciesWriteRepository = speciesWriteRepository;
         _validator = validator;
     }
 
@@ -49,7 +45,7 @@ public class AddSpeciesHandler : ICommandHandler<Guid, AddSpeciesCommand>
             speciesName, 
             []);
         
-        await _speciesRepository.Add(speciesToCreate.Value, cancellationToken);
+        await _speciesWriteRepository.Add(speciesToCreate.Value, cancellationToken);
         
         return speciesToCreate.Value.Id.Value;
     }

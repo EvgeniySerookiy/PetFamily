@@ -53,12 +53,12 @@ public class VolunteersController : ApplicationController
     [HttpGet("pets")]
     public async Task<ActionResult> GetPets(
         [FromQuery] GetFilteredPetsWithPaginationRequest request,
-        [FromServices] GetFilteredPetsWithPaginationHandlerPets handlerPets,
+        [FromServices] GetFilteredPetsWithPaginationHandler handler,
         CancellationToken cancellationToken = default)
     {
         var query = request.ToQuery();
         
-        var response = await handlerPets.Handle(query, cancellationToken);
+        var response = await handler.Handle(query, cancellationToken);
         
         return Ok(response);
     }

@@ -119,7 +119,7 @@ public class VolunteerTests
 
         var result = volunteer.Value.AddPet(pet.Value);
 
-        var addedPetResult = volunteer.Value.GetPetById(pet.Value.Id);
+        var addedPetResult = volunteer.Value.GetByPetId(pet.Value.Id);
 
         result.IsSuccess.Should().BeTrue();
         addedPetResult.IsSuccess.Should().BeTrue();
@@ -142,7 +142,7 @@ public class VolunteerTests
         var result = volunteer.Value.AddPet(petToAdd.Value);
 
         // Assert
-        var addedPetResult = volunteer.Value.GetPetById(petToAdd.Value.Id);
+        var addedPetResult = volunteer.Value.GetByPetId(petToAdd.Value.Id);
 
         var serialNumber = Position.Create(PETS_COUNTS + 1);
 

@@ -13,6 +13,7 @@ using PetFamily.Infrastructure.Options;
 using PetFamily.Infrastructure.Photos;
 using PetFamily.Infrastructure.Providers;
 using PetFamily.Infrastructure.Repositories;
+using PetFamily.Infrastructure.Repositories.Write;
 
 namespace PetFamily.Infrastructure;
 
@@ -56,7 +57,7 @@ public static class Inject
         this IServiceCollection services)
     {
         services.AddScoped<IPhotosCleanerService, PhotosCleanerService>();
-        services.AddHostedService<SoftDeleteCleanupService>();
+        //services.AddHostedService<SoftDeleteCleanupService>();
         services.AddHostedService<PhotosCleanupBackgroundService>();
         
         return services;
@@ -65,8 +66,8 @@ public static class Inject
     private static IServiceCollection AddRepositories(
         this IServiceCollection services)
     {
-        services.AddScoped<IVolunteersRepository, VolunteersRepository>();
-        services.AddScoped<ISpeciesRepository, SpeciesRepository>();
+        services.AddScoped<IVolunteersWriteRepository, VolunteersWriteRepository>();
+        services.AddScoped<ISpeciesWriteRepository, SpeciesWriteRepository>();
         
         return services;
     }
@@ -78,11 +79,11 @@ public static class Inject
         services.AddScoped<WriteDbContext>(_ => 
             new WriteDbContext(configuration.GetConnectionString(Constants.DATABASE)!));
         
-        services.AddScoped<ReadDbContext>(_ => 
-            new ReadDbContext(configuration.GetConnectionString(Constants.DATABASE)!));
-        
-        services.AddScoped<IReadDbContext, ReadDbContext>(_ => 
-            new ReadDbContext(configuration.GetConnectionString(Constants.DATABASE)!));
+        // services.AddScoped<ReadDbContext>(_ => 
+        //     new ReadDbContext(configuration.GetConnectionString(Constants.DATABASE)!));
+        //
+        // services.AddScoped<IReadDbContext, ReadDbContext>(_ => 
+        //     new ReadDbContext(configuration.GetConnectionString(Constants.DATABASE)!));
         
         return services;
     }

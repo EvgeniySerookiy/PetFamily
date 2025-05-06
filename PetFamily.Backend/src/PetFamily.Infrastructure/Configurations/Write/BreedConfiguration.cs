@@ -25,11 +25,5 @@ public class BreedConfiguration : IEntityTypeConfiguration<Breed>
                 .HasMaxLength(BreedName.MAX_BREED_NAME_TEXT_LENGTH)
                 .HasColumnName("breed_name");
         });
-        
-        builder.HasOne(p => p.Species)
-            .WithMany(p => p.Breeds)  
-            .HasForeignKey("species_id")
-            .OnDelete(DeleteBehavior.NoAction)
-            .IsRequired();
     }
 }

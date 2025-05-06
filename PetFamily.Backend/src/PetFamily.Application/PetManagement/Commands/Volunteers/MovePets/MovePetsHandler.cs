@@ -11,18 +11,18 @@ namespace PetFamily.Application.PetManagement.Commands.Volunteers.MovePets;
 
 public class MovePetsHandler : ICommandHandler<Guid, MovePetsCommand>
 {
-    private readonly IVolunteersRepository _volunteersRepository;
-    private readonly ILogger<AddPet.AddPet> _logger;
+    private readonly IVolunteersWriteRepository _volunteersWriteRepository;
+    private readonly ILogger<AddPet.AddPetHandler> _logger;
     private readonly IValidator<MovePetsCommand> _validator;
     private readonly IUnitOfWork _unitOfWork;
 
     public MovePetsHandler(
-        IVolunteersRepository volunteersRepository,
-        ILogger<AddPet.AddPet> logger,
+        IVolunteersWriteRepository volunteersWriteRepository,
+        ILogger<AddPet.AddPetHandler> logger,
         IValidator<MovePetsCommand> validator,
         IUnitOfWork unitOfWork)
     {
-        _volunteersRepository = volunteersRepository;
+        _volunteersWriteRepository = volunteersWriteRepository;
         _logger = logger;
         _validator = validator;
         _unitOfWork = unitOfWork;
@@ -36,7 +36,7 @@ public class MovePetsHandler : ICommandHandler<Guid, MovePetsCommand>
         if (validationResult.IsValid == false)
             return validationResult.ToErrorList();
         
-        var volunteerResult = await _volunteersRepository.GetById(
+        var volunteerResult = await _volunteersWriteRepository.GetById(
             VolunteerId.Create(command.Id),
             cancellationToken);
         if (volunteerResult.IsFailure)
@@ -56,7 +56,7 @@ public class MovePetsHandler : ICommandHandler<Guid, MovePetsCommand>
         
         await _unitOfWork.SaveChanges(cancellationToken);
         
-        _logger.LogInformation("Moving pet with ID {PetId} for volunteer with ID {VolunteerId}", 
+        _logger.LogInformation("Moving pet with id: {PetId} for volunteer with id: {VolunteerId}", 
             petMoveResult.Id, volunteerResult.Value.Id);
         
         return petMoveResult.Id.Value;

@@ -8,16 +8,16 @@ namespace PetFamily.Application.PetManagement.Commands.Volunteers.DeletePet;
 
 public class DeletePetHandler : ICommandHandler<Guid, DeletePetCommand>
 {
-    private readonly IVolunteersRepository _volunteersRepository;
+    private readonly IVolunteersWriteRepository _volunteersWriteRepository;
     private readonly ILogger<DeletePetCommand> _logger;
     private readonly IUnitOfWork _unitOfWork;
 
     public DeletePetHandler(
-        IVolunteersRepository volunteersRepository,
+        IVolunteersWriteRepository volunteersWriteRepository,
         ILogger<DeletePetCommand> logger,
         IUnitOfWork unitOfWork)
     {
-        _volunteersRepository = volunteersRepository;
+        _volunteersWriteRepository = volunteersWriteRepository;
         _logger = logger;
         _unitOfWork = unitOfWork;
     }
@@ -26,17 +26,21 @@ public class DeletePetHandler : ICommandHandler<Guid, DeletePetCommand>
         DeletePetCommand command,
         CancellationToken cancellationToken = default)
     {
-        var volunteerResult = await _volunteersRepository.GetById(command.VolunteerId, cancellationToken);
+        var volunteerResult = await _volunteersWriteRepository.GetById(command.VolunteerId, cancellationToken);
         if (volunteerResult.IsFailure)
             return volunteerResult.Error.ToErrorList();
 
-        var petResult = volunteerResult.Value.GetPetById(command.PetId);
+        var petResult = volunteerResult.Value.GetByPetId(command.PetId);
         if (petResult.IsFailure)
             return petResult.Error.ToErrorList();
 
         petResult.Value.Delete();
         
         await _unitOfWork.SaveChanges(cancellationToken);
+        
+        _logger.LogInformation(
+            "Successfully deleted pet with id: {PetId} for volunteer with id: {VolunteerId}",
+            command.PetId, command.VolunteerId);
 
         return command.PetId;
     }

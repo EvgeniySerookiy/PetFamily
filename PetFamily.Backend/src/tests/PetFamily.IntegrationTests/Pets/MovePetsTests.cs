@@ -27,7 +27,7 @@ public class MovePetsTests : ManagementBaseTests
         var createBreed = SharedTestsSeeder.CreateBreed("Сеттер");
 
         createSpecies.AddBreed(createBreed);
-        await SpeciesRepository.Add(createSpecies);
+        await SpeciesWriteRepository.Add(createSpecies);
 
         var createVolunteer = SharedTestsSeeder.CreateVolunteer();
 
@@ -49,7 +49,7 @@ public class MovePetsTests : ManagementBaseTests
         createVolunteer.AddPet(createPet1);
         createVolunteer.AddPet(createPet2);
         createVolunteer.AddPet(createPet3);
-        await VolunteersRepository.Add(createVolunteer);
+        await VolunteersWriteRepository.Add(createVolunteer);
 
         var command = new MovePetsCommand(createVolunteer.Id, 3, 2);
 
@@ -91,10 +91,10 @@ public class MovePetsTests : ManagementBaseTests
         var createBreed = SharedTestsSeeder.CreateBreed("Сеттер");
 
         createSpecies.AddBreed(createBreed);
-        await SpeciesRepository.Add(createSpecies);
+        await SpeciesWriteRepository.Add(createSpecies);
 
         var createVolunteer = SharedTestsSeeder.CreateVolunteer();
-        await VolunteersRepository.Add(createVolunteer);
+        await VolunteersWriteRepository.Add(createVolunteer);
 
         var command = new MovePetsCommand(createVolunteer.Id, 3, 2);
 

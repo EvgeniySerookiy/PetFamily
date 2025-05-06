@@ -26,7 +26,7 @@ public class DeletePetTests : ManagementBaseTests
         var createBreed = SharedTestsSeeder.CreateBreed("Сеттер");
 
         createSpecies.AddBreed(createBreed);
-        await SpeciesRepository.Add(createSpecies);
+        await SpeciesWriteRepository.Add(createSpecies);
 
         var createVolunteer = SharedTestsSeeder.CreateVolunteer();
 
@@ -36,7 +36,7 @@ public class DeletePetTests : ManagementBaseTests
             createBreed.Id);
         
         createVolunteer.AddPet(createPet);
-        await VolunteersRepository.Add(createVolunteer);
+        await VolunteersWriteRepository.Add(createVolunteer);
 
         var command = new DeletePetCommand(createVolunteer.Id, createPet.Id);
 
@@ -58,7 +58,7 @@ public class DeletePetTests : ManagementBaseTests
     {
         // Arrange
         var createVolunteer = SharedTestsSeeder.CreateVolunteer();
-        await VolunteersRepository.Add(createVolunteer);
+        await VolunteersWriteRepository.Add(createVolunteer);
 
         var petId = PetId.NewPetId().Value;
 

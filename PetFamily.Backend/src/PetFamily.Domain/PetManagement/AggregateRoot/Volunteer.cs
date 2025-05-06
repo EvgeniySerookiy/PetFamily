@@ -122,7 +122,7 @@ public sealed class  Volunteer : SoftDeletableEntity<VolunteerId>
         pet.SetPosition(serialNumberResult.Value);
 
         _pets.Add(pet);
-        return Result.Success<Error>();
+        return UnitResult.Success<Error>();
     }
 
     private void ShiftPositions(int currentPosition, int nextPosition)
@@ -164,11 +164,11 @@ public sealed class  Volunteer : SoftDeletableEntity<VolunteerId>
         return UnitResult.Success<Error>();
     }
 
-    public Result<Pet, Error> GetPetById(Guid petId)
+    public Result<Pet, Error> GetByPetId(Guid petId)
     {
         var pet = Pets.FirstOrDefault(p => p.Id == petId);
         if (pet == null)
-            return Errors.General.NotFound(petId);
+            return Errors.Pet.NotFound(petId);
 
         return pet;
     }
