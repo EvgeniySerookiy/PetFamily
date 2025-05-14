@@ -11,27 +11,17 @@ namespace PetFamily.Application.PetManagement.Queries.Volunteers.GetPet;
 
 public class GetPetHandler : IQueryHandlerPet<PagedList<PetDto>, GetPetQuery>
 {
-    private readonly IVolunteersReadRepository _volunteersReadRepository;
     private readonly ISqlConnectionFactory _sqlConnectionFactory;
 
     public GetPetHandler(
-        IVolunteersReadRepository volunteersReadRepository,
         ISqlConnectionFactory sqlConnectionFactory)
     {
-        _volunteersReadRepository = volunteersReadRepository;
         _sqlConnectionFactory = sqlConnectionFactory;
     }
     public async Task<Result<PetDto, ErrorList>> Handle(
         GetPetQuery query, CancellationToken cancellationToken = default)
     {
-        var petExist = await _volunteersReadRepository
-            .CheckWithVolunteerFoarAPet(query.VolunteerId, query.PetId, cancellationToken);
-        if (petExist.IsFailure)
-            return petExist.Error.ToErrorList();
-        
         var connection = _sqlConnectionFactory.Create();
-        var totalCount = await connection.ExecuteScalarAsync<long>(
-            @"SELECT COUNT(*) FROM pets");
 
         var parameters = new DynamicParameters();
         parameters.Add("@VolunteerId", query.VolunteerId);
@@ -49,7 +39,7 @@ public class GetPetHandler : IQueryHandlerPet<PagedList<PetDto>, GetPetQuery>
                    """;
         
         var pets = await connection.QueryAsync<PetDto, string, PetDto>(
-            sql.ToString(), (pet, jsonPhotos) =>
+            sql, (pet, jsonPhotos) =>
             {
                 var photos = JsonSerializer.Deserialize<PetPhotoDto[]>(jsonPhotos) ?? [];
                 pet.PetPhotos = photos;
@@ -59,6 +49,11 @@ public class GetPetHandler : IQueryHandlerPet<PagedList<PetDto>, GetPetQuery>
             param: parameters);
 
         var pet = pets.FirstOrDefault();
+        if (pet == null)
+        {
+            return Errors.Pet.NotFound(query.PetId).ToErrorList();
+        }
+            
         
         return new PetDto
         {
