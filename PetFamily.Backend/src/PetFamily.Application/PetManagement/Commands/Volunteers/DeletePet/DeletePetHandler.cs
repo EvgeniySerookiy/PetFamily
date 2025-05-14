@@ -1,5 +1,4 @@
 using CSharpFunctionalExtensions;
-using Microsoft.Extensions.Logging;
 using PetFamily.Application.Abstractions;
 using PetFamily.Application.Database;
 using PetFamily.Domain.Shared.ErrorContext;
@@ -8,17 +7,17 @@ namespace PetFamily.Application.PetManagement.Commands.Volunteers.DeletePet;
 
 public class DeletePetHandler : ICommandHandler<Guid, DeletePetCommand>
 {
-    private readonly IVolunteersRepository _volunteersRepository;
-    private readonly ILogger<DeletePetCommand> _logger;
+    private readonly IVolunteersWriteRepository _volunteersWriteRepository;
+    private readonly IVolunteersReadRepository _volunteersReadRepository;
     private readonly IUnitOfWork _unitOfWork;
 
     public DeletePetHandler(
-        IVolunteersRepository volunteersRepository,
-        ILogger<DeletePetCommand> logger,
+        IVolunteersWriteRepository volunteersWriteRepository,
+        IVolunteersReadRepository volunteersReadRepository,
         IUnitOfWork unitOfWork)
     {
-        _volunteersRepository = volunteersRepository;
-        _logger = logger;
+        _volunteersWriteRepository = volunteersWriteRepository;
+        _volunteersReadRepository = volunteersReadRepository;
         _unitOfWork = unitOfWork;
     }
 
@@ -26,7 +25,12 @@ public class DeletePetHandler : ICommandHandler<Guid, DeletePetCommand>
         DeletePetCommand command,
         CancellationToken cancellationToken = default)
     {
-        var volunteerResult = await _volunteersRepository.GetById(command.VolunteerId, cancellationToken);
+        var petExist = await _volunteersReadRepository
+            .CheckWithVolunteerFoarAPet(command.VolunteerId, command.PetId, cancellationToken);
+        if (petExist.IsFailure)
+            return petExist.Error.ToErrorList();
+        
+        var volunteerResult = await _volunteersWriteRepository.GetById(command.VolunteerId, cancellationToken);
         if (volunteerResult.IsFailure)
             return volunteerResult.Error.ToErrorList();
 

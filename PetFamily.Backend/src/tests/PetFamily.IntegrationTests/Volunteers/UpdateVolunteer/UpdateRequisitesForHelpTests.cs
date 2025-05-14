@@ -25,7 +25,7 @@ public class UpdateRequisitesForHelpTests : ManagementBaseTests
     {
         // Arrange
         var createVolunteer = SharedTestsSeeder.CreateVolunteer();
-        await VolunteersRepository.Add(createVolunteer);
+        await VolunteersWriteRepository.Add(createVolunteer);
 
         var listOfRequisitesForHelpDtos = CreateListOfRequisitesForHelpDtos();
         

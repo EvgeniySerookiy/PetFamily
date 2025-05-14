@@ -25,7 +25,7 @@ public class UpdateMainInfoTests : ManagementBaseTests
     {
         // Arrange
         var createVolunteer = SharedTestsSeeder.CreateVolunteer();
-        await VolunteersRepository.Add(createVolunteer);
+        await VolunteersWriteRepository.Add(createVolunteer);
 
         var command = new UpdateMainInfoCommand(createVolunteer.Id, CreateMainInfoDto());
         

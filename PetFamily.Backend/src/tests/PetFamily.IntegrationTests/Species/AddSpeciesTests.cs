@@ -63,7 +63,7 @@ public class AddSpeciesTests : ManagementBaseTests
         // Arrange
         var speciesToCreate = SharedTestsSeeder.CreateSpecies("Собака");
 
-        await SpeciesRepository.Add(speciesToCreate);
+        await SpeciesWriteRepository.Add(speciesToCreate);
 
         var command = CreateAddSpeciesCommand("Собака");
 

@@ -29,10 +29,10 @@ public class AddPetTests : ManagementBaseTests
         var createBreed = SharedTestsSeeder.CreateBreed("Сеттер");
 
         createSpecies.AddBreed(createBreed);
-        await SpeciesRepository.Add(createSpecies);
+        await SpeciesWriteRepository.Add(createSpecies);
 
         var createVolunteer = SharedTestsSeeder.CreateVolunteer();
-        await VolunteersRepository.Add(createVolunteer);
+        await VolunteersWriteRepository.Add(createVolunteer);
 
         var command = CreateMainPetInfoCommand(
             createVolunteer.Id,
@@ -85,7 +85,7 @@ public class AddPetTests : ManagementBaseTests
         var createBreed = SharedTestsSeeder.CreateBreed("Сеттер");
 
         createSpecies.AddBreed(createBreed);
-        await SpeciesRepository.Add(createSpecies);
+        await SpeciesWriteRepository.Add(createSpecies);
 
         var command = CreateMainPetInfoCommand(
             volunteerId,
@@ -109,10 +109,10 @@ public class AddPetTests : ManagementBaseTests
         var createBreed = SharedTestsSeeder.CreateBreed("Сеттер");
 
         createSpecies.AddBreed(createBreed);
-        await SpeciesRepository.Add(createSpecies);
+        await SpeciesWriteRepository.Add(createSpecies);
 
         var createVolunteer = SharedTestsSeeder.CreateVolunteer();
-        await VolunteersRepository.Add(createVolunteer);
+        await VolunteersWriteRepository.Add(createVolunteer);
 
         var command = CreateMainPetInfoCommand(
             createVolunteer.Id,
@@ -142,7 +142,7 @@ public class AddPetTests : ManagementBaseTests
         var createBreed = SharedTestsSeeder.CreateBreed("Сеттер");
 
         createSpecies.AddBreed(createBreed);
-        await SpeciesRepository.Add(createSpecies);
+        await SpeciesWriteRepository.Add(createSpecies);
 
         var volunteerId = VolunteerId.NewVolunteerId().Value;
 

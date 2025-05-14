@@ -8,7 +8,6 @@ namespace PetFamily.Domain.SpeciesManagement.Entities;
 public class Breed : Shared.Entity<BreedId>
 {
     public BreedName BreedName { get; private set; }
-    public Species Species { get; private set; } = null!;
     
     private Breed(BreedId id) : base(id) {}
 

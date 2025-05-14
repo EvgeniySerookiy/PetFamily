@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using PetFamily.API.Controllers.Volunteers.Read.Requests;
 using PetFamily.API.Controllers.Volunteers.Write.Requests;
+using PetFamily.Application.PetManagement.Queries.Volunteers.GetPet;
 using PetFamily.Application.PetManagement.Queries.Volunteers.GetPetsWithPagination;
 using PetFamily.Application.PetManagement.Queries.Volunteers.GetVolunteer;
 using PetFamily.Application.PetManagement.Queries.Volunteers.GetVolunteersWithPagination;
@@ -37,10 +38,10 @@ public class VolunteersController : ApplicationController
     }
     
     // Операции с петом
-    [HttpGet("pets/dapper")]
-    public async Task<ActionResult> GetPetsDapper(
+    [HttpGet("pets")]
+    public async Task<ActionResult> GetPets(
         [FromQuery] GetFilteredPetsWithPaginationRequest request,
-        [FromServices] GetFilteredPetsWithPaginationHandlerPetsDapper handlerPets,
+        [FromServices] GetFilteredPetsWithPaginationHandler handlerPets,
         CancellationToken cancellationToken = default)
     {
         var query = request.ToQuery();
@@ -50,16 +51,17 @@ public class VolunteersController : ApplicationController
         return Ok(response);
     }
     
-    [HttpGet("pets")]
-    public async Task<ActionResult> GetPets(
-        [FromQuery] GetFilteredPetsWithPaginationRequest request,
-        [FromServices] GetFilteredPetsWithPaginationHandlerPets handlerPets,
+    [HttpGet("{volunteerId:guid}/pets/{petId:guid}")]
+    public async Task<ActionResult> GetPet(
+        [FromRoute] Guid volunteerId,
+        [FromRoute] Guid petId,
+        [FromServices] GetPetHandler handlerPet,
         CancellationToken cancellationToken = default)
     {
-        var query = request.ToQuery();
+        var query = new GetPetQuery(volunteerId, petId);
         
-        var response = await handlerPets.Handle(query, cancellationToken);
+        var result = await handlerPet.Handle(query, cancellationToken);
         
-        return Ok(response);
+        return Ok(result.Value);
     }
 }

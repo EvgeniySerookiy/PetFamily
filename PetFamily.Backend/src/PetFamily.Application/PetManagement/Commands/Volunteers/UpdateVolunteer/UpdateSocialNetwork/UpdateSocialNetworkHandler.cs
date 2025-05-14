@@ -11,18 +11,18 @@ namespace PetFamily.Application.PetManagement.Commands.Volunteers.UpdateVoluntee
 
 public class UpdateSocialNetworkHandler : ICommandHandler<Guid, UpdateSocialNetworksCommand>
 {
-    private readonly IVolunteersRepository _volunteersRepository;
+    private readonly IVolunteersWriteRepository _volunteersWriteRepository;
     private readonly ILogger<UpdateSocialNetworkHandler> _logger;
     private readonly IValidator<UpdateSocialNetworksCommand> _validator;
     private readonly IUnitOfWork _unitOfWork;
 
     public UpdateSocialNetworkHandler(
-        IVolunteersRepository volunteersRepository,
+        IVolunteersWriteRepository volunteersWriteRepository,
         ILogger<UpdateSocialNetworkHandler> logger,
         IValidator<UpdateSocialNetworksCommand> validator,
         IUnitOfWork unitOfWork)
     {
-        _volunteersRepository = volunteersRepository;
+        _volunteersWriteRepository = volunteersWriteRepository;
         _logger = logger;
         _validator = validator;
         _unitOfWork = unitOfWork;
@@ -36,7 +36,7 @@ public class UpdateSocialNetworkHandler : ICommandHandler<Guid, UpdateSocialNetw
         if (validationResult.IsValid == false)
             return validationResult.ToErrorList();
         
-        var volunteerResult = await _volunteersRepository.GetById(command.Id, cancellationToken);
+        var volunteerResult = await _volunteersWriteRepository.GetById(command.Id, cancellationToken);
         if (volunteerResult.IsFailure)
             return volunteerResult.Error.ToErrorList();
 

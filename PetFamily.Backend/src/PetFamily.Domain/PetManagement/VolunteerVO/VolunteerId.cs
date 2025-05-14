@@ -12,7 +12,7 @@ public record VolunteerId
     
     public static VolunteerId EmptyVolunteerId() => new (Guid.Empty);
     
-    public static implicit operator Guid(VolunteerId breedId) => breedId.Value;
+    public static implicit operator Guid(VolunteerId volunteerId) => volunteerId.Value;
 
     public static implicit operator VolunteerId(Guid id) => new (id);
 }

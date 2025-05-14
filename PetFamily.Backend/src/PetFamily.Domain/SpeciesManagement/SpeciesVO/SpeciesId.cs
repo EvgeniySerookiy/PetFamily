@@ -1,6 +1,6 @@
 namespace PetFamily.Domain.SpeciesManagement.SpeciesVO;
 
-public class SpeciesId
+public record SpeciesId
 {
     public Guid Value { get; }
     private SpeciesId() { } 
@@ -14,4 +14,8 @@ public class SpeciesId
     public static SpeciesId NewSpeciesId() => new (Guid.NewGuid());
     
     public static SpeciesId EmptySpeciesId() => new (Guid.Empty);
+    
+    public static implicit operator Guid(SpeciesId speciesId) => speciesId.Value;
+
+    public static implicit operator SpeciesId(Guid id) => new (id);
 }

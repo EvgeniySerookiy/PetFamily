@@ -1,5 +1,5 @@
 using PetFamily.Application.Dtos.VolunteerDTOs;
-using PetFamily.Application.PetManagement.Commands.Volunteers.CreateVolunteer;
+using PetFamily.Application.PetManagement.Commands.Volunteers.AddVolunteer;
 using PetFamily.Application.PetManagement.Commands.Volunteers.UpdateVolunteer.UpdateRequisitesForHelp;
 using PetFamily.Application.PetManagement.Commands.Volunteers.UpdateVolunteer.UpdateSocialNetwork;
 

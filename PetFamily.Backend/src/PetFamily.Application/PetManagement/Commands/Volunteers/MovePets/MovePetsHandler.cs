@@ -11,18 +11,18 @@ namespace PetFamily.Application.PetManagement.Commands.Volunteers.MovePets;
 
 public class MovePetsHandler : ICommandHandler<Guid, MovePetsCommand>
 {
-    private readonly IVolunteersRepository _volunteersRepository;
+    private readonly IVolunteersWriteRepository _volunteersWriteRepository;
     private readonly ILogger<AddPet.AddPet> _logger;
     private readonly IValidator<MovePetsCommand> _validator;
     private readonly IUnitOfWork _unitOfWork;
 
     public MovePetsHandler(
-        IVolunteersRepository volunteersRepository,
+        IVolunteersWriteRepository volunteersWriteRepository,
         ILogger<AddPet.AddPet> logger,
         IValidator<MovePetsCommand> validator,
         IUnitOfWork unitOfWork)
     {
-        _volunteersRepository = volunteersRepository;
+        _volunteersWriteRepository = volunteersWriteRepository;
         _logger = logger;
         _validator = validator;
         _unitOfWork = unitOfWork;
@@ -36,7 +36,7 @@ public class MovePetsHandler : ICommandHandler<Guid, MovePetsCommand>
         if (validationResult.IsValid == false)
             return validationResult.ToErrorList();
         
-        var volunteerResult = await _volunteersRepository.GetById(
+        var volunteerResult = await _volunteersWriteRepository.GetById(
             VolunteerId.Create(command.Id),
             cancellationToken);
         if (volunteerResult.IsFailure)

@@ -20,7 +20,7 @@ public class AddPetPhotosHandler : ICommandHandler<Guid, AddPetPhotosCommand>
     private readonly IFileProvider _fileProvider;
     private readonly IValidator<AddPetPhotosCommand> _addPetPhotosValidator;
     private readonly IMessageQueue<IEnumerable<PhotoInfo>> _messageQueue;
-    private readonly IVolunteersRepository _volunteersRepository;
+    private readonly IVolunteersWriteRepository _volunteersWriteRepository;
     private readonly ILogger<AddPet.AddPet> _logger;
     private readonly IUnitOfWork _unitOfWork;
 
@@ -28,14 +28,14 @@ public class AddPetPhotosHandler : ICommandHandler<Guid, AddPetPhotosCommand>
         IFileProvider fileProvider,
         IValidator<AddPetPhotosCommand> addPetPhotosValidator,
         IMessageQueue<IEnumerable<PhotoInfo>> messageQueue,
-        IVolunteersRepository volunteersRepository,
+        IVolunteersWriteRepository volunteersWriteRepository,
         ILogger<AddPet.AddPet> logger,
         IUnitOfWork unitOfWork)
     {
         _fileProvider = fileProvider;
         _addPetPhotosValidator = addPetPhotosValidator;
         _messageQueue = messageQueue;
-        _volunteersRepository = volunteersRepository;
+        _volunteersWriteRepository = volunteersWriteRepository;
         _logger = logger;
         _unitOfWork = unitOfWork;
     }
@@ -52,7 +52,7 @@ public class AddPetPhotosHandler : ICommandHandler<Guid, AddPetPhotosCommand>
         var transaction = await _unitOfWork.BeginTransaction(cancellationToken);
         try
         {
-            var volunteerResult = await _volunteersRepository.GetById(
+            var volunteerResult = await _volunteersWriteRepository.GetById(
                 VolunteerId.Create(command.VolunteerId),
                 cancellationToken);
             if (volunteerResult.IsFailure)

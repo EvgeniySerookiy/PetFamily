@@ -24,7 +24,7 @@ public class DeleteVolunteerTests : ManagementBaseTests
     {
         // Arrange
         var createVolunteer = SharedTestsSeeder.CreateVolunteer();
-        await VolunteersRepository.Add(createVolunteer);
+        await VolunteersWriteRepository.Add(createVolunteer);
         
         var command = new DeleteVolunteerCommand(createVolunteer.Id);
         

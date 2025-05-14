@@ -6,7 +6,8 @@ using PetFamily.Application.Abstractions;
 using PetFamily.Application.Dtos.VolunteerDTOs;
 using PetFamily.Application.PetManagement.Commands.Volunteers.AddPet;
 using PetFamily.Application.PetManagement.Commands.Volunteers.AddPetPhotos;
-using PetFamily.Application.PetManagement.Commands.Volunteers.CreateVolunteer;
+using PetFamily.Application.PetManagement.Commands.Volunteers.AddVolunteer;
+using PetFamily.Application.PetManagement.Commands.Volunteers.DeletePet;
 using PetFamily.Application.PetManagement.Commands.Volunteers.DeletePetPhotos;
 using PetFamily.Application.PetManagement.Commands.Volunteers.DeleteVolunteer;
 using PetFamily.Application.PetManagement.Commands.Volunteers.MovePets;
@@ -131,6 +132,21 @@ public class VolunteersController : ApplicationController
                     speciesId,
                     breedId),
             cancellationToken);
+        if (result.IsFailure)
+            return result.Error.ToResponse();
+
+        return Ok(result.Value);
+    }
+    
+    [HttpDelete("{volunteerId:guid}/pets/{petId:guid}")]
+    public async Task<ActionResult> Delete(
+        [FromRoute] Guid volunteerId,
+        [FromRoute] Guid petId,
+        [FromServices] DeletePetHandler handler,
+        CancellationToken cancellationToken = default)
+    {
+        var result = await handler
+            .Handle(new DeletePetCommand(volunteerId, petId), cancellationToken);
         if (result.IsFailure)
             return result.Error.ToResponse();
 
