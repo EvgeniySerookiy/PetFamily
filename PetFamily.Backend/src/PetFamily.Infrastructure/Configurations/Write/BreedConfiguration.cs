@@ -21,15 +21,9 @@ public class BreedConfiguration : IEntityTypeConfiguration<Breed>
         builder.ComplexProperty(b => b.BreedName, pb =>
         {
             pb.Property(p => p.Value)
-                .IsRequired()
                 .HasMaxLength(BreedName.MAX_BREED_NAME_TEXT_LENGTH)
-                .HasColumnName("breed_name");
+                .HasColumnName("breed_name")
+                .IsRequired();
         });
-        
-        builder.HasOne(p => p.Species)
-            .WithMany(p => p.Breeds)  
-            .HasForeignKey("species_id")
-            .OnDelete(DeleteBehavior.NoAction)
-            .IsRequired();
     }
 }

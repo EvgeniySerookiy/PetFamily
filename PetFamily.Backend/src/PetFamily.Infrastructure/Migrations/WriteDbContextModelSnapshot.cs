@@ -500,14 +500,12 @@ namespace PetFamily.Infrastructure.Migrations
 
             modelBuilder.Entity("PetFamily.Domain.SpeciesManagement.Entities.Breed", b =>
                 {
-                    b.HasOne("PetFamily.Domain.SpeciesManagement.Entities.Species", "Species")
+                    b.HasOne("PetFamily.Domain.SpeciesManagement.Entities.Species", null)
                         .WithMany("Breeds")
                         .HasForeignKey("species_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_breeds_species_species_id");
-
-                    b.Navigation("Species");
                 });
 
             modelBuilder.Entity("PetFamily.Domain.PetManagement.AggregateRoot.Volunteer", b =>

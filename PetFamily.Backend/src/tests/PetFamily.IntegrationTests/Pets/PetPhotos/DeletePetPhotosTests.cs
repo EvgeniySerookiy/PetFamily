@@ -24,7 +24,7 @@ public class DeletePetPhotosTests : ManagementBaseTests
         var createBreed = SharedTestsSeeder.CreateBreed("Сеттер");
 
         createSpecies.AddBreed(createBreed);
-        await SpeciesRepository.Add(createSpecies);
+        await SpeciesWriteRepository.Add(createSpecies);
 
         var createVolunteer = SharedTestsSeeder.CreateVolunteer();
         
@@ -34,7 +34,7 @@ public class DeletePetPhotosTests : ManagementBaseTests
             createBreed.Id);
         
         createVolunteer.AddPet(createPet);
-        await VolunteersRepository.Add(createVolunteer);
+        await VolunteersWriteRepository.Add(createVolunteer);
         
         var photoGuid1 = ExtractGuid(createPet.PetPhotos[0].PathToStorage.Path);
         var photoGuid2 = ExtractGuid(createPet.PetPhotos[1].PathToStorage.Path);

@@ -12,7 +12,8 @@ using PetFamily.Infrastructure.MessageQueues;
 using PetFamily.Infrastructure.Options;
 using PetFamily.Infrastructure.Photos;
 using PetFamily.Infrastructure.Providers;
-using PetFamily.Infrastructure.Repositories;
+using PetFamily.Infrastructure.Repositories.Read;
+using PetFamily.Infrastructure.Repositories.Write;
 
 namespace PetFamily.Infrastructure;
 
@@ -65,8 +66,10 @@ public static class Inject
     private static IServiceCollection AddRepositories(
         this IServiceCollection services)
     {
-        services.AddScoped<IVolunteersRepository, VolunteersRepository>();
-        services.AddScoped<ISpeciesRepository, SpeciesRepository>();
+        services.AddScoped<IVolunteersWriteRepository, VolunteersWriteRepository>();
+        services.AddScoped<IVolunteersReadRepository, VolunteersReadRepository>();
+        services.AddScoped<ISpeciesWriteRepository, SpeciesWriteRepository>();
+        services.AddScoped<ISpeciesReadRepository, SpeciesReadRepository>();
         
         return services;
     }

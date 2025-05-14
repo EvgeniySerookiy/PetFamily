@@ -1,6 +1,5 @@
 using CSharpFunctionalExtensions;
 using FluentValidation;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using PetFamily.Application.Abstractions;
 using PetFamily.Application.Database;
@@ -16,21 +15,21 @@ namespace PetFamily.Application.PetManagement.Commands.Volunteers.AddPet;
 
 public class AddPet : ICommandHandler<Guid, MainPetInfoCommand>
 {
-    private readonly IReadDbContext _readDbContext;
-    private readonly IVolunteersRepository _volunteersRepository;
+    private readonly ISpeciesReadRepository _speciesReadRepository;
+    private readonly IVolunteersWriteRepository _volunteersWriteRepository;
     private readonly ILogger<AddPet> _logger;
     private readonly IValidator<MainPetInfoCommand> _validator;
     private readonly IUnitOfWork _unitOfWork;
 
     public AddPet(
-        IReadDbContext readDbContext,
-        IVolunteersRepository volunteersRepository,
+        ISpeciesReadRepository speciesReadRepository,
+        IVolunteersWriteRepository volunteersWriteRepository,
         ILogger<AddPet> logger,
         IValidator<MainPetInfoCommand> validator,
         IUnitOfWork unitOfWork)
     {
-        _readDbContext = readDbContext;
-        _volunteersRepository = volunteersRepository;
+        _speciesReadRepository = speciesReadRepository;
+        _volunteersWriteRepository = volunteersWriteRepository;
         _logger = logger;
         _validator = validator;
         _unitOfWork = unitOfWork;
@@ -43,19 +42,16 @@ public class AddPet : ICommandHandler<Guid, MainPetInfoCommand>
         var speciesId = SpeciesId.Create(command.SpeciesId);
         var breedId = BreedId.Create(command.BreedId);
         
-        var breedResult = await _readDbContext.Breeds
-            .FirstOrDefaultAsync(b => b.Id == breedId.Value, cancellationToken);
-        if (breedResult == null)
-            return Errors.General.NotFound(breedId.Value).ToErrorList();
-        
-        if(breedResult.SpeciesId != speciesId.Value)
-            return Errors.General.NotFound(speciesId.Value).ToErrorList();
+        var breedResult = await _speciesReadRepository
+            .CheckForTheBreedAndSpecies(speciesId.Value, breedId.Value, cancellationToken);
+        if (breedResult.IsFailure)
+            return breedResult.Error.ToErrorList();
         
         var validationResult = await _validator.ValidateAsync(command, cancellationToken);
         if (validationResult.IsValid == false)
             return validationResult.ToErrorList();
         
-        var volunteerResult = await _volunteersRepository.GetById(
+        var volunteerResult = await _volunteersWriteRepository.GetById(
             VolunteerId.Create(command.VolunteerId),
             cancellationToken);
         if (volunteerResult.IsFailure)

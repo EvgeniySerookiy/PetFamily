@@ -24,7 +24,7 @@ public class DeleteSpeciesTests : ManagementBaseTests
         // Arrange
         var speciesToCreate = SharedTestsSeeder.CreateSpecies("Собака");
         
-        await SpeciesRepository.Add(speciesToCreate);
+        await SpeciesWriteRepository.Add(speciesToCreate);
         
         var command = new DeleteSpeciesCommand(speciesToCreate.Id.Value);
             
@@ -42,7 +42,7 @@ public class DeleteSpeciesTests : ManagementBaseTests
         // Arrange
         var speciesToCreate = SharedTestsSeeder.CreateSpecies("Собака");
         
-        await SpeciesRepository.Add(speciesToCreate);
+        await SpeciesWriteRepository.Add(speciesToCreate);
 
         var speciesId = SpeciesId.NewSpeciesId().Value;
         var command = new DeleteSpeciesCommand(speciesId);

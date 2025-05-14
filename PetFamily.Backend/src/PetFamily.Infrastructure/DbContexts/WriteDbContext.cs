@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using PetFamily.Domain.PetManagement.AggregateRoot;
-using PetFamily.Domain.PetManagement.Entities;
 using PetFamily.Domain.SpeciesManagement.Entities;
 
 namespace PetFamily.Infrastructure.DbContexts;
@@ -10,9 +9,7 @@ public class WriteDbContext : DbContext
 {
     private readonly string _connectionString;
     public DbSet<Volunteer> Volunteers => Set<Volunteer>();
-    public DbSet<Pet> Pets => Set<Pet>();
     public DbSet<Species> Species => Set<Species>();
-    public DbSet<Breed> Breeds => Set<Breed>();
 
     public WriteDbContext(
         string connectionString)

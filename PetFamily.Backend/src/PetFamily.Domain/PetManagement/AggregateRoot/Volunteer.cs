@@ -92,6 +92,11 @@ public sealed class  Volunteer : SoftDeletableEntity<VolunteerId>
     {
         TransferSocialNetworkList = TransferSocialNetworkList.Create(socialNetworkList).Value;
     }
+    
+    public void RemovePet(Pet pet)
+    {
+        _pets.Remove(pet);
+    }
 
     public override void Delete()
     {

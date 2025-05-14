@@ -6,7 +6,8 @@ using PetFamily.Application.Models;
 
 namespace PetFamily.Application.PetManagement.Queries.Species.GetBreedsOfSpeciesWithPagination;
 
-public class GetBreedsOfSpeciesWithPaginationHandler : IQueryHandlerBreedsOfSpecies<PagedList<BreedDto>, GetBreedsOfSpeciesWithPaginationQuery>
+public class GetBreedsOfSpeciesWithPaginationHandler : 
+    IQueryHandlerBreedsOfSpecies<PagedList<BreedDto>, GetBreedsOfSpeciesWithPaginationQuery>
 {
     private readonly IReadDbContext _readDbContext;
 

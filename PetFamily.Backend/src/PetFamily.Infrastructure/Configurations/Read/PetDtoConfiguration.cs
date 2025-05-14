@@ -14,6 +14,10 @@ public class PetDtoConfiguration : IEntityTypeConfiguration<PetDto>
         builder.Property(p => p.SpeciesId);
         builder.Property(p => p.BreedId);
         builder.Property(p => p.PetName);
+        builder.Property(p => p.DateOfBirth);
+        builder.Property(p => p.Region);
+        builder.Property(p => p.City);
+        builder.Property(p => p.Color);
         builder.Property(p => p.Position);
         builder.Property(p => p.IsDeleted);
         builder.Property(p => p.PetPhotos)

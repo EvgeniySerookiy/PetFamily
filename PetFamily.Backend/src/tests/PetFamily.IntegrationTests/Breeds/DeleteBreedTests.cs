@@ -25,7 +25,7 @@ public class DeleteBreedTests : ManagementBaseTests
         var breedToCreate = SharedTestsSeeder.CreateBreed("Сеттер");
 
         speciesToCreate.AddBreed(breedToCreate);
-        await SpeciesRepository.Add(speciesToCreate);
+        await SpeciesWriteRepository.Add(speciesToCreate);
         
         var command = new DeleteBreedCommand(
             speciesToCreate.Id.Value, 
@@ -47,7 +47,7 @@ public class DeleteBreedTests : ManagementBaseTests
         var breedToCreate = SharedTestsSeeder.CreateBreed("Сеттер");
 
         speciesToCreate.AddBreed(breedToCreate);
-        await SpeciesRepository.Add(speciesToCreate);
+        await SpeciesWriteRepository.Add(speciesToCreate);
         
         var breedId = BreedId.NewBreedId().Value;
         

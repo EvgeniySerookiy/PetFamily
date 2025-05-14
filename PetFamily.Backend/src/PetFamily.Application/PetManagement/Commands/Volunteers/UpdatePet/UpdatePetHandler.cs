@@ -12,18 +12,18 @@ namespace PetFamily.Application.PetManagement.Commands.Volunteers.UpdatePet;
 
 public class UpdatePetHandler : ICommandHandler<Guid, UpdatePetCommand>
 {
-    private readonly IVolunteersRepository _volunteersRepository;
+    private readonly IVolunteersWriteRepository _volunteersWriteRepository;
     private readonly IReadDbContext _readDbContext;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<UpdatePetHandler> _logger;
 
     public UpdatePetHandler(
-        IVolunteersRepository volunteersRepository,
+        IVolunteersWriteRepository volunteersWriteRepository,
         IReadDbContext readDbContext,
         IUnitOfWork unitOfWork,
         ILogger<UpdatePetHandler> logger)
     {
-        _volunteersRepository = volunteersRepository;
+        _volunteersWriteRepository = volunteersWriteRepository;
         _readDbContext = readDbContext;
         _unitOfWork = unitOfWork;
         _logger = logger;
@@ -43,7 +43,7 @@ public class UpdatePetHandler : ICommandHandler<Guid, UpdatePetCommand>
         if (breedQuery is null)
             return Errors.Breed.NotFound(command.BreedId).ToErrorList();
 
-        var volunteerResult = await _volunteersRepository.GetById(command.VolunteerId);
+        var volunteerResult = await _volunteersWriteRepository.GetById(command.VolunteerId);
         if (volunteerResult.IsFailure)
             return volunteerResult.Error.ToErrorList();
         

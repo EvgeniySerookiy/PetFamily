@@ -23,7 +23,7 @@ public class AddBreedTests : ManagementBaseTests
     {
         // Arrange
         var speciesToCreate = SharedTestsSeeder.CreateSpecies("Собака");
-        await SpeciesRepository.Add(speciesToCreate);
+        await SpeciesWriteRepository.Add(speciesToCreate);
         
         var command = new AddBreedCommand(speciesToCreate.Id.Value, "Сеттер");
 
@@ -46,7 +46,7 @@ public class AddBreedTests : ManagementBaseTests
     {
         // Arrange
         var speciesToCreate = SharedTestsSeeder.CreateSpecies("Собака");
-        await SpeciesRepository.Add(speciesToCreate);
+        await SpeciesWriteRepository.Add(speciesToCreate);
 
         var speciesId = SpeciesId.NewSpeciesId().Value;
         
@@ -71,7 +71,7 @@ public class AddBreedTests : ManagementBaseTests
         var breedToCreate = SharedTestsSeeder.CreateBreed("Сеттер");
 
         speciesToCreate.AddBreed(breedToCreate);
-        await SpeciesRepository.Add(speciesToCreate);
+        await SpeciesWriteRepository.Add(speciesToCreate);
         
         var command = new AddBreedCommand(speciesToCreate.Id.Value, "Сеттер");
 

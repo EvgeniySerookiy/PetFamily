@@ -35,6 +35,7 @@ public static class Inject
             .AddClasses(classes => classes
                 .AssignableToAny(
                     typeof(IQueryHandlerPets<,>), 
+                    typeof(IQueryHandlerPet<,>),
                     typeof(IQueryHandlerVolunteer<,>),
                     typeof(IQueryHandlerVolunteers<,>),
                     typeof(IQueryHandlerBreedsOfSpecies<,>),

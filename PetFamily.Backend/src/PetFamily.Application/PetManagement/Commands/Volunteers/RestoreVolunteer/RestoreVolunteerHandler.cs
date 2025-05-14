@@ -8,16 +8,16 @@ namespace PetFamily.Application.PetManagement.Commands.Volunteers.RestoreVolunte
 
 public class RestoreVolunteerHandler : ICommandHandler<Guid, RestoreVolunteerCommand>
 {
-    private readonly IVolunteersRepository _volunteersRepository;
+    private readonly IVolunteersWriteRepository _volunteersWriteRepository;
     private readonly ILogger<RestoreVolunteerHandler> _logger;
     private readonly IUnitOfWork _unitOfWork;
 
     public RestoreVolunteerHandler(
-        IVolunteersRepository volunteersRepository,
+        IVolunteersWriteRepository volunteersWriteRepository,
         ILogger<RestoreVolunteerHandler> logger,
         IUnitOfWork unitOfWork)
     {
-        _volunteersRepository = volunteersRepository;
+        _volunteersWriteRepository = volunteersWriteRepository;
         _logger = logger;
         _unitOfWork = unitOfWork;
     }
@@ -26,7 +26,7 @@ public class RestoreVolunteerHandler : ICommandHandler<Guid, RestoreVolunteerCom
         RestoreVolunteerCommand command,
         CancellationToken cancellationToken = default)
     {
-        var volunteerResult = await _volunteersRepository.GetById(command.Id, cancellationToken);
+        var volunteerResult = await _volunteersWriteRepository.GetById(command.Id, cancellationToken);
         if (volunteerResult.IsFailure)
             return volunteerResult.Error.ToErrorList();
 

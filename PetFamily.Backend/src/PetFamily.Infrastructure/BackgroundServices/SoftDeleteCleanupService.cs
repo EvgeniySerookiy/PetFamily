@@ -1,9 +1,11 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using PetFamily.Application.Messaging;
 using PetFamily.Application.Photos;
+using PetFamily.Domain.PetManagement.Entities;
 using PetFamily.Infrastructure.DbContexts;
 using PetFamily.Infrastructure.Options;
 
@@ -40,9 +42,9 @@ public class SoftDeleteCleanupService : BackgroundService
                await timer.WaitForNextTickAsync(stoppingToken))
             try
             {
-                await CleanupDeletedVolunteersAsync(stoppingToken);
                 await CleanupDeletedPetsAsync(stoppingToken);
-
+                await CleanupDeletedVolunteersAsync(stoppingToken);
+                
                 _logger.LogInformation("Soft delete cleanup completed successfully");
             }
             catch (Exception exception)
@@ -53,53 +55,65 @@ public class SoftDeleteCleanupService : BackgroundService
 
     private async Task CleanupDeletedVolunteersAsync(CancellationToken cancellationToken)
     {
-        var writeDbContext = GetScopedWriteDbContext();
-        
-        var deletedVolunteers = writeDbContext.Volunteers
-            .Where(v => v.IsDeleted &&
-                        DateTime.UtcNow - v.DeletionDate >= _softDeleteOptions.TimeToRestore);
+        using var scope = _serviceScopeFactory.CreateScope();
+        var writeDbContext = scope.ServiceProvider.GetRequiredService<WriteDbContext>();
 
-        writeDbContext.Volunteers.RemoveRange(deletedVolunteers);
+        var deletedVolunteersCount = writeDbContext.Volunteers
+            .Where(v => v.IsDeleted &&
+                        DateTime.UtcNow - v.DeletionDate >= _softDeleteOptions.TimeToRestore)
+            .ExecuteDeleteAsync(cancellationToken);
 
         await writeDbContext.SaveChangesAsync(cancellationToken);
     }
 
     private async Task CleanupDeletedPetsAsync(CancellationToken cancellationToken)
     {
-        var writeDbContext = GetScopedWriteDbContext();
-
-        var deletedPets = GetScopedWriteDbContext().Pets
-            .Where(v => v.IsDeleted &&
-                        DateTime.UtcNow - v.DeletionDate >= _softDeleteOptions.TimeToRestore);
-
-        var photosToDelete = new List<PhotoInfo>();
-        
-         foreach (var pet in deletedPets)
-         {
-             if (pet.PetPhotos != null)
-             {
-                 foreach (var photo in pet.PetPhotos)
-                 {
-                     var photoInfo = new PhotoInfo(photo.PathToStorage, BUCKET_NAME);
-                     photosToDelete.Add(photoInfo);
-                 }
-             }
-         }
-
-         writeDbContext.Pets.RemoveRange(deletedPets);
-        
-        if (photosToDelete.Any())
-        {
-            await _messageQueue.WriteAsync(photosToDelete, cancellationToken);
-        }
-
-        await writeDbContext.SaveChangesAsync(cancellationToken);
-    }
-
-    private WriteDbContext GetScopedWriteDbContext()
-    {
         using var scope = _serviceScopeFactory.CreateScope();
         var writeDbContext = scope.ServiceProvider.GetRequiredService<WriteDbContext>();
-        return writeDbContext;
+
+        var deletedPets = await GetDeletedPetsAsync(writeDbContext, cancellationToken);
+    
+        var photosToDelete = ExtractPhotosToDelete(deletedPets);
+
+        if (photosToDelete.Any())
+            await _messageQueue.WriteAsync(photosToDelete, cancellationToken);
+
+        await DeletePetsAsync(writeDbContext, cancellationToken);
     }
+
+    private async Task<List<Pet>> GetDeletedPetsAsync(WriteDbContext context, CancellationToken cancellationToken)
+    {
+        return await context.Volunteers
+            .Include(v => v.Pets)
+            .SelectMany(v => v.Pets)
+            .Where(p => p.IsDeleted &&
+                        DateTime.UtcNow - p.DeletionDate >= _softDeleteOptions.TimeToRestore)
+            .ToListAsync(cancellationToken);
+    }
+
+    private List<PhotoInfo> ExtractPhotosToDelete(IEnumerable<Pet> deletedPets)
+    {
+        var photosToDelete = new List<PhotoInfo>();
+
+        foreach (var pet in deletedPets)
+        {
+            if (pet.PetPhotos == null) continue;
+
+            foreach (var photo in pet.PetPhotos)
+                photosToDelete.Add(new PhotoInfo(photo.PathToStorage, BUCKET_NAME));
+        }
+
+        return photosToDelete;
+    }
+
+    private async Task DeletePetsAsync(WriteDbContext context, CancellationToken cancellationToken)
+    {
+        await context.Volunteers
+            .Include(v => v.Pets)
+            .SelectMany(v => v.Pets)
+            .Where(p => p.IsDeleted &&
+                        DateTime.UtcNow - p.DeletionDate >= _softDeleteOptions.TimeToRestore)
+            .ExecuteDeleteAsync(cancellationToken);
+    }
+
 }

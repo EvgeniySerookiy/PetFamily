@@ -1,5 +1,4 @@
 using CSharpFunctionalExtensions;
-using Microsoft.EntityFrameworkCore;
 using PetFamily.Application.Abstractions;
 using PetFamily.Application.Database;
 using PetFamily.Domain.Shared.ErrorContext;
@@ -9,34 +8,29 @@ namespace PetFamily.Application.PetManagement.Commands.SpeciesСmd.DeleteSpecies
 
 public class DeleteSpeciesHandler : ICommandHandler<Guid, DeleteSpeciesCommand>
 {
-    private readonly IReadDbContext _readDbContext;
-    private readonly ISpeciesRepository _speciesRepository;
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IVolunteersReadRepository _volunteersReadRepository;
+    private readonly ISpeciesWriteRepository _speciesWriteRepository;
     
     public DeleteSpeciesHandler(
-        IReadDbContext readDbContext,
-        ISpeciesRepository speciesRepository,
-        IUnitOfWork unitOfWork)
+        IVolunteersReadRepository volunteersReadRepository,
+        ISpeciesWriteRepository speciesWriteRepository)
     {
-        _readDbContext = readDbContext;
-        _speciesRepository = speciesRepository;
-        _unitOfWork = unitOfWork;
+        _volunteersReadRepository = volunteersReadRepository;
+        _speciesWriteRepository = speciesWriteRepository;
     }
 
     public async Task<Result<Guid, ErrorList>> Handle(
         DeleteSpeciesCommand command, 
         CancellationToken cancellationToken = default)
     {
-        var petResult = await _readDbContext.Species
-            .FirstOrDefaultAsync(p => p.Id == command.SpeciesId, cancellationToken);
-        if (petResult == null)
-            return Errors.Species.NotFound(command.SpeciesId).ToErrorList();
+        var petResult = await _volunteersReadRepository
+            .IsSpeciesUsedByAnyPet(command.SpeciesId, cancellationToken);
+        if (petResult.IsFailure)
+            petResult.Error.ToErrorList();
         
-        await _speciesRepository.DeleteSpecies(
+        await _speciesWriteRepository.Delete(
             SpeciesId.Create(command.SpeciesId), 
             cancellationToken);
-        
-        await _unitOfWork.SaveChanges(cancellationToken);
         
         return command.SpeciesId;
     }

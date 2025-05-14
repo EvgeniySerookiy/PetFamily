@@ -12,18 +12,18 @@ namespace PetFamily.Application.PetManagement.Commands.Volunteers.UpdateVoluntee
 
 public class UpdateMainInfoHandler : ICommandHandler<Guid, UpdateMainInfoCommand>
 {
-    private readonly IVolunteersRepository _volunteersRepository;
+    private readonly IVolunteersWriteRepository _volunteersWriteRepository;
     private readonly ILogger<UpdateMainInfoHandler> _logger;
     private readonly IValidator<UpdateMainInfoCommand> _validator;
     private readonly IUnitOfWork _unitOfWork;
 
     public UpdateMainInfoHandler(
-        IVolunteersRepository volunteersRepository,
+        IVolunteersWriteRepository volunteersWriteRepository,
         ILogger<UpdateMainInfoHandler> logger,
         IValidator<UpdateMainInfoCommand> validator,
         IUnitOfWork unitOfWork)
     {
-        _volunteersRepository = volunteersRepository;
+        _volunteersWriteRepository = volunteersWriteRepository;
         _logger = logger;
         _validator = validator;
         _unitOfWork = unitOfWork;
@@ -38,7 +38,7 @@ public class UpdateMainInfoHandler : ICommandHandler<Guid, UpdateMainInfoCommand
         if (validationResult.IsValid == false)
             return validationResult.ToErrorList();
         
-        var volunteerResult = await _volunteersRepository.GetById(command.VolunteerId, cancellationToken);
+        var volunteerResult = await _volunteersWriteRepository.GetById(command.VolunteerId, cancellationToken);
         if (volunteerResult.IsFailure)
             return volunteerResult.Error.ToErrorList();
 
